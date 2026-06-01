@@ -117,7 +117,7 @@ function nominatimReverse(_x, _x2) {
 } // ── StarRating ───────────────────────────────────────────────
 function _nominatimReverse() {
   _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6(lat, lng) {
-    var r, d, a, _t2;
+    var r, d, a, _t3;
     return _regenerator().w(function (_context6) {
       while (1) switch (_context6.p = _context6.n) {
         case 0:
@@ -138,7 +138,7 @@ function _nominatimReverse() {
           return _context6.a(2, [a.road, a.neighbourhood || a.suburb, a.city || a.town || a.village, a.country].filter(Boolean).slice(0, 3).join(', '));
         case 3:
           _context6.p = 3;
-          _t2 = _context6.v;
+          _t3 = _context6.v;
           return _context6.a(2, '');
       }
     }, _callee6, null, [[0, 3]]);
@@ -385,7 +385,7 @@ var ImportModal = function ImportModal(_ref3) {
   }
   function _handleParse() {
     _handleParse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
-      var rawUrl, isShort, resolved, _d$status, r, d, parsed, location, base, _t;
+      var rawUrl, isShort, resolved, race, _d$status, d, html, m, parsed, location, base, _t, _t2;
       return _regenerator().w(function (_context) {
         while (1) switch (_context.p = _context.n) {
           case 0:
@@ -398,33 +398,57 @@ var ImportModal = function ImportModal(_ref3) {
           case 1:
             isShort = rawUrl.includes('share.google') || rawUrl.includes('maps.app.goo.gl') || rawUrl.includes('goo.gl/maps');
             setBusy(true);
-            _context.p = 2;
             resolved = rawUrl;
             if (!isShort) {
-              _context.n = 5;
+              _context.n = 8;
               break;
             }
+            race = function race(p) {
+              return Promise.race([p, new Promise(function (_, rej) {
+                return setTimeout(function () {
+                  return rej(new Error('timeout'));
+                }, 9000);
+              })]);
+            };
+            _context.p = 2;
             _context.n = 3;
-            return fetch("https://api.allorigins.win/get?url=".concat(encodeURIComponent(rawUrl)));
+            return race(fetch("https://api.allorigins.win/get?url=".concat(encodeURIComponent(rawUrl))).then(function (r) {
+              return r.json();
+            }));
           case 3:
-            r = _context.v;
-            _context.n = 4;
-            return r.json();
-          case 4:
             d = _context.v;
-            resolved = ((_d$status = d.status) === null || _d$status === void 0 ? void 0 : _d$status.url) || rawUrl;
-          case 5:
+            if ((_d$status = d.status) !== null && _d$status !== void 0 && _d$status.url) resolved = d.status.url;
+            _context.n = 8;
+            break;
+          case 4:
+            _context.p = 4;
+            _t = _context.v;
+            _context.p = 5;
+            _context.n = 6;
+            return race(fetch("https://corsproxy.io/?".concat(encodeURIComponent(rawUrl))).then(function (r) {
+              return r.text();
+            }));
+          case 6:
+            html = _context.v;
+            m = html.match(/"(https?:\/\/(?:www\.)?google\.com\/maps\/[^"]{20,})"/);
+            if (m) resolved = m[1].replace(/\\u003d/g, '=').replace(/\\u0026/g, '&');
+            _context.n = 8;
+            break;
+          case 7:
+            _context.p = 7;
+            _t2 = _context.v;
+          case 8:
             parsed = parseGoogleMapsUrl(resolved);
             location = '';
             if (!(parsed.lat && parsed.lng)) {
-              _context.n = 7;
+              _context.n = 10;
               break;
             }
-            _context.n = 6;
+            _context.n = 9;
             return nominatimReverse(parsed.lat, parsed.lng);
-          case 6:
+          case 9:
             location = _context.v;
-          case 7:
+          case 10:
             base = {
               name: parsed.name || '',
               cuisine: 'Other',
@@ -450,18 +474,11 @@ var ImportModal = function ImportModal(_ref3) {
               setForm(base);
               setStep('preview');
             }
-            _context.n = 9;
-            break;
-          case 8:
-            _context.p = 8;
-            _t = _context.v;
-            alert("Couldn't resolve the link. Please check it and try again.");
-          case 9:
             setBusy(false);
-          case 10:
+          case 11:
             return _context.a(2);
         }
-      }, _callee, null, [[2, 8]]);
+      }, _callee, null, [[5, 7], [2, 4]]);
     }));
     return _handleParse.apply(this, arguments);
   }

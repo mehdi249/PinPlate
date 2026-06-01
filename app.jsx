@@ -158,30 +158,34 @@ const ImportModal = ({ onClose, onImport }) => {
     if (!rawUrl) return;
     const isShort = rawUrl.includes('share.google') || rawUrl.includes('maps.app.goo.gl') || rawUrl.includes('goo.gl/maps');
     setBusy(true);
-    try {
-      let resolved = rawUrl;
-      if (isShort) {
-        const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(rawUrl)}`);
-        const d = await r.json();
-        resolved = d.status?.url || rawUrl;
+    let resolved = rawUrl;
+    if (isShort) {
+      const race = (p) => Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),9000))]);
+      try {
+        const d = await race(fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(rawUrl)}`).then(r=>r.json()));
+        if (d.status?.url) resolved = d.status.url;
+      } catch(e1) {
+        try {
+          const html = await race(fetch(`https://corsproxy.io/?${encodeURIComponent(rawUrl)}`).then(r=>r.text()));
+          const m = html.match(/"(https?:\/\/(?:www\.)?google\.com\/maps\/[^"]{20,})"/);
+          if (m) resolved = m[1].replace(/\\u003d/g,'=').replace(/\\u0026/g,'&');
+        } catch(e2) { /* both proxies failed — fall through with original url */ }
       }
-      const parsed = parseGoogleMapsUrl(resolved);
-      let location = '';
-      if (parsed.lat && parsed.lng) location = await nominatimReverse(parsed.lat, parsed.lng);
-      const base = {
-        name:parsed.name||'', cuisine:'Other', location,
-        recommender:'', note:'', status:'want', rating:null, priceRange:'',
-        phone:'', website:'', menuUrl:'', hours:[], photos:[], reviews:[],
-        lat:parsed.lat, lng:parsed.lng, googleMapsUrl:resolved,
-      };
-      if (isShort && parsed.name) {
-        onImport(base);
-      } else {
-        setForm(base);
-        setStep('preview');
-      }
-    } catch(e) {
-      alert("Couldn't resolve the link. Please check it and try again.");
+    }
+    const parsed = parseGoogleMapsUrl(resolved);
+    let location = '';
+    if (parsed.lat && parsed.lng) location = await nominatimReverse(parsed.lat, parsed.lng);
+    const base = {
+      name:parsed.name||'', cuisine:'Other', location,
+      recommender:'', note:'', status:'want', rating:null, priceRange:'',
+      phone:'', website:'', menuUrl:'', hours:[], photos:[], reviews:[],
+      lat:parsed.lat, lng:parsed.lng, googleMapsUrl:resolved,
+    };
+    if (isShort && parsed.name) {
+      onImport(base);
+    } else {
+      setForm(base);
+      setStep('preview');
     }
     setBusy(false);
   }
