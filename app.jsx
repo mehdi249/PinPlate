@@ -749,6 +749,20 @@ const PENDING_SPOTS = [
     hours: ['Monday: 11 AM–11 PM','Tuesday: 11 AM–11 PM','Wednesday: 11 AM–11 PM','Thursday: 11 AM–11 PM','Friday: 11 AM–12 AM','Saturday: 11 AM–12 AM','Sunday: 11 AM–11 PM'],
     lat: 49.2896, lng: -123.1268,
   },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440004',
+    name: 'JEON',
+    cuisine: 'Korean',
+    location: '1160 Davie St #110, Vancouver, BC V6E 1N1',
+    recommended_by: '',
+    notes: 'Modern Korean · elevated sharing plates · truffle japchae · pressed galbi · kimchi arancini · dark leather booths & Korean-inspired screens · from Chef Tom Jeon of Tom Sushi & Tozen',
+    visited: false,
+    price_range: '$40-100',
+    phone: '(236) 480-8080',
+    website: 'https://jeonvancouver.com',
+    hours: ['Monday: 5–10 PM','Tuesday: Closed','Wednesday: 5–10 PM','Thursday: 5–10 PM','Friday: 5–11 PM','Saturday: 5–11 PM','Sunday: 5–10 PM'],
+    lat: 49.2769, lng: -123.1363,
+  },
 ];
 
 // ── App ──────────────────────────────────────────────────────
