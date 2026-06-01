@@ -648,7 +648,7 @@ const Card = ({ r, onClick }) => {
   );
 };
 
-// ── Feed (single-column sections) ────────────────────────────
+// ── Feed (single-column sections with jump bar) ───────────────
 const SectionHead = ({title, count}) => (
   <div style={{display:'flex',alignItems:'baseline',gap:10,marginBottom:14,paddingBottom:10,borderBottom:`1px solid ${C.bd}`}}>
     <h2 style={{fontFamily:C.display,fontSize:20,color:C.text,margin:0}}>{title}</h2>
@@ -656,23 +656,36 @@ const SectionHead = ({title, count}) => (
   </div>
 );
 
-const Feed = ({ wantList, visitedList, onCardClick }) => (
-  <div style={{maxWidth:560,margin:'0 auto',width:'100%',padding:'20px 16px 80px'}}>
-    <div style={{marginBottom:32}}>
-      <SectionHead title="To Visit" count={wantList.length}/>
-      {wantList.length===0
-        ?<p style={{fontFamily:C.ui,fontSize:13,color:C.dim,textAlign:'center',padding:'28px 0'}}>Nothing saved yet — tap + Add to start</p>
-        :<div style={{display:'flex',flexDirection:'column',gap:10}}>{wantList.map(r=><Card key={r.id} r={r} onClick={()=>onCardClick(r)}/>)}</div>
-      }
-    </div>
-    {visitedList.length>0&&(
-      <div>
-        <SectionHead title="Visited" count={visitedList.length}/>
-        <div style={{display:'flex',flexDirection:'column',gap:10}}>{visitedList.map(r=><Card key={r.id} r={r} onClick={()=>onCardClick(r)}/>)}</div>
+const Feed = ({ wantList, visitedList, onCardClick }) => {
+  const scrollTo = id => document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
+  const pill = (label, id) => (
+    <button onClick={()=>scrollTo(id)} style={{padding:'6px 14px',borderRadius:20,border:`1px solid ${C.bd}`,background:C.hi,fontFamily:C.ui,fontSize:12,fontWeight:500,color:C.mid,cursor:'pointer',whiteSpace:'nowrap'}}>
+      {label}
+    </button>
+  );
+  return (
+    <div style={{maxWidth:560,margin:'0 auto',width:'100%',padding:'0 16px 80px'}}>
+      <div style={{position:'sticky',top:0,zIndex:100,background:C.bg,padding:'12px 0 10px',display:'flex',gap:8}}>
+        {pill(`To Visit · ${wantList.length}`,'section-want')}
+        {pill(`Visited · ${visitedList.length}`,'section-visited')}
       </div>
-    )}
-  </div>
-);
+      <div id="section-want" style={{marginBottom:32,scrollMarginTop:56}}>
+        <SectionHead title="To Visit" count={wantList.length}/>
+        {wantList.length===0
+          ?<p style={{fontFamily:C.ui,fontSize:13,color:C.dim,textAlign:'center',padding:'28px 0'}}>Nothing saved yet — tap + Add to start</p>
+          :<div style={{display:'flex',flexDirection:'column',gap:10}}>{wantList.map(r=><Card key={r.id} r={r} onClick={()=>onCardClick(r)}/>)}</div>
+        }
+      </div>
+      <div id="section-visited" style={{scrollMarginTop:56}}>
+        <SectionHead title="Visited" count={visitedList.length}/>
+        {visitedList.length===0
+          ?<p style={{fontFamily:C.ui,fontSize:13,color:C.dim,textAlign:'center',padding:'28px 0'}}>None yet — mark a spot as visited to see it here</p>
+          :<div style={{display:'flex',flexDirection:'column',gap:10}}>{visitedList.map(r=><Card key={r.id} r={r} onClick={()=>onCardClick(r)}/>)}</div>
+        }
+      </div>
+    </div>
+  );
+};
 
 // ── Sign-in screen ───────────────────────────────────────────
 const ADMIN_EMAIL = 'mehdiiaabbassii@gmail.com';
@@ -957,6 +970,6 @@ function App() {
     {showEdit&&<EditModal onClose={()=>{setShowEdit(false);setEditTarget(null);}} onSave={handleSave} editData={editTarget}/>}
     {showImport&&<ImportModal onClose={()=>setShowImport(false)} onImport={handleSave}/>}
 
-    {toast&&<div style={{position:'fixed',bottom:24,left:'50%',transform:'translateX(-50%)',background:C.espr,color:'#fdf8f3',padding:'10px 20px',borderRadius:50,fontFamily:C.ui,fontSize:13,fontWeight:500,zIndex:500,boxShadow:'0 4px 20px rgba(0,0,0,0.2)',animation:'slideUp 0.2s ease',whiteSpace:'nowrap'}}>{toast}</div>}
+    {toast&&<div style={{position:'fixed',bottom:'calc(24px + env(safe-area-inset-bottom))',left:'50%',transform:'translateX(-50%)',background:C.espr,color:'#fdf8f3',padding:'10px 20px',borderRadius:50,fontFamily:C.ui,fontSize:13,fontWeight:500,zIndex:9999,boxShadow:'0 4px 20px rgba(0,0,0,0.2)',animation:'slideUp 0.2s ease',maxWidth:'calc(100vw - 32px)',textAlign:'center'}}>{toast}</div>}
   </>);
 }

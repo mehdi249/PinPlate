@@ -2160,7 +2160,7 @@ var Card = function Card(_ref7) {
   })))));
 };
 
-// ── Feed (single-column sections) ────────────────────────────
+// ── Feed (single-column sections with jump bar) ───────────────
 var SectionHead = function SectionHead(_ref8) {
   var title = _ref8.title,
     count = _ref8.count;
@@ -2193,16 +2193,54 @@ var Feed = function Feed(_ref9) {
   var wantList = _ref9.wantList,
     visitedList = _ref9.visitedList,
     onCardClick = _ref9.onCardClick;
+  var scrollTo = function scrollTo(id) {
+    var _document$getElementB;
+    return (_document$getElementB = document.getElementById(id)) === null || _document$getElementB === void 0 ? void 0 : _document$getElementB.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  };
+  var pill = function pill(label, id) {
+    return /*#__PURE__*/React.createElement("button", {
+      onClick: function onClick() {
+        return scrollTo(id);
+      },
+      style: {
+        padding: '6px 14px',
+        borderRadius: 20,
+        border: "1px solid ".concat(C.bd),
+        background: C.hi,
+        fontFamily: C.ui,
+        fontSize: 12,
+        fontWeight: 500,
+        color: C.mid,
+        cursor: 'pointer',
+        whiteSpace: 'nowrap'
+      }
+    }, label);
+  };
   return /*#__PURE__*/React.createElement("div", {
     style: {
       maxWidth: 560,
       margin: '0 auto',
       width: '100%',
-      padding: '20px 16px 80px'
+      padding: '0 16px 80px'
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      marginBottom: 32
+      position: 'sticky',
+      top: 0,
+      zIndex: 100,
+      background: C.bg,
+      padding: '12px 0 10px',
+      display: 'flex',
+      gap: 8
+    }
+  }, pill("To Visit \xB7 ".concat(wantList.length), 'section-want'), pill("Visited \xB7 ".concat(visitedList.length), 'section-visited')), /*#__PURE__*/React.createElement("div", {
+    id: "section-want",
+    style: {
+      marginBottom: 32,
+      scrollMarginTop: 56
     }
   }, /*#__PURE__*/React.createElement(SectionHead, {
     title: "To Visit",
@@ -2229,10 +2267,23 @@ var Feed = function Feed(_ref9) {
         return onCardClick(r);
       }
     });
-  }))), visitedList.length > 0 && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
+  }))), /*#__PURE__*/React.createElement("div", {
+    id: "section-visited",
+    style: {
+      scrollMarginTop: 56
+    }
+  }, /*#__PURE__*/React.createElement(SectionHead, {
     title: "Visited",
     count: visitedList.length
-  }), /*#__PURE__*/React.createElement("div", {
+  }), visitedList.length === 0 ? /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 13,
+      color: C.dim,
+      textAlign: 'center',
+      padding: '28px 0'
+    }
+  }, "None yet \u2014 mark a spot as visited to see it here") : /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: 'column',
@@ -3160,7 +3211,7 @@ function App() {
   }), toast && /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'fixed',
-      bottom: 24,
+      bottom: 'calc(24px + env(safe-area-inset-bottom))',
       left: '50%',
       transform: 'translateX(-50%)',
       background: C.espr,
@@ -3170,10 +3221,11 @@ function App() {
       fontFamily: C.ui,
       fontSize: 13,
       fontWeight: 500,
-      zIndex: 500,
+      zIndex: 9999,
       boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
       animation: 'slideUp 0.2s ease',
-      whiteSpace: 'nowrap'
+      maxWidth: 'calc(100vw - 32px)',
+      textAlign: 'center'
     }
   }, toast));
 }
