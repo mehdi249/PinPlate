@@ -159,13 +159,16 @@ const MapView = ({ spots, onMarkerClick }) => {
   const map          = useRef(null);
   const marks        = useRef({});
   const locateMarker = useRef(null);
+  const [selected, setSelected] = useState(null);
 
   useEffect(()=>{
     if (map.current) return;
-    map.current = L.map(el.current,{ center:[40.7128,-74.006], zoom:12 });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-      attribution:'© OpenStreetMap contributors', maxZoom:19,
+    map.current = L.map(el.current,{ center:[49.2827,-123.1207], zoom:13, zoomControl:false });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
+      attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
+      maxZoom:19, subdomains:'abcd',
     }).addTo(map.current);
+    L.control.zoom({ position:'topleft' }).addTo(map.current);
     return ()=>{ map.current?.remove(); map.current=null; };
   },[]);
 
@@ -179,52 +182,90 @@ const MapView = ({ spots, onMarkerClick }) => {
       const visited = r.status==='visited';
       const bg = visited ? C.sage : C.amber;
       const icon = L.divIcon({
-        html:`<div style="width:28px;height:28px;background:${bg};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,0.22);display:flex;align-items:center;justify-content:center"><span style="transform:rotate(45deg);color:#fff;font-size:11px;font-weight:700;line-height:24px;display:block;text-align:center">${visited?'✓':'+'}</span></div>`,
-        iconSize:[28,40], iconAnchor:[14,40], className:'',
+        html:`<div style="width:30px;height:30px;background:${bg};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 3px 12px rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center"><span style="transform:rotate(45deg);color:#fff;font-size:12px;font-weight:700;line-height:1">${visited?'✓':'+'}</span></div>`,
+        iconSize:[30,42], iconAnchor:[15,42], className:'',
       });
-      const mk = L.marker([r.lat,r.lng],{icon})
-        .addTo(map.current)
-        .bindPopup(`<div style="font-family:sans-serif;min-width:140px;padding:2px"><strong style="font-size:13px;color:#1a0d02">${r.name}</strong><br/><span style="font-size:11px;color:${bg}">${r.cuisine}</span>${r.location?`<br/><span style="font-size:11px;color:#999">${r.location}</span>`:''}</div>`);
-      mk.on('click',()=>{ mk.openPopup(); onMarkerClick(r); });
+      const mk = L.marker([r.lat,r.lng],{icon}).addTo(map.current);
+      mk.on('click',()=>{
+        setSelected(r);
+        map.current.panTo([r.lat,r.lng],{animate:true,duration:0.4});
+      });
       marks.current[r.id]=mk;
       bounds.push([r.lat,r.lng]);
     });
-    if (bounds.length) map.current.fitBounds(bounds,{padding:[50,50],maxZoom:14});
+    if (bounds.length) map.current.fitBounds(bounds,{padding:[60,60],maxZoom:14});
   },[spots]);
 
   const unmapped = spots.filter(r=>!r.lat||!r.lng);
+
+  function locate() {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(pos=>{
+      const {latitude:lat,longitude:lng}=pos.coords;
+      map.current.setView([lat,lng],15,{animate:true});
+      if (locateMarker.current) locateMarker.current.remove();
+      locateMarker.current=L.circleMarker([lat,lng],{radius:8,fillColor:'#4a90d9',color:'#fff',weight:2.5,opacity:1,fillOpacity:1}).addTo(map.current).bindPopup('You are here');
+    },()=>{});
+  }
+
+  function directions(r) {
+    const q=r.lat&&r.lng?`${r.lat},${r.lng}`:encodeURIComponent([r.name,r.location].filter(Boolean).join(' '));
+    window.open(`https://maps.google.com/maps?daddr=${q}`,'_blank');
+  }
 
   return (
     <div style={{flex:1,position:'relative'}}>
       <div ref={el} style={{width:'100%',height:'calc(100vh - 110px)'}}/>
 
-      {/* Locate Me */}
-      <button onClick={()=>{
-        if (!navigator.geolocation) { alert('Location not supported by this browser'); return; }
-        navigator.geolocation.getCurrentPosition(pos=>{
-          const {latitude:lat,longitude:lng}=pos.coords;
-          map.current.setView([lat,lng],15);
-          if (locateMarker.current) locateMarker.current.remove();
-          locateMarker.current=L.circleMarker([lat,lng],{radius:7,fillColor:'#4a90d9',color:'#fff',weight:2,opacity:1,fillOpacity:1}).addTo(map.current).bindPopup('You are here');
-        },()=>alert('Location access denied. Please allow location in your browser settings.'));
-      }} style={{position:'absolute',bottom:20,left:12,zIndex:1000,background:'rgba(253,250,246,0.96)',backdropFilter:'blur(12px)',WebkitBackdropFilter:'blur(12px)',border:`1px solid ${C.bd}`,borderRadius:10,padding:'8px 14px',fontFamily:C.ui,fontSize:13,fontWeight:500,color:C.text,cursor:'pointer',boxShadow:'0 2px 12px rgba(0,0,0,0.1)',display:'flex',alignItems:'center',gap:7}}>
-        <Ic n="aim" size={14}/>Locate Me
+      {/* Locate Me — top left, below zoom controls */}
+      <button onClick={locate} style={{position:'absolute',top:90,left:10,zIndex:1000,background:'rgba(253,250,246,0.97)',backdropFilter:'blur(12px)',WebkitBackdropFilter:'blur(12px)',border:`1px solid ${C.bd}`,borderRadius:10,padding:'8px 13px',fontFamily:C.ui,fontSize:12,fontWeight:500,color:C.text,cursor:'pointer',boxShadow:'0 2px 10px rgba(0,0,0,0.1)',display:'flex',alignItems:'center',gap:6}}>
+        <Ic n="aim" size={13}/>Locate Me
       </button>
 
-      {/* Status chips legend */}
-      <div style={{position:'absolute',top:12,right:12,zIndex:1000,display:'flex',flexDirection:'column',gap:6}}>
-        <div style={{display:'flex',alignItems:'center',gap:7,background:'rgba(253,250,246,0.96)',backdropFilter:'blur(10px)',WebkitBackdropFilter:'blur(10px)',borderRadius:20,padding:'5px 11px',border:`1px solid ${C.bd}`,boxShadow:'0 1px 6px rgba(0,0,0,0.08)'}}>
-          <div style={{width:8,height:8,background:C.amber,borderRadius:'50%'}}/>
-          <span style={{fontFamily:C.ui,fontSize:11,fontWeight:500,color:C.mid}}>To visit</span>
-        </div>
-        <div style={{display:'flex',alignItems:'center',gap:7,background:'rgba(253,250,246,0.96)',backdropFilter:'blur(10px)',WebkitBackdropFilter:'blur(10px)',borderRadius:20,padding:'5px 11px',border:`1px solid ${C.bd}`,boxShadow:'0 1px 6px rgba(0,0,0,0.08)'}}>
-          <div style={{width:8,height:8,background:C.sage,borderRadius:'50%'}}/>
-          <span style={{fontFamily:C.ui,fontSize:11,fontWeight:500,color:C.mid}}>Visited</span>
-        </div>
-        {unmapped.length>0&&<div style={{background:'rgba(253,250,246,0.96)',borderRadius:20,padding:'5px 11px',border:`1px solid ${C.bd}`}}>
-          <span style={{fontFamily:C.ui,fontSize:10,color:C.dim}}>{unmapped.length} without pin</span>
-        </div>}
+      {/* Legend — top right */}
+      <div style={{position:'absolute',top:12,right:12,zIndex:1000,display:'flex',flexDirection:'column',gap:5}}>
+        {[{color:C.amber,label:'To visit'},{color:C.sage,label:'Visited'}].map(({color,label})=>(
+          <div key={label} style={{display:'flex',alignItems:'center',gap:7,background:'rgba(253,250,246,0.97)',backdropFilter:'blur(10px)',WebkitBackdropFilter:'blur(10px)',borderRadius:20,padding:'5px 11px',border:`1px solid ${C.bd}`,boxShadow:'0 1px 6px rgba(0,0,0,0.08)'}}>
+            <div style={{width:8,height:8,background:color,borderRadius:'50%'}}/>
+            <span style={{fontFamily:C.ui,fontSize:11,fontWeight:500,color:C.mid}}>{label}</span>
+          </div>
+        ))}
+        {unmapped.length>0&&(
+          <div style={{background:'rgba(253,250,246,0.97)',borderRadius:20,padding:'5px 11px',border:`1px solid ${C.bd}`}}>
+            <span style={{fontFamily:C.ui,fontSize:10,color:C.dim}}>{unmapped.length} without pin</span>
+          </div>
+        )}
       </div>
+
+      {/* Bottom mini-card */}
+      {selected&&(
+        <div style={{position:'absolute',bottom:20,left:12,right:12,zIndex:1000,background:'rgba(253,250,246,0.98)',backdropFilter:'blur(24px)',WebkitBackdropFilter:'blur(24px)',borderRadius:20,padding:'18px 18px 16px',boxShadow:'0 8px 36px rgba(0,0,0,0.16)',border:`1px solid ${C.bd}`,animation:'slideUp 0.22s cubic-bezier(0.34,1.2,0.64,1)'}}>
+          {/* Close */}
+          <button onClick={()=>setSelected(null)} style={{position:'absolute',top:14,right:14,background:'transparent',border:`1px solid ${C.bd}`,borderRadius:'50%',width:26,height:26,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:C.dim}}>
+            <Ic n="close" size={11}/>
+          </button>
+
+          {/* Info */}
+          <h3 style={{fontFamily:C.display,fontSize:20,color:C.text,margin:'0 0 6px',paddingRight:32,lineHeight:1.2}}>{selected.name}</h3>
+          <div style={{display:'flex',gap:6,alignItems:'center',marginBottom:selected.location?4:0,flexWrap:'wrap'}}>
+            <span style={{fontFamily:C.ui,fontSize:11,fontWeight:500,color:selected.status==='visited'?C.sage:C.amber,background:selected.status==='visited'?C.sageBg:C.amberBg,borderRadius:20,padding:'2px 9px'}}>{selected.status==='visited'?'Visited':'To Visit'}</span>
+            <span style={{fontFamily:C.ui,fontSize:11,color:C.dim}}>·</span>
+            <span style={{fontFamily:C.ui,fontSize:11,color:C.mid}}>{selected.cuisine}</span>
+            {selected.priceRange&&<><span style={{fontFamily:C.ui,fontSize:11,color:C.dim}}>·</span><span style={{fontFamily:C.ui,fontSize:11,color:C.mid}}>{selected.priceRange}</span></>}
+          </div>
+          {selected.location&&<p style={{fontFamily:C.ui,fontSize:12,color:C.dim,margin:'0 0 14px',lineHeight:1.4}}>{selected.location}</p>}
+
+          {/* Actions */}
+          <div style={{display:'flex',gap:8,marginTop:12}}>
+            <button onClick={()=>directions(selected)} style={{flex:1,padding:'10px 0',borderRadius:11,background:C.amberBg,border:`1px solid ${C.amberBd}`,color:C.amber,fontFamily:C.ui,fontSize:13,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
+              <Ic n="nav" size={14}/>Directions
+            </button>
+            <button onClick={()=>{onMarkerClick(selected);setSelected(null);}} style={{flex:2,padding:'10px 0',borderRadius:11,background:C.espr,border:'none',color:'#fdf8f3',fontFamily:C.ui,fontSize:13,fontWeight:600,cursor:'pointer'}}>
+              View Details →
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

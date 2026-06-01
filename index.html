@@ -424,15 +424,24 @@ var MapView = function MapView(_ref3) {
   var map = useRef(null);
   var marks = useRef({});
   var locateMarker = useRef(null);
+  var _useState = useState(null),
+    _useState2 = _slicedToArray(_useState, 2),
+    selected = _useState2[0],
+    setSelected = _useState2[1];
   useEffect(function () {
     if (map.current) return;
     map.current = L.map(el.current, {
-      center: [40.7128, -74.006],
-      zoom: 12
+      center: [49.2827, -123.1207],
+      zoom: 13,
+      zoomControl: false
     });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 19
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
+      maxZoom: 19,
+      subdomains: 'abcd'
+    }).addTo(map.current);
+    L.control.zoom({
+      position: 'topleft'
     }).addTo(map.current);
     return function () {
       var _map$current;
@@ -452,29 +461,56 @@ var MapView = function MapView(_ref3) {
       var visited = r.status === 'visited';
       var bg = visited ? C.sage : C.amber;
       var icon = L.divIcon({
-        html: "<div style=\"width:28px;height:28px;background:".concat(bg, ";border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,0.22);display:flex;align-items:center;justify-content:center\"><span style=\"transform:rotate(45deg);color:#fff;font-size:11px;font-weight:700;line-height:24px;display:block;text-align:center\">").concat(visited ? '✓' : '+', "</span></div>"),
-        iconSize: [28, 40],
-        iconAnchor: [14, 40],
+        html: "<div style=\"width:30px;height:30px;background:".concat(bg, ";border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 3px 12px rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center\"><span style=\"transform:rotate(45deg);color:#fff;font-size:12px;font-weight:700;line-height:1\">").concat(visited ? '✓' : '+', "</span></div>"),
+        iconSize: [30, 42],
+        iconAnchor: [15, 42],
         className: ''
       });
       var mk = L.marker([r.lat, r.lng], {
         icon: icon
-      }).addTo(map.current).bindPopup("<div style=\"font-family:sans-serif;min-width:140px;padding:2px\"><strong style=\"font-size:13px;color:#1a0d02\">".concat(r.name, "</strong><br/><span style=\"font-size:11px;color:").concat(bg, "\">").concat(r.cuisine, "</span>").concat(r.location ? "<br/><span style=\"font-size:11px;color:#999\">".concat(r.location, "</span>") : '', "</div>"));
+      }).addTo(map.current);
       mk.on('click', function () {
-        mk.openPopup();
-        onMarkerClick(r);
+        setSelected(r);
+        map.current.panTo([r.lat, r.lng], {
+          animate: true,
+          duration: 0.4
+        });
       });
       marks.current[r.id] = mk;
       bounds.push([r.lat, r.lng]);
     });
     if (bounds.length) map.current.fitBounds(bounds, {
-      padding: [50, 50],
+      padding: [60, 60],
       maxZoom: 14
     });
   }, [spots]);
   var unmapped = spots.filter(function (r) {
     return !r.lat || !r.lng;
   });
+  function locate() {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      var _pos$coords = pos.coords,
+        lat = _pos$coords.latitude,
+        lng = _pos$coords.longitude;
+      map.current.setView([lat, lng], 15, {
+        animate: true
+      });
+      if (locateMarker.current) locateMarker.current.remove();
+      locateMarker.current = L.circleMarker([lat, lng], {
+        radius: 8,
+        fillColor: '#4a90d9',
+        color: '#fff',
+        weight: 2.5,
+        opacity: 1,
+        fillOpacity: 1
+      }).addTo(map.current).bindPopup('You are here');
+    }, function () {});
+  }
+  function directions(r) {
+    var q = r.lat && r.lng ? "".concat(r.lat, ",").concat(r.lng) : encodeURIComponent([r.name, r.location].filter(Boolean).join(' '));
+    window.open("https://maps.google.com/maps?daddr=".concat(q), '_blank');
+  }
   return /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1,
@@ -487,53 +523,31 @@ var MapView = function MapView(_ref3) {
       height: 'calc(100vh - 110px)'
     }
   }), /*#__PURE__*/React.createElement("button", {
-    onClick: function onClick() {
-      if (!navigator.geolocation) {
-        alert('Location not supported by this browser');
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(function (pos) {
-        var _pos$coords = pos.coords,
-          lat = _pos$coords.latitude,
-          lng = _pos$coords.longitude;
-        map.current.setView([lat, lng], 15);
-        if (locateMarker.current) locateMarker.current.remove();
-        locateMarker.current = L.circleMarker([lat, lng], {
-          radius: 7,
-          fillColor: '#4a90d9',
-          color: '#fff',
-          weight: 2,
-          opacity: 1,
-          fillOpacity: 1
-        }).addTo(map.current).bindPopup('You are here');
-      }, function () {
-        return alert('Location access denied. Please allow location in your browser settings.');
-      });
-    },
+    onClick: locate,
     style: {
       position: 'absolute',
-      bottom: 20,
-      left: 12,
+      top: 90,
+      left: 10,
       zIndex: 1000,
-      background: 'rgba(253,250,246,0.96)',
+      background: 'rgba(253,250,246,0.97)',
       backdropFilter: 'blur(12px)',
       WebkitBackdropFilter: 'blur(12px)',
       border: "1px solid ".concat(C.bd),
       borderRadius: 10,
-      padding: '8px 14px',
+      padding: '8px 13px',
       fontFamily: C.ui,
-      fontSize: 13,
+      fontSize: 12,
       fontWeight: 500,
       color: C.text,
       cursor: 'pointer',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
       display: 'flex',
       alignItems: 'center',
-      gap: 7
+      gap: 6
     }
   }, /*#__PURE__*/React.createElement(Ic, {
     n: "aim",
-    size: 14
+    size: 13
   }), "Locate Me"), /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
@@ -542,65 +556,49 @@ var MapView = function MapView(_ref3) {
       zIndex: 1000,
       display: 'flex',
       flexDirection: 'column',
-      gap: 6
+      gap: 5
     }
-  }, /*#__PURE__*/React.createElement("div", {
+  }, [{
+    color: C.amber,
+    label: 'To visit'
+  }, {
+    color: C.sage,
+    label: 'Visited'
+  }].map(function (_ref4) {
+    var color = _ref4.color,
+      label = _ref4.label;
+    return /*#__PURE__*/React.createElement("div", {
+      key: label,
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 7,
+        background: 'rgba(253,250,246,0.97)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        borderRadius: 20,
+        padding: '5px 11px',
+        border: "1px solid ".concat(C.bd),
+        boxShadow: '0 1px 6px rgba(0,0,0,0.08)'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: 8,
+        height: 8,
+        background: color,
+        borderRadius: '50%'
+      }
+    }), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontFamily: C.ui,
+        fontSize: 11,
+        fontWeight: 500,
+        color: C.mid
+      }
+    }, label));
+  }), unmapped.length > 0 && /*#__PURE__*/React.createElement("div", {
     style: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: 7,
-      background: 'rgba(253,250,246,0.96)',
-      backdropFilter: 'blur(10px)',
-      WebkitBackdropFilter: 'blur(10px)',
-      borderRadius: 20,
-      padding: '5px 11px',
-      border: "1px solid ".concat(C.bd),
-      boxShadow: '0 1px 6px rgba(0,0,0,0.08)'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: 8,
-      height: 8,
-      background: C.amber,
-      borderRadius: '50%'
-    }
-  }), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontFamily: C.ui,
-      fontSize: 11,
-      fontWeight: 500,
-      color: C.mid
-    }
-  }, "To visit")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: 7,
-      background: 'rgba(253,250,246,0.96)',
-      backdropFilter: 'blur(10px)',
-      WebkitBackdropFilter: 'blur(10px)',
-      borderRadius: 20,
-      padding: '5px 11px',
-      border: "1px solid ".concat(C.bd),
-      boxShadow: '0 1px 6px rgba(0,0,0,0.08)'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: 8,
-      height: 8,
-      background: C.sage,
-      borderRadius: '50%'
-    }
-  }), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontFamily: C.ui,
-      fontSize: 11,
-      fontWeight: 500,
-      color: C.mid
-    }
-  }, "Visited")), unmapped.length > 0 && /*#__PURE__*/React.createElement("div", {
-    style: {
-      background: 'rgba(253,250,246,0.96)',
+      background: 'rgba(253,250,246,0.97)',
       borderRadius: 20,
       padding: '5px 11px',
       border: "1px solid ".concat(C.bd)
@@ -611,30 +609,173 @@ var MapView = function MapView(_ref3) {
       fontSize: 10,
       color: C.dim
     }
-  }, unmapped.length, " without pin"))));
+  }, unmapped.length, " without pin"))), selected && /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'absolute',
+      bottom: 20,
+      left: 12,
+      right: 12,
+      zIndex: 1000,
+      background: 'rgba(253,250,246,0.98)',
+      backdropFilter: 'blur(24px)',
+      WebkitBackdropFilter: 'blur(24px)',
+      borderRadius: 20,
+      padding: '18px 18px 16px',
+      boxShadow: '0 8px 36px rgba(0,0,0,0.16)',
+      border: "1px solid ".concat(C.bd),
+      animation: 'slideUp 0.22s cubic-bezier(0.34,1.2,0.64,1)'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return setSelected(null);
+    },
+    style: {
+      position: 'absolute',
+      top: 14,
+      right: 14,
+      background: 'transparent',
+      border: "1px solid ".concat(C.bd),
+      borderRadius: '50%',
+      width: 26,
+      height: 26,
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: C.dim
+    }
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "close",
+    size: 11
+  })), /*#__PURE__*/React.createElement("h3", {
+    style: {
+      fontFamily: C.display,
+      fontSize: 20,
+      color: C.text,
+      margin: '0 0 6px',
+      paddingRight: 32,
+      lineHeight: 1.2
+    }
+  }, selected.name), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 6,
+      alignItems: 'center',
+      marginBottom: selected.location ? 4 : 0,
+      flexWrap: 'wrap'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 11,
+      fontWeight: 500,
+      color: selected.status === 'visited' ? C.sage : C.amber,
+      background: selected.status === 'visited' ? C.sageBg : C.amberBg,
+      borderRadius: 20,
+      padding: '2px 9px'
+    }
+  }, selected.status === 'visited' ? 'Visited' : 'To Visit'), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 11,
+      color: C.dim
+    }
+  }, "\xB7"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 11,
+      color: C.mid
+    }
+  }, selected.cuisine), selected.priceRange && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 11,
+      color: C.dim
+    }
+  }, "\xB7"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 11,
+      color: C.mid
+    }
+  }, selected.priceRange))), selected.location && /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 12,
+      color: C.dim,
+      margin: '0 0 14px',
+      lineHeight: 1.4
+    }
+  }, selected.location), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8,
+      marginTop: 12
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return directions(selected);
+    },
+    style: {
+      flex: 1,
+      padding: '10px 0',
+      borderRadius: 11,
+      background: C.amberBg,
+      border: "1px solid ".concat(C.amberBd),
+      color: C.amber,
+      fontFamily: C.ui,
+      fontSize: 13,
+      fontWeight: 600,
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 6
+    }
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "nav",
+    size: 14
+  }), "Directions"), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      onMarkerClick(selected);
+      setSelected(null);
+    },
+    style: {
+      flex: 2,
+      padding: '10px 0',
+      borderRadius: 11,
+      background: C.espr,
+      border: 'none',
+      color: '#fdf8f3',
+      fontFamily: C.ui,
+      fontSize: 13,
+      fontWeight: 600,
+      cursor: 'pointer'
+    }
+  }, "View Details \u2192"))));
 };
 
 // ── Import modal ─────────────────────────────────────────────
-var ImportModal = function ImportModal(_ref4) {
+var ImportModal = function ImportModal(_ref5) {
   var _form$name;
-  var onClose = _ref4.onClose,
-    onImport = _ref4.onImport;
-  var _useState = useState(''),
-    _useState2 = _slicedToArray(_useState, 2),
-    url = _useState2[0],
-    setUrl = _useState2[1];
-  var _useState3 = useState('paste'),
+  var onClose = _ref5.onClose,
+    onImport = _ref5.onImport;
+  var _useState3 = useState(''),
     _useState4 = _slicedToArray(_useState3, 2),
-    step = _useState4[0],
-    setStep = _useState4[1];
-  var _useState5 = useState(null),
+    url = _useState4[0],
+    setUrl = _useState4[1];
+  var _useState5 = useState('paste'),
     _useState6 = _slicedToArray(_useState5, 2),
-    form = _useState6[0],
-    setForm = _useState6[1];
-  var _useState7 = useState(false),
+    step = _useState6[0],
+    setStep = _useState6[1];
+  var _useState7 = useState(null),
     _useState8 = _slicedToArray(_useState7, 2),
-    busy = _useState8[0],
-    setBusy = _useState8[1];
+    form = _useState8[0],
+    setForm = _useState8[1];
+  var _useState9 = useState(false),
+    _useState0 = _slicedToArray(_useState9, 2),
+    busy = _useState0[0],
+    setBusy = _useState0[1];
   var set = function set(k, v) {
     return setForm(function (f) {
       return _objectSpread(_objectSpread({}, f), {}, _defineProperty({}, k, v));
@@ -1166,18 +1307,18 @@ var ImportModal = function ImportModal(_ref4) {
 };
 
 // ── Detail panel ─────────────────────────────────────────────
-var DetailPanel = function DetailPanel(_ref5) {
+var DetailPanel = function DetailPanel(_ref6) {
   var _r$hours;
-  var r = _ref5.r,
-    onClose = _ref5.onClose,
-    onEdit = _ref5.onEdit,
-    onMarkVisited = _ref5.onMarkVisited,
-    onRate = _ref5.onRate,
-    onDelete = _ref5.onDelete;
-  var _useState9 = useState(false),
-    _useState0 = _slicedToArray(_useState9, 2),
-    hoursOpen = _useState0[0],
-    setHoursOpen = _useState0[1];
+  var r = _ref6.r,
+    onClose = _ref6.onClose,
+    onEdit = _ref6.onEdit,
+    onMarkVisited = _ref6.onMarkVisited,
+    onRate = _ref6.onRate,
+    onDelete = _ref6.onDelete;
+  var _useState1 = useState(false),
+    _useState10 = _slicedToArray(_useState1, 2),
+    hoursOpen = _useState10[0],
+    setHoursOpen = _useState10[1];
   var openUrl = function openUrl(url) {
     return window.open(url.startsWith('http') ? url : 'https://' + url, '_blank');
   };
@@ -1774,11 +1915,11 @@ var DetailPanel = function DetailPanel(_ref5) {
 };
 
 // ── Add / Edit modal ─────────────────────────────────────────
-var EditModal = function EditModal(_ref6) {
-  var onClose = _ref6.onClose,
-    onSave = _ref6.onSave,
-    editData = _ref6.editData;
-  var _useState1 = useState(editData || {
+var EditModal = function EditModal(_ref7) {
+  var onClose = _ref7.onClose,
+    onSave = _ref7.onSave,
+    editData = _ref7.editData;
+  var _useState11 = useState(editData || {
       name: '',
       cuisine: 'Italian',
       location: '',
@@ -1797,9 +1938,9 @@ var EditModal = function EditModal(_ref6) {
       lng: null,
       googleMapsUrl: ''
     }),
-    _useState10 = _slicedToArray(_useState1, 2),
-    form = _useState10[0],
-    setForm = _useState10[1];
+    _useState12 = _slicedToArray(_useState11, 2),
+    form = _useState12[0],
+    setForm = _useState12[1];
   var set = function set(k, v) {
     return setForm(function (f) {
       return _objectSpread(_objectSpread({}, f), {}, _defineProperty({}, k, v));
@@ -2072,15 +2213,15 @@ function getPriorityList() {
 function savePriorityList(list) {
   localStorage.setItem('pinplate_priority', JSON.stringify(list));
 }
-var Card = function Card(_ref7) {
-  var r = _ref7.r,
-    onClick = _ref7.onClick,
-    isPriority = _ref7.isPriority,
-    priorityNum = _ref7.priorityNum,
-    priorityTotal = _ref7.priorityTotal,
-    onTogglePriority = _ref7.onTogglePriority,
-    onMoveUp = _ref7.onMoveUp,
-    onMoveDown = _ref7.onMoveDown;
+var Card = function Card(_ref8) {
+  var r = _ref8.r,
+    onClick = _ref8.onClick,
+    isPriority = _ref8.isPriority,
+    priorityNum = _ref8.priorityNum,
+    priorityTotal = _ref8.priorityTotal,
+    onTogglePriority = _ref8.onTogglePriority,
+    onMoveUp = _ref8.onMoveUp,
+    onMoveDown = _ref8.onMoveDown;
   var isVisited = r.status === 'visited';
   var accent = isVisited ? C.sage : C.amber;
   var accentBg = isVisited ? C.sageBg : C.amberBg;
@@ -2337,23 +2478,23 @@ var Card = function Card(_ref7) {
 };
 
 // ── Feed ─────────────────────────────────────────────────────
-var Feed = function Feed(_ref8) {
-  var restaurants = _ref8.restaurants,
-    onCardClick = _ref8.onCardClick;
-  var _useState11 = useState('All'),
-    _useState12 = _slicedToArray(_useState11, 2),
-    cuisine = _useState12[0],
-    setCuisine = _useState12[1];
-  var _useState13 = useState('want'),
+var Feed = function Feed(_ref9) {
+  var restaurants = _ref9.restaurants,
+    onCardClick = _ref9.onCardClick;
+  var _useState13 = useState('All'),
     _useState14 = _slicedToArray(_useState13, 2),
-    section = _useState14[0],
-    setSection = _useState14[1];
-  var _useState15 = useState(function () {
+    cuisine = _useState14[0],
+    setCuisine = _useState14[1];
+  var _useState15 = useState('want'),
+    _useState16 = _slicedToArray(_useState15, 2),
+    section = _useState16[0],
+    setSection = _useState16[1];
+  var _useState17 = useState(function () {
       return getPriorityList();
     }),
-    _useState16 = _slicedToArray(_useState15, 2),
-    priority = _useState16[0],
-    setPriority = _useState16[1];
+    _useState18 = _slicedToArray(_useState17, 2),
+    priority = _useState18[0],
+    setPriority = _useState18[1];
   function togglePriority(id) {
     setPriority(function (prev) {
       var next = prev.includes(id) ? prev.filter(function (x) {
@@ -2370,9 +2511,9 @@ var Feed = function Feed(_ref8) {
       var newIdx = idx + dir;
       if (newIdx < 0 || newIdx >= prev.length) return prev;
       var next = _toConsumableArray(prev);
-      var _ref9 = [next[newIdx], next[idx]];
-      next[idx] = _ref9[0];
-      next[newIdx] = _ref9[1];
+      var _ref0 = [next[newIdx], next[idx]];
+      next[idx] = _ref0[0];
+      next[newIdx] = _ref0[1];
       savePriorityList(next);
       return next;
     });
@@ -2591,18 +2732,18 @@ var Feed = function Feed(_ref8) {
 // ── Sign-in screen ───────────────────────────────────────────
 var ADMIN_EMAIL = 'mehdiiaabbassii@gmail.com';
 var SignIn = function SignIn() {
-  var _useState17 = useState(''),
-    _useState18 = _slicedToArray(_useState17, 2),
-    password = _useState18[0],
-    setPassword = _useState18[1];
   var _useState19 = useState(''),
     _useState20 = _slicedToArray(_useState19, 2),
-    err = _useState20[0],
-    setErr = _useState20[1];
-  var _useState21 = useState(false),
+    password = _useState20[0],
+    setPassword = _useState20[1];
+  var _useState21 = useState(''),
     _useState22 = _slicedToArray(_useState21, 2),
-    busy = _useState22[0],
-    setBusy = _useState22[1];
+    err = _useState22[0],
+    setErr = _useState22[1];
+  var _useState23 = useState(false),
+    _useState24 = _slicedToArray(_useState23, 2),
+    busy = _useState24[0],
+    setBusy = _useState24[1];
   var inp = {
     width: '100%',
     padding: '11px 14px',
@@ -2991,54 +3132,54 @@ var PENDING_SPOTS = [{
 
 // ── App ──────────────────────────────────────────────────────
 function App() {
-  var _useState23 = useState([]),
-    _useState24 = _slicedToArray(_useState23, 2),
-    restaurants = _useState24[0],
-    setRestaurants = _useState24[1];
-  var _useState25 = useState(true),
+  var _useState25 = useState([]),
     _useState26 = _slicedToArray(_useState25, 2),
-    loading = _useState26[0],
-    setLoading = _useState26[1];
-  var _useState27 = useState('home'),
+    restaurants = _useState26[0],
+    setRestaurants = _useState26[1];
+  var _useState27 = useState(true),
     _useState28 = _slicedToArray(_useState27, 2),
-    tab = _useState28[0],
-    setTab = _useState28[1];
-  var _useState29 = useState(false),
+    loading = _useState28[0],
+    setLoading = _useState28[1];
+  var _useState29 = useState('home'),
     _useState30 = _slicedToArray(_useState29, 2),
-    showEdit = _useState30[0],
-    setShowEdit = _useState30[1];
+    tab = _useState30[0],
+    setTab = _useState30[1];
   var _useState31 = useState(false),
     _useState32 = _slicedToArray(_useState31, 2),
-    showImport = _useState32[0],
-    setShowImport = _useState32[1];
+    showEdit = _useState32[0],
+    setShowEdit = _useState32[1];
   var _useState33 = useState(false),
     _useState34 = _slicedToArray(_useState33, 2),
-    showAddMenu = _useState34[0],
-    setShowAddMenu = _useState34[1];
-  var _useState35 = useState(null),
+    showImport = _useState34[0],
+    setShowImport = _useState34[1];
+  var _useState35 = useState(false),
     _useState36 = _slicedToArray(_useState35, 2),
-    editTarget = _useState36[0],
-    setEditTarget = _useState36[1];
+    showAddMenu = _useState36[0],
+    setShowAddMenu = _useState36[1];
   var _useState37 = useState(null),
     _useState38 = _slicedToArray(_useState37, 2),
-    detail = _useState38[0],
-    setDetail = _useState38[1];
-  var _useState39 = useState(''),
+    editTarget = _useState38[0],
+    setEditTarget = _useState38[1];
+  var _useState39 = useState(null),
     _useState40 = _slicedToArray(_useState39, 2),
-    search = _useState40[0],
-    setSearch = _useState40[1];
-  var _useState41 = useState(null),
+    detail = _useState40[0],
+    setDetail = _useState40[1];
+  var _useState41 = useState(''),
     _useState42 = _slicedToArray(_useState41, 2),
-    toast = _useState42[0],
-    setToast = _useState42[1];
+    search = _useState42[0],
+    setSearch = _useState42[1];
   var _useState43 = useState(null),
     _useState44 = _slicedToArray(_useState43, 2),
-    session = _useState44[0],
-    setSession = _useState44[1];
-  var _useState45 = useState(false),
+    toast = _useState44[0],
+    setToast = _useState44[1];
+  var _useState45 = useState(null),
     _useState46 = _slicedToArray(_useState45, 2),
-    authChecked = _useState46[0],
-    setAuthChecked = _useState46[1];
+    session = _useState46[0],
+    setSession = _useState46[1];
+  var _useState47 = useState(false),
+    _useState48 = _slicedToArray(_useState47, 2),
+    authChecked = _useState48[0],
+    setAuthChecked = _useState48[1];
   function showToast(msg) {
     setToast(msg);
     setTimeout(function () {
@@ -3048,8 +3189,8 @@ function App() {
 
   // Auth state
   useEffect(function () {
-    sb.auth.getSession().then(function (_ref0) {
-      var session = _ref0.data.session;
+    sb.auth.getSession().then(function (_ref1) {
+      var session = _ref1.data.session;
       setSession(session);
       setAuthChecked(true);
     });
@@ -3106,15 +3247,15 @@ function App() {
               _context3.n = 6;
               break;
             }
-            safe = toInsert.map(function (_ref1) {
-              var id = _ref1.id,
-                name = _ref1.name,
-                cuisine = _ref1.cuisine,
-                location = _ref1.location,
-                recommended_by = _ref1.recommended_by,
-                notes = _ref1.notes,
-                visited = _ref1.visited,
-                rating = _ref1.rating;
+            safe = toInsert.map(function (_ref10) {
+              var id = _ref10.id,
+                name = _ref10.name,
+                cuisine = _ref10.cuisine,
+                location = _ref10.location,
+                recommended_by = _ref10.recommended_by,
+                notes = _ref10.notes,
+                visited = _ref10.visited,
+                rating = _ref10.rating;
               return {
                 id: id,
                 name: name || '',
@@ -3727,7 +3868,7 @@ function App() {
 }
 
 
-const BUILD_TIME = 1780355528;
+const BUILD_TIME = 1780356336;
 (function(){
   var checking=false;
   async function checkUpdate(){
