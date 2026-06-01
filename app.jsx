@@ -559,7 +559,7 @@ const EditModal = ({ onClose, onSave, editData }) => {
   const set=(k,v)=>setForm(f=>({...f,[k]:v}));
   const inp={width:'100%',padding:'10px 14px',background:C.hi,border:`1px solid ${C.bdMid}`,borderRadius:10,fontFamily:C.ui,fontSize:14,color:C.text,outline:'none',boxSizing:'border-box'};
   const lbl={display:'block',fontFamily:C.ui,fontSize:11,fontWeight:600,letterSpacing:'0.05em',color:C.dim,marginBottom:5,textTransform:'uppercase'};
-  const ok=form.name.trim()&&form.recommender.trim();
+  const ok=form.name.trim();
   return (
     <div style={{position:'fixed',inset:0,zIndex:300,background:'rgba(10,5,0,0.45)',backdropFilter:'blur(6px)',WebkitBackdropFilter:'blur(6px)',display:'flex',alignItems:'center',justifyContent:'center',padding:20,animation:'fadeIn 0.2s ease'}} onClick={onClose}>
       <div style={{width:'100%',maxWidth:420,maxHeight:'88vh',overflowY:'auto',borderRadius:20,background:C.hi,boxShadow:'0 24px 60px rgba(0,0,0,0.18)',padding:28,animation:'slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)'}} onClick={e=>e.stopPropagation()}>
@@ -571,7 +571,7 @@ const EditModal = ({ onClose, onSave, editData }) => {
           <div><label style={lbl}>Restaurant Name *</label><input style={inp} value={form.name} onChange={e=>set('name',e.target.value)} placeholder="e.g. Chez Pierre"/></div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
             <div><label style={lbl}>Cuisine</label><select style={{...inp,cursor:'pointer'}} value={form.cuisine} onChange={e=>set('cuisine',e.target.value)}>{CUISINES.map(c=><option key={c}>{c}</option>)}</select></div>
-            <div><label style={lbl}>Recommended By *</label><input style={inp} value={form.recommender} onChange={e=>set('recommender',e.target.value)} placeholder="e.g. Sarah"/></div>
+            <div><label style={lbl}>Recommended By</label><input style={inp} value={form.recommender} onChange={e=>set('recommender',e.target.value)} placeholder="e.g. Sarah"/></div>
           </div>
           <div><label style={lbl}>Location</label><input style={inp} value={form.location} onChange={e=>set('location',e.target.value)} placeholder="e.g. West Village, NYC"/></div>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>

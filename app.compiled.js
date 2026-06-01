@@ -1776,7 +1776,7 @@ var EditModal = function EditModal(_ref6) {
     marginBottom: 5,
     textTransform: 'uppercase'
   };
-  var ok = form.name.trim() && form.recommender.trim();
+  var ok = form.name.trim();
   return /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'fixed',
@@ -1875,7 +1875,7 @@ var EditModal = function EditModal(_ref6) {
     }, c);
   }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     style: lbl
-  }, "Recommended By *"), /*#__PURE__*/React.createElement("input", {
+  }, "Recommended By"), /*#__PURE__*/React.createElement("input", {
     style: inp,
     value: form.recommender,
     onChange: function onChange(e) {
