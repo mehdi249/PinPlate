@@ -610,7 +610,7 @@ function savePriorityList(list) {
   localStorage.setItem('pinplate_priority', JSON.stringify(list));
 }
 
-const Card = ({ r, onClick, isPriority, priorityNum, onTogglePriority }) => {
+const Card = ({ r, onClick, isPriority, priorityNum, priorityTotal, onTogglePriority, onMoveUp, onMoveDown }) => {
   const isVisited = r.status === 'visited';
   const accent    = isVisited ? C.sage  : C.amber;
   const accentBg  = isVisited ? C.sageBg : C.amberBg;
@@ -634,7 +634,17 @@ const Card = ({ r, onClick, isPriority, priorityNum, onTogglePriority }) => {
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
         <div style={{flex:1,paddingRight:8,display:'flex',alignItems:'flex-start',gap:7}}>
           {isPriority&&priorityNum&&(
-            <span style={{flexShrink:0,marginTop:2,minWidth:18,height:18,borderRadius:9,background:C.amber,color:'#fff',fontFamily:C.ui,fontSize:10,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',padding:'0 5px'}}>{priorityNum}</span>
+            <div style={{flexShrink:0,display:'flex',alignItems:'center',gap:3,marginTop:1}}>
+              <span style={{minWidth:18,height:18,borderRadius:9,background:C.amber,color:'#fff',fontFamily:C.ui,fontSize:10,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',padding:'0 5px'}}>{priorityNum}</span>
+              <div style={{display:'flex',flexDirection:'column',gap:1}}>
+                <button onClick={e=>{e.stopPropagation();onMoveUp&&onMoveUp();}} disabled={priorityNum===1} style={{background:'none',border:'none',padding:0,cursor:priorityNum===1?'default':'pointer',lineHeight:1,opacity:priorityNum===1?0.25:0.7}}>
+                  <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke={C.amber} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="18,15 12,9 6,15"/></svg>
+                </button>
+                <button onClick={e=>{e.stopPropagation();onMoveDown&&onMoveDown();}} disabled={priorityNum===priorityTotal} style={{background:'none',border:'none',padding:0,cursor:priorityNum===priorityTotal?'default':'pointer',lineHeight:1,opacity:priorityNum===priorityTotal?0.25:0.7}}>
+                  <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke={C.amber} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6,9 12,15 18,9"/></svg>
+                </button>
+              </div>
+            </div>
           )}
           <h3 style={{fontFamily:C.display,fontSize:17,color:C.text,margin:0,lineHeight:1.25}}>{r.name}</h3>
         </div>
@@ -679,6 +689,18 @@ const Feed = ({ restaurants, onCardClick }) => {
   function togglePriority(id) {
     setPriority(prev => {
       const next = prev.includes(id) ? prev.filter(x=>x!==id) : [...prev, id];
+      savePriorityList(next);
+      return next;
+    });
+  }
+  function movePriority(id, dir) {
+    setPriority(prev => {
+      const idx = prev.indexOf(id);
+      if (idx === -1) return prev;
+      const newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= prev.length) return prev;
+      const next = [...prev];
+      [next[idx], next[newIdx]] = [next[newIdx], next[idx]];
       savePriorityList(next);
       return next;
     });
@@ -731,7 +753,7 @@ const Feed = ({ restaurants, onCardClick }) => {
                       <div style={{flex:1,height:1,background:C.amberBd}}/>
                     </div>
                     <div style={{padding:'0 16px',display:'flex',flexDirection:'column',gap:10}}>
-                      {wantPriority.map((r,i)=><Card key={r.id} r={r} onClick={()=>onCardClick(r)} isPriority={true} priorityNum={i+1} onTogglePriority={()=>togglePriority(r.id)}/>)}
+                      {wantPriority.map((r,i)=><Card key={r.id} r={r} onClick={()=>onCardClick(r)} isPriority={true} priorityNum={i+1} priorityTotal={wantPriority.length} onTogglePriority={()=>togglePriority(r.id)} onMoveUp={()=>movePriority(r.id,-1)} onMoveDown={()=>movePriority(r.id,1)}/>)}
                     </div>
                     {wantOther.length>0&&<div style={{margin:'16px 16px 14px',height:1,background:C.bd}}/>}
                   </>

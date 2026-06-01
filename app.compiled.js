@@ -2035,7 +2035,10 @@ var Card = function Card(_ref7) {
     onClick = _ref7.onClick,
     isPriority = _ref7.isPriority,
     priorityNum = _ref7.priorityNum,
-    onTogglePriority = _ref7.onTogglePriority;
+    priorityTotal = _ref7.priorityTotal,
+    onTogglePriority = _ref7.onTogglePriority,
+    onMoveUp = _ref7.onMoveUp,
+    onMoveDown = _ref7.onMoveDown;
   var isVisited = r.status === 'visited';
   var accent = isVisited ? C.sage : C.amber;
   var accentBg = isVisited ? C.sageBg : C.amberBg;
@@ -2082,10 +2085,16 @@ var Card = function Card(_ref7) {
       alignItems: 'flex-start',
       gap: 7
     }
-  }, isPriority && priorityNum && /*#__PURE__*/React.createElement("span", {
+  }, isPriority && priorityNum && /*#__PURE__*/React.createElement("div", {
     style: {
       flexShrink: 0,
-      marginTop: 2,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 3,
+      marginTop: 1
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
       minWidth: 18,
       height: 18,
       borderRadius: 9,
@@ -2099,7 +2108,63 @@ var Card = function Card(_ref7) {
       justifyContent: 'center',
       padding: '0 5px'
     }
-  }, priorityNum), /*#__PURE__*/React.createElement("h3", {
+  }, priorityNum), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 1
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick(e) {
+      e.stopPropagation();
+      onMoveUp && onMoveUp();
+    },
+    disabled: priorityNum === 1,
+    style: {
+      background: 'none',
+      border: 'none',
+      padding: 0,
+      cursor: priorityNum === 1 ? 'default' : 'pointer',
+      lineHeight: 1,
+      opacity: priorityNum === 1 ? 0.25 : 0.7
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: 12,
+    height: 12,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: C.amber,
+    strokeWidth: "2.5",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, /*#__PURE__*/React.createElement("polyline", {
+    points: "18,15 12,9 6,15"
+  }))), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick(e) {
+      e.stopPropagation();
+      onMoveDown && onMoveDown();
+    },
+    disabled: priorityNum === priorityTotal,
+    style: {
+      background: 'none',
+      border: 'none',
+      padding: 0,
+      cursor: priorityNum === priorityTotal ? 'default' : 'pointer',
+      lineHeight: 1,
+      opacity: priorityNum === priorityTotal ? 0.25 : 0.7
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: 12,
+    height: 12,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: C.amber,
+    strokeWidth: "2.5",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, /*#__PURE__*/React.createElement("polyline", {
+    points: "6,9 12,15 18,9"
+  }))))), /*#__PURE__*/React.createElement("h3", {
     style: {
       fontFamily: C.display,
       fontSize: 17,
@@ -2256,6 +2321,20 @@ var Feed = function Feed(_ref8) {
       return next;
     });
   }
+  function movePriority(id, dir) {
+    setPriority(function (prev) {
+      var idx = prev.indexOf(id);
+      if (idx === -1) return prev;
+      var newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= prev.length) return prev;
+      var next = _toConsumableArray(prev);
+      var _ref9 = [next[newIdx], next[idx]];
+      next[idx] = _ref9[0];
+      next[newIdx] = _ref9[1];
+      savePriorityList(next);
+      return next;
+    });
+  }
   var cuisines = useMemo(function () {
     return _toConsumableArray(new Set(restaurants.map(function (r) {
       return r.cuisine;
@@ -2406,8 +2485,15 @@ var Feed = function Feed(_ref8) {
       },
       isPriority: true,
       priorityNum: i + 1,
+      priorityTotal: wantPriority.length,
       onTogglePriority: function onTogglePriority() {
         return togglePriority(r.id);
+      },
+      onMoveUp: function onMoveUp() {
+        return movePriority(r.id, -1);
+      },
+      onMoveDown: function onMoveDown() {
+        return movePriority(r.id, 1);
       }
     });
   })), wantOther.length > 0 && /*#__PURE__*/React.createElement("div", {
@@ -2920,8 +3006,8 @@ function App() {
 
   // Auth state
   useEffect(function () {
-    sb.auth.getSession().then(function (_ref9) {
-      var session = _ref9.data.session;
+    sb.auth.getSession().then(function (_ref0) {
+      var session = _ref0.data.session;
       setSession(session);
       setAuthChecked(true);
     });
@@ -2978,15 +3064,15 @@ function App() {
               _context3.n = 6;
               break;
             }
-            safe = toInsert.map(function (_ref0) {
-              var id = _ref0.id,
-                name = _ref0.name,
-                cuisine = _ref0.cuisine,
-                location = _ref0.location,
-                recommended_by = _ref0.recommended_by,
-                notes = _ref0.notes,
-                visited = _ref0.visited,
-                rating = _ref0.rating;
+            safe = toInsert.map(function (_ref1) {
+              var id = _ref1.id,
+                name = _ref1.name,
+                cuisine = _ref1.cuisine,
+                location = _ref1.location,
+                recommended_by = _ref1.recommended_by,
+                notes = _ref1.notes,
+                visited = _ref1.visited,
+                rating = _ref1.rating;
               return {
                 id: id,
                 name: name || '',
