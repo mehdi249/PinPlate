@@ -52,7 +52,24 @@ const BUILD_TIME = ${buildTime};
   setInterval(checkUpdate,60000);
 })();`;
 
-const footer = `\n${autoUpdate}
+const swReg = `
+if('serviceWorker'in navigator){
+  navigator.serviceWorker.register('/PinPlate/sw.js',{scope:'/PinPlate/'})
+    .then(reg=>{
+      reg.addEventListener('updatefound',()=>{
+        var nw=reg.installing;
+        nw.addEventListener('statechange',()=>{
+          if(nw.state==='installed'&&navigator.serviceWorker.controller){
+            location.reload();
+          }
+        });
+      });
+    });
+  // When the SW tells us a new version activated, reload immediately
+  navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());
+}`;
+
+const footer = `\n${autoUpdate}\n${swReg}
 ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App, null));
 
 </script>
