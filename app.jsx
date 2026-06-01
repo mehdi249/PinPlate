@@ -576,8 +576,29 @@ function App() {
     const existingIds = new Set((existing||[]).map(r=>r.id));
     const toInsert = PENDING_SPOTS.filter(s=>!existingIds.has(s.id));
     if (!toInsert.length) return;
-    const { error } = await sb.from('spots').insert(toInsert);
+    let { error } = await sb.from('spots').insert(toInsert);
+    if (error && (error.message?.includes('column') || error.message?.includes('schema') || error.code==='PGRST204')) {
+      const safe = toInsert.map(({id,name,cuisine,location,recommended_by,notes,visited,rating})=>
+        ({id,name:name||'',cuisine:cuisine||'Other',location:location||null,recommended_by:recommended_by||null,notes:notes||null,visited:!!visited,rating:rating||null}));
+      ({ error } = await sb.from('spots').insert(safe));
+    }
     if (error) showToast('Seed error: '+error.message);
+  }
+
+  async function handleSave(form) {
+    const payload = appToDb(form);
+    let error;
+    if (editTarget) ({ error } = await sb.from('spots').update(payload).eq('id',editTarget.id));
+    else            ({ error } = await sb.from('spots').insert(payload));
+    if (error && (error.message?.includes('column') || error.message?.includes('schema') || error.code==='PGRST204')) {
+      const safe = {name:payload.name,cuisine:payload.cuisine,location:payload.location,recommended_by:payload.recommended_by,notes:payload.notes,visited:payload.visited,rating:payload.rating};
+      if (editTarget) ({ error } = await sb.from('spots').update(safe).eq('id',editTarget.id));
+      else            ({ error } = await sb.from('spots').insert(safe));
+    }
+    if (error) { showToast('Save failed: '+error.message); return; }
+    setShowEdit(false); setShowImport(false); setEditTarget(null); setDetail(null);
+    showToast(editTarget?'Updated!':'Pinned! 📍');
+    await loadSpots();
   }
 
   async function loadSpots() {
@@ -601,17 +622,6 @@ function App() {
 
   const wantList    = filtered.filter(r=>r.status==='want');
   const visitedList = filtered.filter(r=>r.status==='visited');
-
-  async function handleSave(form) {
-    const payload=appToDb(form);
-    let error;
-    if (editTarget) ({ error }=await sb.from('spots').update(payload).eq('id',editTarget.id));
-    else            ({ error }=await sb.from('spots').insert(payload));
-    if (error) { showToast('Save failed: '+error.message); return; }
-    setShowEdit(false); setShowImport(false); setEditTarget(null); setDetail(null);
-    showToast(editTarget?'Updated!':'Pinned! 📍');
-    await loadSpots();
-  }
 
   async function handleMarkVisited(id) {
     const {error}=await sb.from('spots').update({visited:true}).eq('id',id);

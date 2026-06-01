@@ -1878,7 +1878,8 @@ function App() {
   }
   function _insertPending() {
     _insertPending = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
-      var ids, _yield$sb$from$select, existing, existingIds, toInsert, _yield$sb$from$insert, error;
+      var _error$message, _error$message2;
+      var ids, _yield$sb$from$select, existing, existingIds, toInsert, _yield$sb$from$insert, error, safe, _yield$sb$from$insert2;
       return _regenerator().w(function (_context2) {
         while (1) switch (_context2.n) {
           case 0:
@@ -1913,47 +1914,158 @@ function App() {
           case 4:
             _yield$sb$from$insert = _context2.v;
             error = _yield$sb$from$insert.error;
-            if (error) showToast('Seed error: ' + error.message);
+            if (!(error && ((_error$message = error.message) !== null && _error$message !== void 0 && _error$message.includes('column') || (_error$message2 = error.message) !== null && _error$message2 !== void 0 && _error$message2.includes('schema') || error.code === 'PGRST204'))) {
+              _context2.n = 6;
+              break;
+            }
+            safe = toInsert.map(function (_ref8) {
+              var id = _ref8.id,
+                name = _ref8.name,
+                cuisine = _ref8.cuisine,
+                location = _ref8.location,
+                recommended_by = _ref8.recommended_by,
+                notes = _ref8.notes,
+                visited = _ref8.visited,
+                rating = _ref8.rating;
+              return {
+                id: id,
+                name: name || '',
+                cuisine: cuisine || 'Other',
+                location: location || null,
+                recommended_by: recommended_by || null,
+                notes: notes || null,
+                visited: !!visited,
+                rating: rating || null
+              };
+            });
+            _context2.n = 5;
+            return sb.from('spots').insert(safe);
           case 5:
+            _yield$sb$from$insert2 = _context2.v;
+            error = _yield$sb$from$insert2.error;
+          case 6:
+            if (error) showToast('Seed error: ' + error.message);
+          case 7:
             return _context2.a(2);
         }
       }, _callee2);
     }));
     return _insertPending.apply(this, arguments);
   }
+  function handleSave(_x3) {
+    return _handleSave.apply(this, arguments);
+  }
+  function _handleSave() {
+    _handleSave = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3(form) {
+      var _error$message3, _error$message4;
+      var payload, error, _yield$sb$from$update, _yield$sb$from$insert3, safe, _yield$sb$from$update2, _yield$sb$from$insert4;
+      return _regenerator().w(function (_context3) {
+        while (1) switch (_context3.n) {
+          case 0:
+            payload = appToDb(form);
+            if (!editTarget) {
+              _context3.n = 2;
+              break;
+            }
+            _context3.n = 1;
+            return sb.from('spots').update(payload).eq('id', editTarget.id);
+          case 1:
+            _yield$sb$from$update = _context3.v;
+            error = _yield$sb$from$update.error;
+            _context3.n = 4;
+            break;
+          case 2:
+            _context3.n = 3;
+            return sb.from('spots').insert(payload);
+          case 3:
+            _yield$sb$from$insert3 = _context3.v;
+            error = _yield$sb$from$insert3.error;
+          case 4:
+            if (!(error && ((_error$message3 = error.message) !== null && _error$message3 !== void 0 && _error$message3.includes('column') || (_error$message4 = error.message) !== null && _error$message4 !== void 0 && _error$message4.includes('schema') || error.code === 'PGRST204'))) {
+              _context3.n = 8;
+              break;
+            }
+            safe = {
+              name: payload.name,
+              cuisine: payload.cuisine,
+              location: payload.location,
+              recommended_by: payload.recommended_by,
+              notes: payload.notes,
+              visited: payload.visited,
+              rating: payload.rating
+            };
+            if (!editTarget) {
+              _context3.n = 6;
+              break;
+            }
+            _context3.n = 5;
+            return sb.from('spots').update(safe).eq('id', editTarget.id);
+          case 5:
+            _yield$sb$from$update2 = _context3.v;
+            error = _yield$sb$from$update2.error;
+            _context3.n = 8;
+            break;
+          case 6:
+            _context3.n = 7;
+            return sb.from('spots').insert(safe);
+          case 7:
+            _yield$sb$from$insert4 = _context3.v;
+            error = _yield$sb$from$insert4.error;
+          case 8:
+            if (!error) {
+              _context3.n = 9;
+              break;
+            }
+            showToast('Save failed: ' + error.message);
+            return _context3.a(2);
+          case 9:
+            setShowEdit(false);
+            setShowImport(false);
+            setEditTarget(null);
+            setDetail(null);
+            showToast(editTarget ? 'Updated!' : 'Pinned! 📍');
+            _context3.n = 10;
+            return loadSpots();
+          case 10:
+            return _context3.a(2);
+        }
+      }, _callee3);
+    }));
+    return _handleSave.apply(this, arguments);
+  }
   function loadSpots() {
     return _loadSpots.apply(this, arguments);
   }
   function _loadSpots() {
-    _loadSpots = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+    _loadSpots = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
       var _yield$sb$from$select2, data, error;
-      return _regenerator().w(function (_context3) {
-        while (1) switch (_context3.n) {
+      return _regenerator().w(function (_context4) {
+        while (1) switch (_context4.n) {
           case 0:
-            _context3.n = 1;
+            _context4.n = 1;
             return insertPending();
           case 1:
-            _context3.n = 2;
+            _context4.n = 2;
             return sb.from('spots').select('*').order('created_at', {
               ascending: false
             });
           case 2:
-            _yield$sb$from$select2 = _context3.v;
+            _yield$sb$from$select2 = _context4.v;
             data = _yield$sb$from$select2.data;
             error = _yield$sb$from$select2.error;
             if (!error) {
-              _context3.n = 3;
+              _context4.n = 3;
               break;
             }
             showToast('Load error: ' + error.message);
-            return _context3.a(2);
+            return _context4.a(2);
           case 3:
             setRestaurants((data || []).map(dbToApp));
             setLoading(false);
           case 4:
-            return _context3.a(2);
+            return _context4.a(2);
         }
-      }, _callee3);
+      }, _callee4);
     }));
     return _loadSpots.apply(this, arguments);
   }
@@ -1972,61 +2084,12 @@ function App() {
   var visitedList = filtered.filter(function (r) {
     return r.status === 'visited';
   });
-  function handleSave(_x3) {
-    return _handleSave.apply(this, arguments);
-  }
-  function _handleSave() {
-    _handleSave = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4(form) {
-      var payload, error, _yield$sb$from$update, _yield$sb$from$insert2;
-      return _regenerator().w(function (_context4) {
-        while (1) switch (_context4.n) {
-          case 0:
-            payload = appToDb(form);
-            if (!editTarget) {
-              _context4.n = 2;
-              break;
-            }
-            _context4.n = 1;
-            return sb.from('spots').update(payload).eq('id', editTarget.id);
-          case 1:
-            _yield$sb$from$update = _context4.v;
-            error = _yield$sb$from$update.error;
-            _context4.n = 4;
-            break;
-          case 2:
-            _context4.n = 3;
-            return sb.from('spots').insert(payload);
-          case 3:
-            _yield$sb$from$insert2 = _context4.v;
-            error = _yield$sb$from$insert2.error;
-          case 4:
-            if (!error) {
-              _context4.n = 5;
-              break;
-            }
-            showToast('Save failed: ' + error.message);
-            return _context4.a(2);
-          case 5:
-            setShowEdit(false);
-            setShowImport(false);
-            setEditTarget(null);
-            setDetail(null);
-            showToast(editTarget ? 'Updated!' : 'Pinned! 📍');
-            _context4.n = 6;
-            return loadSpots();
-          case 6:
-            return _context4.a(2);
-        }
-      }, _callee4);
-    }));
-    return _handleSave.apply(this, arguments);
-  }
   function handleMarkVisited(_x4) {
     return _handleMarkVisited.apply(this, arguments);
   }
   function _handleMarkVisited() {
     _handleMarkVisited = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5(id) {
-      var _yield$sb$from$update2, error;
+      var _yield$sb$from$update3, error;
       return _regenerator().w(function (_context5) {
         while (1) switch (_context5.n) {
           case 0:
@@ -2035,8 +2098,8 @@ function App() {
               visited: true
             }).eq('id', id);
           case 1:
-            _yield$sb$from$update2 = _context5.v;
-            error = _yield$sb$from$update2.error;
+            _yield$sb$from$update3 = _context5.v;
+            error = _yield$sb$from$update3.error;
             if (!error) {
               _context5.n = 2;
               break;
@@ -2069,7 +2132,7 @@ function App() {
   }
   function _handleRate() {
     _handleRate = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6(id, rating) {
-      var _yield$sb$from$update3, error;
+      var _yield$sb$from$update4, error;
       return _regenerator().w(function (_context6) {
         while (1) switch (_context6.n) {
           case 0:
@@ -2079,8 +2142,8 @@ function App() {
               visited: true
             }).eq('id', id);
           case 1:
-            _yield$sb$from$update3 = _context6.v;
-            error = _yield$sb$from$update3.error;
+            _yield$sb$from$update4 = _context6.v;
+            error = _yield$sb$from$update4.error;
             if (!error) {
               _context6.n = 2;
               break;
