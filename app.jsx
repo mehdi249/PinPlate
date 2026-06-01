@@ -175,18 +175,27 @@ const ImportModal = ({ onClose, onImport }) => {
     let resolved = rawUrl;
     let htmlData = { name:'', lat:null, lng:null };
     if (isShort) {
-      const race = p => Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),10000))]);
+      const race = p => Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))]);
+      // Try direct browser fetch first — browser can follow Google's redirects natively
       try {
-        const d = await race(fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(rawUrl)}`).then(r=>r.json()));
-        if (d.status?.url) resolved = d.status.url;
-        if (d.contents)    htmlData = parseGoogleMapsHtml(d.contents);
-      } catch(e1) {
+        const resp = await race(fetch(rawUrl));
+        if (resp.url && resp.url !== rawUrl) resolved = resp.url;
+        try { htmlData = parseGoogleMapsHtml(await resp.text()); } catch(e) {}
+      } catch(e0) {}
+      // Try proxies if direct fetch didn't get a name or resolve URL
+      if (!htmlData.name && resolved === rawUrl) {
         try {
-          const html = await race(fetch(`https://corsproxy.io/?${encodeURIComponent(rawUrl)}`).then(r=>r.text()));
-          htmlData = parseGoogleMapsHtml(html);
-          const m = html.match(/"(https?:\/\/(?:www\.)?google\.com\/maps\/[^"]{20,})"/);
-          if (m) resolved = m[1].replace(/\\u003d/g,'=').replace(/\\u0026/g,'&');
-        } catch(e2) { /* both failed — fall through */ }
+          const d = await race(fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(rawUrl)}`).then(r=>r.json()));
+          if (d.status?.url && d.status.url !== rawUrl) resolved = d.status.url;
+          if (d.contents) htmlData = parseGoogleMapsHtml(d.contents);
+        } catch(e1) {
+          try {
+            const html = await race(fetch(`https://corsproxy.io/?${encodeURIComponent(rawUrl)}`).then(r=>r.text()));
+            htmlData = parseGoogleMapsHtml(html);
+            const m = html.match(/"(https?:\/\/(?:www\.)?google\.com\/maps\/[^"]{20,})"/);
+            if (m) resolved = m[1].replace(/\\u003d/g,'=').replace(/\\u0026/g,'&');
+          } catch(e2) {}
+        }
       }
     }
     const urlData = parseGoogleMapsUrl(resolved);
@@ -201,7 +210,7 @@ const ImportModal = ({ onClose, onImport }) => {
       name:parsed.name||'', cuisine:'Other', location,
       recommender:'', note:'', status:'want', rating:null, priceRange:'',
       phone:'', website:'', menuUrl:'', hours:[], photos:[], reviews:[],
-      lat:parsed.lat, lng:parsed.lng, googleMapsUrl:resolved,
+      lat:parsed.lat, lng:parsed.lng, googleMapsUrl:rawUrl,
     };
     if (isShort && parsed.name) {
       onImport(base);
@@ -233,7 +242,8 @@ const ImportModal = ({ onClose, onImport }) => {
           </p>
           <div style={{background:'rgba(200,119,58,0.08)',border:'1px solid rgba(200,119,58,0.2)',borderRadius:10,padding:'10px 13px',marginBottom:14}}>
             <p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(100,70,40,0.7)',lineHeight:1.7,margin:0}}>
-              <strong>Best results:</strong> In Google Maps, tap the restaurant → tap <strong>Share</strong> → choose <strong>Safari</strong> → long-press the address bar → <strong>Copy</strong>. This gives a full URL with all details.
+              <strong>Auto-fills name + location:</strong> In Google Maps, open the restaurant → tap <strong>Share</strong> → <strong>Open in Safari</strong> → copy the URL from the address bar.<br/>
+              <strong>Saves link only:</strong> The short <em>share.google/…</em> link — Google blocks reading it, so you'll add the name manually. The Maps link is still saved.
             </p>
           </div>
           <div style={{marginBottom:16}}>
@@ -248,8 +258,11 @@ const ImportModal = ({ onClose, onImport }) => {
 
         {step==='preview' && form && (<>
           {busy&&<p style={{fontFamily:"'Lora',serif",fontSize:12,color:'#c8773a',marginBottom:12}}>📍 Getting address…</p>}
+          {!form.name&&<div style={{background:'rgba(200,119,58,0.1)',border:'1px solid rgba(200,119,58,0.25)',borderRadius:10,padding:'9px 12px',marginBottom:4}}>
+            <p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(140,80,20,0.85)',margin:0,lineHeight:1.6}}>Google blocked the auto-read. The link is saved — just type the name below to pin it.</p>
+          </div>}
           <div style={{display:'flex',flexDirection:'column',gap:13}}>
-            <div><label style={lbl}>Restaurant Name *</label><input style={inp} value={form.name} onChange={e=>set('name',e.target.value)}/></div>
+            <div><label style={lbl}>Restaurant Name *</label><input style={inp} value={form.name} onChange={e=>set('name',e.target.value)} autoFocus={!form.name}/></div>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
               <div><label style={lbl}>Cuisine</label>
                 <select style={{...inp,cursor:'pointer'}} value={form.cuisine} onChange={e=>set('cuisine',e.target.value)}>

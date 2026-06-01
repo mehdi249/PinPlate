@@ -118,7 +118,7 @@ function nominatimReverse(_x, _x2) {
 } // ── StarRating ───────────────────────────────────────────────
 function _nominatimReverse() {
   _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7(lat, lng) {
-    var r, d, a, _t3;
+    var r, d, a, _t6;
     return _regenerator().w(function (_context7) {
       while (1) switch (_context7.p = _context7.n) {
         case 0:
@@ -139,7 +139,7 @@ function _nominatimReverse() {
           return _context7.a(2, [a.road, a.neighbourhood || a.suburb, a.city || a.town || a.village, a.country].filter(Boolean).slice(0, 3).join(', '));
         case 3:
           _context7.p = 3;
-          _t3 = _context7.v;
+          _t6 = _context7.v;
           return _context7.a(2, '');
       }
     }, _callee7, null, [[0, 3]]);
@@ -387,7 +387,7 @@ var ImportModal = function ImportModal(_ref3) {
   function _handleParse() {
     _handleParse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
       var _urlData$lat, _urlData$lng;
-      var rawUrl, isShort, resolved, htmlData, race, _d$status, d, html, m, urlData, parsed, location, base, _t, _t2;
+      var rawUrl, isShort, resolved, htmlData, race, resp, _d$status, d, html, m, urlData, parsed, location, base, _t, _t2, _t3, _t4, _t5;
       return _regenerator().w(function (_context) {
         while (1) switch (_context.p = _context.n) {
           case 0:
@@ -407,46 +407,74 @@ var ImportModal = function ImportModal(_ref3) {
               lng: null
             };
             if (!isShort) {
-              _context.n = 8;
+              _context.n = 16;
               break;
             }
             race = function race(p) {
               return Promise.race([p, new Promise(function (_, rej) {
                 return setTimeout(function () {
                   return rej(new Error('timeout'));
-                }, 10000);
+                }, 8000);
               })]);
-            };
+            }; // Try direct browser fetch first — browser can follow Google's redirects natively
             _context.p = 2;
             _context.n = 3;
+            return race(fetch(rawUrl));
+          case 3:
+            resp = _context.v;
+            if (resp.url && resp.url !== rawUrl) resolved = resp.url;
+            _context.p = 4;
+            _t = parseGoogleMapsHtml;
+            _context.n = 5;
+            return resp.text();
+          case 5:
+            htmlData = _t(_context.v);
+            _context.n = 7;
+            break;
+          case 6:
+            _context.p = 6;
+            _t2 = _context.v;
+          case 7:
+            _context.n = 9;
+            break;
+          case 8:
+            _context.p = 8;
+            _t3 = _context.v;
+          case 9:
+            if (!(!htmlData.name && resolved === rawUrl)) {
+              _context.n = 16;
+              break;
+            }
+            _context.p = 10;
+            _context.n = 11;
             return race(fetch("https://api.allorigins.win/get?url=".concat(encodeURIComponent(rawUrl))).then(function (r) {
               return r.json();
             }));
-          case 3:
+          case 11:
             d = _context.v;
-            if ((_d$status = d.status) !== null && _d$status !== void 0 && _d$status.url) resolved = d.status.url;
+            if ((_d$status = d.status) !== null && _d$status !== void 0 && _d$status.url && d.status.url !== rawUrl) resolved = d.status.url;
             if (d.contents) htmlData = parseGoogleMapsHtml(d.contents);
-            _context.n = 8;
+            _context.n = 16;
             break;
-          case 4:
-            _context.p = 4;
-            _t = _context.v;
-            _context.p = 5;
-            _context.n = 6;
+          case 12:
+            _context.p = 12;
+            _t4 = _context.v;
+            _context.p = 13;
+            _context.n = 14;
             return race(fetch("https://corsproxy.io/?".concat(encodeURIComponent(rawUrl))).then(function (r) {
               return r.text();
             }));
-          case 6:
+          case 14:
             html = _context.v;
             htmlData = parseGoogleMapsHtml(html);
             m = html.match(/"(https?:\/\/(?:www\.)?google\.com\/maps\/[^"]{20,})"/);
             if (m) resolved = m[1].replace(/\\u003d/g, '=').replace(/\\u0026/g, '&');
-            _context.n = 8;
+            _context.n = 16;
             break;
-          case 7:
-            _context.p = 7;
-            _t2 = _context.v;
-          case 8:
+          case 15:
+            _context.p = 15;
+            _t5 = _context.v;
+          case 16:
             urlData = parseGoogleMapsUrl(resolved);
             parsed = {
               name: urlData.name || htmlData.name,
@@ -455,14 +483,14 @@ var ImportModal = function ImportModal(_ref3) {
             };
             location = '';
             if (!(parsed.lat && parsed.lng)) {
-              _context.n = 10;
+              _context.n = 18;
               break;
             }
-            _context.n = 9;
+            _context.n = 17;
             return nominatimReverse(parsed.lat, parsed.lng);
-          case 9:
+          case 17:
             location = _context.v;
-          case 10:
+          case 18:
             base = {
               name: parsed.name || '',
               cuisine: 'Other',
@@ -480,7 +508,7 @@ var ImportModal = function ImportModal(_ref3) {
               reviews: [],
               lat: parsed.lat,
               lng: parsed.lng,
-              googleMapsUrl: resolved
+              googleMapsUrl: rawUrl
             };
             if (isShort && parsed.name) {
               onImport(base);
@@ -489,10 +517,10 @@ var ImportModal = function ImportModal(_ref3) {
               setStep('preview');
             }
             setBusy(false);
-          case 11:
+          case 19:
             return _context.a(2);
         }
-      }, _callee, null, [[5, 7], [2, 4]]);
+      }, _callee, null, [[13, 15], [10, 12], [4, 6], [2, 8]]);
     }));
     return _handleParse.apply(this, arguments);
   }
@@ -604,7 +632,7 @@ var ImportModal = function ImportModal(_ref3) {
       lineHeight: 1.7,
       margin: 0
     }
-  }, /*#__PURE__*/React.createElement("strong", null, "Best results:"), " In Google Maps, tap the restaurant \u2192 tap ", /*#__PURE__*/React.createElement("strong", null, "Share"), " \u2192 choose ", /*#__PURE__*/React.createElement("strong", null, "Safari"), " \u2192 long-press the address bar \u2192 ", /*#__PURE__*/React.createElement("strong", null, "Copy"), ". This gives a full URL with all details.")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("strong", null, "Auto-fills name + location:"), " In Google Maps, open the restaurant \u2192 tap ", /*#__PURE__*/React.createElement("strong", null, "Share"), " \u2192 ", /*#__PURE__*/React.createElement("strong", null, "Open in Safari"), " \u2192 copy the URL from the address bar.", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("strong", null, "Saves link only:"), " The short ", /*#__PURE__*/React.createElement("em", null, "share.google/\u2026"), " link \u2014 Google blocks reading it, so you'll add the name manually. The Maps link is still saved.")), /*#__PURE__*/React.createElement("div", {
     style: {
       marginBottom: 16
     }
@@ -657,7 +685,23 @@ var ImportModal = function ImportModal(_ref3) {
       color: '#c8773a',
       marginBottom: 12
     }
-  }, "\uD83D\uDCCD Getting address\u2026"), /*#__PURE__*/React.createElement("div", {
+  }, "\uD83D\uDCCD Getting address\u2026"), !form.name && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: 'rgba(200,119,58,0.1)',
+      border: '1px solid rgba(200,119,58,0.25)',
+      borderRadius: 10,
+      padding: '9px 12px',
+      marginBottom: 4
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 12,
+      color: 'rgba(140,80,20,0.85)',
+      margin: 0,
+      lineHeight: 1.6
+    }
+  }, "Google blocked the auto-read. The link is saved \u2014 just type the name below to pin it.")), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: 'column',
@@ -670,7 +714,8 @@ var ImportModal = function ImportModal(_ref3) {
     value: form.name,
     onChange: function onChange(e) {
       return set('name', e.target.value);
-    }
+    },
+    autoFocus: !form.name
   })), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'grid',
