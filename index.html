@@ -8,634 +8,2234 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body style="margin:0;background:#e8d9c8;">
 <div id="root">
   <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(160deg,#e8d5be,#ddc9b0);">
-    <p style="font-family:Georgia,serif;font-size:24px;color:rgba(30,14,4,0.55);letter-spacing:-0.01em;margin-bottom:10px">PinPlate</p>
-    <p style="font-family:Georgia,serif;font-size:13px;color:rgba(100,70,40,0.35)">Loading…</p>
+    <p style="font-family:Georgia,serif;font-size:24px;color:rgba(30,14,4,0.55);letter-spacing:-0.01em;margin:0 0 10px">PinPlate</p>
+    <p style="font-family:Georgia,serif;font-size:13px;color:rgba(100,70,40,0.35);margin:0">Loading…</p>
   </div>
 </div>
 <script>
-  window.onerror = function(msg,_,line,col,err){
-    document.getElementById('root').innerHTML =
-      '<div style="padding:28px;font-family:Georgia,serif;color:#c8773a;max-width:480px;margin:40px auto">'
-      +'<p style="font-size:16px;margin-bottom:8px">Something went wrong</p>'
-      +'<p style="font-size:12px;color:rgba(100,70,40,0.5)">'+msg+'<br/>Line '+line+'</p>'
-      +'<p style="font-size:12px;margin-top:12px;color:rgba(100,70,40,0.4)">Try a hard refresh (hold the reload button).</p>'
-      +'</div>';
-  };
-</script>
-<script type="text/babel">
-const { useState, useMemo, useEffect, useRef } = React;
-
-const SUPABASE_URL = 'https://biafijftxhealzmmwsmk.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYWZpamZ0eGhlYWx6bW13c21rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTQ3NjYsImV4cCI6MjA5NTgzMDc2Nn0.el4_ujwNYvbYdFtvzAEooKd1SvZlJd5YGVdlGlSo6Q8';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-const CUISINES = ["Italian","Japanese","Mexican","Thai","Indian","French","Chinese","Mediterranean","American","Korean","Vietnamese","Middle Eastern","Other"];
-
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i.return) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+var _React = React,
+  useState = _React.useState,
+  useMemo = _React.useMemo,
+  useEffect = _React.useEffect,
+  useRef = _React.useRef;
+var SUPABASE_URL = 'https://biafijftxhealzmmwsmk.supabase.co';
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYWZpamZ0eGhlYWx6bW13c21rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTQ3NjYsImV4cCI6MjA5NTgzMDc2Nn0.el4_ujwNYvbYdFtvzAEooKd1SvZlJd5YGVdlGlSo6Q8';
+var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+var CUISINES = ["Italian", "Japanese", "Mexican", "Thai", "Indian", "French", "Chinese", "Mediterranean", "American", "Korean", "Vietnamese", "Middle Eastern", "Other"];
 function dbToApp(r) {
   return {
-    id: r.id, name: r.name, cuisine: r.cuisine||'Other',
-    location: r.location||'', recommender: r.recommended_by||'',
-    note: r.notes||'', status: r.visited?'visited':'want',
-    rating: r.rating||null, date: (r.created_at||'').split('T')[0],
-    phone: r.phone||'', website: r.website||'', menuUrl: r.menu_url||'',
-    priceRange: r.price_range||'', hours: r.hours||[],
-    photos: r.photos||[], reviews: r.reviews||[],
-    lat: r.lat||null, lng: r.lng||null, googleMapsUrl: r.google_maps_url||'',
+    id: r.id,
+    name: r.name,
+    cuisine: r.cuisine || 'Other',
+    location: r.location || '',
+    recommender: r.recommended_by || '',
+    note: r.notes || '',
+    status: r.visited ? 'visited' : 'want',
+    rating: r.rating || null,
+    date: (r.created_at || '').split('T')[0],
+    phone: r.phone || '',
+    website: r.website || '',
+    menuUrl: r.menu_url || '',
+    priceRange: r.price_range || '',
+    hours: r.hours || [],
+    photos: r.photos || [],
+    reviews: r.reviews || [],
+    lat: r.lat || null,
+    lng: r.lng || null,
+    googleMapsUrl: r.google_maps_url || ''
   };
 }
-
 function appToDb(f) {
+  var _f$hours, _f$photos, _f$reviews;
   return {
-    name: f.name, cuisine: f.cuisine, location: f.location||null,
-    recommended_by: f.recommender, notes: f.note||null,
-    visited: f.status==='visited',
-    rating: f.status==='visited'?(f.rating||null):null,
-    phone: f.phone||null, website: f.website||null,
-    menu_url: f.menuUrl||null, price_range: f.priceRange||null,
-    hours: f.hours?.length?f.hours:null,
-    photos: f.photos?.length?f.photos:null,
-    reviews: f.reviews?.length?f.reviews:null,
-    lat: f.lat||null, lng: f.lng||null,
-    google_maps_url: f.googleMapsUrl||null,
+    name: f.name,
+    cuisine: f.cuisine,
+    location: f.location || null,
+    recommended_by: f.recommender,
+    notes: f.note || null,
+    visited: f.status === 'visited',
+    rating: f.status === 'visited' ? f.rating || null : null,
+    phone: f.phone || null,
+    website: f.website || null,
+    menu_url: f.menuUrl || null,
+    price_range: f.priceRange || null,
+    hours: (_f$hours = f.hours) !== null && _f$hours !== void 0 && _f$hours.length ? f.hours : null,
+    photos: (_f$photos = f.photos) !== null && _f$photos !== void 0 && _f$photos.length ? f.photos : null,
+    reviews: (_f$reviews = f.reviews) !== null && _f$reviews !== void 0 && _f$reviews.length ? f.reviews : null,
+    lat: f.lat || null,
+    lng: f.lng || null,
+    google_maps_url: f.googleMapsUrl || null
   };
 }
-
 function parseGoogleMapsUrl(url) {
-  const out = { name:'', lat:null, lng:null };
+  var out = {
+    name: '',
+    lat: null,
+    lng: null
+  };
   try {
-    const nm = url.match(/\/place\/([^/@?&#]+)/);
-    if (nm) out.name = decodeURIComponent(nm[1].replace(/\+/g,' '));
-    const cm = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-    if (cm) { out.lat=parseFloat(cm[1]); out.lng=parseFloat(cm[2]); }
-    if (!out.lat) {
-      const dm = url.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
-      if (dm) { out.lat=parseFloat(dm[1]); out.lng=parseFloat(dm[2]); }
+    var nm = url.match(/\/place\/([^/@?&#]+)/);
+    if (nm) out.name = decodeURIComponent(nm[1].replace(/\+/g, ' '));
+    var cm = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (cm) {
+      out.lat = parseFloat(cm[1]);
+      out.lng = parseFloat(cm[2]);
     }
-  } catch(e){}
+    if (!out.lat) {
+      var dm = url.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+      if (dm) {
+        out.lat = parseFloat(dm[1]);
+        out.lng = parseFloat(dm[2]);
+      }
+    }
+  } catch (e) {}
   return out;
 }
-
-async function nominatimReverse(lat, lng) {
-  try {
-    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
-      { headers:{'Accept-Language':'en'} });
-    const d = await r.json();
-    const a = d.address||{};
-    return [a.road, a.neighbourhood||a.suburb, a.city||a.town||a.village, a.country]
-      .filter(Boolean).slice(0,3).join(', ');
-  } catch(e){ return ''; }
+function nominatimReverse(_x, _x2) {
+  return _nominatimReverse.apply(this, arguments);
+} // ── StarRating ───────────────────────────────────────────────
+function _nominatimReverse() {
+  _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6(lat, lng) {
+    var r, d, a, _t;
+    return _regenerator().w(function (_context6) {
+      while (1) switch (_context6.p = _context6.n) {
+        case 0:
+          _context6.p = 0;
+          _context6.n = 1;
+          return fetch("https://nominatim.openstreetmap.org/reverse?lat=".concat(lat, "&lon=").concat(lng, "&format=json"), {
+            headers: {
+              'Accept-Language': 'en'
+            }
+          });
+        case 1:
+          r = _context6.v;
+          _context6.n = 2;
+          return r.json();
+        case 2:
+          d = _context6.v;
+          a = d.address || {};
+          return _context6.a(2, [a.road, a.neighbourhood || a.suburb, a.city || a.town || a.village, a.country].filter(Boolean).slice(0, 3).join(', '));
+        case 3:
+          _context6.p = 3;
+          _t = _context6.v;
+          return _context6.a(2, '');
+      }
+    }, _callee6, null, [[0, 3]]);
+  }));
+  return _nominatimReverse.apply(this, arguments);
 }
-
-// ── StarRating ───────────────────────────────────────────────
-const StarRating = ({ value, onChange, readonly, size=16 }) => (
-  <div style={{display:'flex',gap:'2px'}}>
-    {[1,2,3,4,5].map(n=>(
-      <span key={n} onClick={()=>!readonly&&onChange&&onChange(n)} style={{
-        fontSize:`${size}px`, cursor:readonly?'default':'pointer',
-        color:n<=(value||0)?'#c8773a':'rgba(180,140,110,0.25)',
-        transition:'color 0.15s', userSelect:'none',
-      }}>★</span>
-    ))}
-  </div>
-);
+var StarRating = function StarRating(_ref) {
+  var value = _ref.value,
+    onChange = _ref.onChange,
+    readonly = _ref.readonly,
+    _ref$size = _ref.size,
+    size = _ref$size === void 0 ? 16 : _ref$size;
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: '2px'
+    }
+  }, [1, 2, 3, 4, 5].map(function (n) {
+    return /*#__PURE__*/React.createElement("span", {
+      key: n,
+      onClick: function onClick() {
+        return !readonly && onChange && onChange(n);
+      },
+      style: {
+        fontSize: "".concat(size, "px"),
+        cursor: readonly ? 'default' : 'pointer',
+        color: n <= (value || 0) ? '#c8773a' : 'rgba(180,140,110,0.25)',
+        transition: 'color 0.15s',
+        userSelect: 'none'
+      }
+    }, "\u2605");
+  }));
+};
 
 // ── Map view ─────────────────────────────────────────────────
-const MapView = ({ spots, onMarkerClick }) => {
-  const el    = useRef(null);
-  const map   = useRef(null);
-  const marks = useRef({});
-
-  useEffect(()=>{
+var MapView = function MapView(_ref2) {
+  var spots = _ref2.spots,
+    onMarkerClick = _ref2.onMarkerClick;
+  var el = useRef(null);
+  var map = useRef(null);
+  var marks = useRef({});
+  useEffect(function () {
     if (map.current) return;
-    map.current = L.map(el.current,{ center:[40.7128,-74.006], zoom:12 });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-      attribution:'© OpenStreetMap contributors', maxZoom:19,
-    }).addTo(map.current);
-    return ()=>{ map.current?.remove(); map.current=null; };
-  },[]);
-
-  useEffect(()=>{
-    if (!map.current) return;
-    Object.values(marks.current).forEach(m=>m.remove());
-    marks.current={};
-    const bounds=[];
-    spots.forEach(r=>{
-      if (!r.lat||!r.lng) return;
-      const visited = r.status==='visited';
-      const bg = visited?'#5a9a6a':'#c8773a';
-      const icon = L.divIcon({
-        html:`<div style="width:30px;height:30px;background:${bg};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.28);display:flex;align-items:center;justify-content:center"><span style="transform:rotate(45deg);color:#fff;font-size:12px;font-weight:700;line-height:25px;display:block;text-align:center">${visited?'✓':'+'}</span></div>`,
-        iconSize:[30,42], iconAnchor:[15,42], className:'',
-      });
-      const mk = L.marker([r.lat,r.lng],{icon})
-        .addTo(map.current)
-        .bindPopup(`<div style="font-family:serif;min-width:140px"><strong style="font-size:14px">${r.name}</strong><br/><span style="font-size:11px;color:${bg}">${r.cuisine}</span>${r.location?`<br/><span style="font-size:11px;color:#666">📍 ${r.location}</span>`:''}</div>`);
-      mk.on('click',()=>{ mk.openPopup(); onMarkerClick(r); });
-      marks.current[r.id]=mk;
-      bounds.push([r.lat,r.lng]);
+    map.current = L.map(el.current, {
+      center: [40.7128, -74.006],
+      zoom: 12
     });
-    if (bounds.length) map.current.fitBounds(bounds,{padding:[50,50],maxZoom:14});
-  },[spots]);
-
-  const mappable = spots.filter(r=>r.lat&&r.lng);
-  const unmapped = spots.filter(r=>!r.lat||!r.lng);
-
-  return (
-    <div style={{flex:1,position:'relative'}}>
-      <div ref={el} style={{width:'100%',height:'calc(100vh - 110px)'}}/>
-      {/* Legend */}
-      <div style={{position:'absolute',top:12,right:12,background:'rgba(255,248,240,0.92)',backdropFilter:'blur(12px)',borderRadius:12,padding:'10px 14px',border:'1px solid rgba(180,140,110,0.2)',zIndex:1000,boxShadow:'0 2px 12px rgba(0,0,0,0.1)'}}>
-        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
-          <div style={{width:12,height:12,background:'#c8773a',borderRadius:'50%'}}/>
-          <span style={{fontFamily:"'Lora',serif",fontSize:12,color:'#1e0e04'}}>Want to try</span>
-        </div>
-        <div style={{display:'flex',alignItems:'center',gap:8}}>
-          <div style={{width:12,height:12,background:'#5a9a6a',borderRadius:'50%'}}/>
-          <span style={{fontFamily:"'Lora',serif",fontSize:12,color:'#1e0e04'}}>Visited</span>
-        </div>
-        {unmapped.length>0&&<p style={{fontFamily:"'Lora',serif",fontSize:10,color:'rgba(100,70,40,0.4)',marginTop:8,borderTop:'1px solid rgba(180,140,110,0.2)',paddingTop:6}}>{unmapped.length} spot{unmapped.length>1?'s':''} without location</p>}
-      </div>
-    </div>
-  );
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19
+    }).addTo(map.current);
+    return function () {
+      var _map$current;
+      (_map$current = map.current) === null || _map$current === void 0 || _map$current.remove();
+      map.current = null;
+    };
+  }, []);
+  useEffect(function () {
+    if (!map.current) return;
+    Object.values(marks.current).forEach(function (m) {
+      return m.remove();
+    });
+    marks.current = {};
+    var bounds = [];
+    spots.forEach(function (r) {
+      if (!r.lat || !r.lng) return;
+      var visited = r.status === 'visited';
+      var bg = visited ? '#5a9a6a' : '#c8773a';
+      var icon = L.divIcon({
+        html: "<div style=\"width:30px;height:30px;background:".concat(bg, ";border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.28);display:flex;align-items:center;justify-content:center\"><span style=\"transform:rotate(45deg);color:#fff;font-size:12px;font-weight:700;line-height:25px;display:block;text-align:center\">").concat(visited ? '✓' : '+', "</span></div>"),
+        iconSize: [30, 42],
+        iconAnchor: [15, 42],
+        className: ''
+      });
+      var mk = L.marker([r.lat, r.lng], {
+        icon: icon
+      }).addTo(map.current).bindPopup("<div style=\"font-family:serif;min-width:140px\"><strong style=\"font-size:14px\">".concat(r.name, "</strong><br/><span style=\"font-size:11px;color:").concat(bg, "\">").concat(r.cuisine, "</span>").concat(r.location ? "<br/><span style=\"font-size:11px;color:#666\">\uD83D\uDCCD ".concat(r.location, "</span>") : '', "</div>"));
+      mk.on('click', function () {
+        mk.openPopup();
+        onMarkerClick(r);
+      });
+      marks.current[r.id] = mk;
+      bounds.push([r.lat, r.lng]);
+    });
+    if (bounds.length) map.current.fitBounds(bounds, {
+      padding: [50, 50],
+      maxZoom: 14
+    });
+  }, [spots]);
+  var mappable = spots.filter(function (r) {
+    return r.lat && r.lng;
+  });
+  var unmapped = spots.filter(function (r) {
+    return !r.lat || !r.lng;
+  });
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      position: 'relative'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    ref: el,
+    style: {
+      width: '100%',
+      height: 'calc(100vh - 110px)'
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'absolute',
+      top: 12,
+      right: 12,
+      background: 'rgba(255,248,240,0.92)',
+      backdropFilter: 'blur(12px)',
+      borderRadius: 12,
+      padding: '10px 14px',
+      border: '1px solid rgba(180,140,110,0.2)',
+      zIndex: 1000,
+      boxShadow: '0 2px 12px rgba(0,0,0,0.1)'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      marginBottom: 6
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 12,
+      height: 12,
+      background: '#c8773a',
+      borderRadius: '50%'
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 12,
+      color: '#1e0e04'
+    }
+  }, "Want to try")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 12,
+      height: 12,
+      background: '#5a9a6a',
+      borderRadius: '50%'
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 12,
+      color: '#1e0e04'
+    }
+  }, "Visited")), unmapped.length > 0 && /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 10,
+      color: 'rgba(100,70,40,0.4)',
+      marginTop: 8,
+      borderTop: '1px solid rgba(180,140,110,0.2)',
+      paddingTop: 6
+    }
+  }, unmapped.length, " spot", unmapped.length > 1 ? 's' : '', " without location")));
 };
 
 // ── Import modal ─────────────────────────────────────────────
-const ImportModal = ({ onClose, onImport }) => {
-  const [url,  setUrl]  = useState('');
-  const [step, setStep] = useState('paste');
-  const [form, setForm] = useState(null);
-  const [busy, setBusy] = useState(false);
-  const set = (k,v) => setForm(f=>({...f,[k]:v}));
-
-  async function handleParse() {
-    if (!url.trim()) return;
-    if (url.includes('maps.app.goo.gl')) {
-      alert('Please use the full URL.\n\nOn Google Maps: tap Share → tap the link once to expand it, or copy from your browser's address bar.');
-      return;
-    }
-    const parsed = parseGoogleMapsUrl(url.trim());
-    const base = {
-      name:parsed.name, cuisine:'Other', location:'', recommender:'',
-      note:'', status:'want', rating:null, priceRange:'',
-      phone:'', website:'', menuUrl:'', hours:[], photos:[], reviews:[],
-      lat:parsed.lat, lng:parsed.lng, googleMapsUrl:url.trim(),
-    };
-    setForm(base);
-    setStep('preview');
-    if (parsed.lat && parsed.lng) {
-      setBusy(true);
-      const addr = await nominatimReverse(parsed.lat, parsed.lng);
-      if (addr) setForm(f=>({...f, location:addr}));
-      setBusy(false);
-    }
+var ImportModal = function ImportModal(_ref3) {
+  var _form$name, _form$recommender;
+  var onClose = _ref3.onClose,
+    onImport = _ref3.onImport;
+  var _useState = useState(''),
+    _useState2 = _slicedToArray(_useState, 2),
+    url = _useState2[0],
+    setUrl = _useState2[1];
+  var _useState3 = useState('paste'),
+    _useState4 = _slicedToArray(_useState3, 2),
+    step = _useState4[0],
+    setStep = _useState4[1];
+  var _useState5 = useState(null),
+    _useState6 = _slicedToArray(_useState5, 2),
+    form = _useState6[0],
+    setForm = _useState6[1];
+  var _useState7 = useState(false),
+    _useState8 = _slicedToArray(_useState7, 2),
+    busy = _useState8[0],
+    setBusy = _useState8[1];
+  var set = function set(k, v) {
+    return setForm(function (f) {
+      return _objectSpread(_objectSpread({}, f), {}, _defineProperty({}, k, v));
+    });
+  };
+  function handleParse() {
+    return _handleParse.apply(this, arguments);
   }
-
-  const inp = {width:'100%',padding:'10px 13px',background:'rgba(200,160,120,0.12)',border:'1px solid rgba(180,140,110,0.28)',borderRadius:10,fontFamily:"'Lora',serif",fontSize:14,color:'#1e0e04',outline:'none',boxSizing:'border-box'};
-  const lbl = {display:'block',fontFamily:"'DM Serif Display',serif",fontSize:11,letterSpacing:'0.08em',color:'rgba(100,70,40,0.55)',marginBottom:5,textTransform:'uppercase'};
-  const canSave = form?.name?.trim() && form?.recommender?.trim();
-
-  return (
-    <div style={{position:'fixed',inset:0,zIndex:300,background:'rgba(20,12,6,0.5)',backdropFilter:'blur(8px)',WebkitBackdropFilter:'blur(8px)',display:'flex',alignItems:'center',justifyContent:'center',padding:20,animation:'fadeIn 0.2s ease'}} onClick={onClose}>
-      <div style={{width:'100%',maxWidth:440,maxHeight:'88vh',overflowY:'auto',borderRadius:22,background:'rgba(255,248,240,0.92)',backdropFilter:'blur(32px)',WebkitBackdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.7)',boxShadow:'0 24px 64px rgba(30,14,4,0.2)',padding:28,animation:'slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)'}} onClick={e=>e.stopPropagation()}>
-
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
-          <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:20,color:'#1e0e04',margin:0}}>
-            {step==='paste'?'Import from Google Maps':'Confirm Details'}
-          </h2>
-          <button onClick={onClose} style={{background:'rgba(180,140,110,0.15)',border:'1px solid rgba(180,140,110,0.25)',color:'rgba(100,70,40,0.5)',borderRadius:'50%',width:30,height:30,cursor:'pointer',fontSize:13,display:'flex',alignItems:'center',justifyContent:'center'}}>✕</button>
-        </div>
-
-        {step==='paste' && (<>
-          <p style={{fontFamily:"'Lora',serif",fontSize:13,color:'rgba(100,70,40,0.6)',marginBottom:16,lineHeight:1.6}}>
-            Open <strong>Google Maps</strong>, find the restaurant, tap <strong>Share → Copy link</strong>, then paste it below.
-          </p>
-          <div style={{marginBottom:16}}>
-            <label style={lbl}>Google Maps URL</label>
-            <input style={inp} value={url} onChange={e=>setUrl(e.target.value)} placeholder="https://www.google.com/maps/place/..." autoFocus/>
-          </div>
-          <div style={{display:'flex',gap:10}}>
-            <button onClick={onClose} style={{flex:1,padding:11,borderRadius:10,background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.2)',color:'rgba(100,70,40,0.5)',fontFamily:"'DM Serif Display',serif",fontSize:14,cursor:'pointer'}}>Cancel</button>
-            <button onClick={handleParse} style={{flex:2,padding:11,borderRadius:10,background:url?'#2c1f14':'rgba(180,140,110,0.12)',border:'none',color:url?'#fdf8f3':'rgba(100,70,40,0.3)',fontFamily:"'DM Serif Display',serif",fontSize:14,cursor:url?'pointer':'default'}}>Import →</button>
-          </div>
-        </>)}
-
-        {step==='preview' && form && (<>
-          {busy&&<p style={{fontFamily:"'Lora',serif",fontSize:12,color:'#c8773a',marginBottom:12}}>📍 Getting address…</p>}
-          <div style={{display:'flex',flexDirection:'column',gap:13}}>
-            <div><label style={lbl}>Restaurant Name *</label><input style={inp} value={form.name} onChange={e=>set('name',e.target.value)}/></div>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-              <div><label style={lbl}>Cuisine</label>
-                <select style={{...inp,cursor:'pointer'}} value={form.cuisine} onChange={e=>set('cuisine',e.target.value)}>
-                  {CUISINES.map(c=><option key={c}>{c}</option>)}
-                </select>
-              </div>
-              <div><label style={lbl}>Recommended By *</label><input style={inp} value={form.recommender} onChange={e=>set('recommender',e.target.value)} placeholder="e.g. Sarah"/></div>
-            </div>
-            <div><label style={lbl}>Location</label><input style={inp} value={form.location} onChange={e=>set('location',e.target.value)}/></div>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-              <div><label style={lbl}>Website</label><input style={inp} value={form.website} onChange={e=>set('website',e.target.value)} placeholder="restaurant.com"/></div>
-              <div><label style={lbl}>Phone</label><input style={inp} value={form.phone} onChange={e=>set('phone',e.target.value)} placeholder="+1 (212) 000-0000"/></div>
-            </div>
-            <div><label style={lbl}>Notes</label><textarea style={{...inp,resize:'vertical',minHeight:60}} value={form.note} onChange={e=>set('note',e.target.value)} placeholder="What to order, tips…"/></div>
-            {form.lat&&form.lng&&(
-              <div style={{background:'rgba(90,154,106,0.1)',border:'1px solid rgba(90,154,106,0.25)',borderRadius:10,padding:'9px 12px'}}>
-                <p style={{fontFamily:"'Lora',serif",fontSize:12,color:'#3d7a4f',margin:0}}>✓ Coordinates found — will appear on map</p>
-              </div>
-            )}
-          </div>
-          <div style={{display:'flex',gap:10,marginTop:20}}>
-            <button onClick={()=>setStep('paste')} style={{flex:1,padding:11,borderRadius:10,background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.2)',color:'rgba(100,70,40,0.5)',fontFamily:"'DM Serif Display',serif",fontSize:14,cursor:'pointer'}}>← Back</button>
-            <button onClick={()=>canSave&&onImport(form)} style={{flex:2,padding:11,borderRadius:10,background:canSave?'#2c1f14':'rgba(180,140,110,0.12)',border:'none',color:canSave?'#fdf8f3':'rgba(100,70,40,0.3)',fontFamily:"'DM Serif Display',serif",fontSize:14,cursor:canSave?'pointer':'default',transition:'all 0.2s'}}>📍 Pin It</button>
-          </div>
-        </>)}
-      </div>
-    </div>
-  );
+  function _handleParse() {
+    _handleParse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+      var parsed, base, addr;
+      return _regenerator().w(function (_context) {
+        while (1) switch (_context.n) {
+          case 0:
+            if (url.trim()) {
+              _context.n = 1;
+              break;
+            }
+            return _context.a(2);
+          case 1:
+            if (!url.includes('maps.app.goo.gl')) {
+              _context.n = 2;
+              break;
+            }
+            alert("Please use the full URL.\n\nOn Google Maps: tap Share → tap the link once to expand it, or copy from your browser's address bar.");
+            return _context.a(2);
+          case 2:
+            parsed = parseGoogleMapsUrl(url.trim());
+            base = {
+              name: parsed.name,
+              cuisine: 'Other',
+              location: '',
+              recommender: '',
+              note: '',
+              status: 'want',
+              rating: null,
+              priceRange: '',
+              phone: '',
+              website: '',
+              menuUrl: '',
+              hours: [],
+              photos: [],
+              reviews: [],
+              lat: parsed.lat,
+              lng: parsed.lng,
+              googleMapsUrl: url.trim()
+            };
+            setForm(base);
+            setStep('preview');
+            if (!(parsed.lat && parsed.lng)) {
+              _context.n = 4;
+              break;
+            }
+            setBusy(true);
+            _context.n = 3;
+            return nominatimReverse(parsed.lat, parsed.lng);
+          case 3:
+            addr = _context.v;
+            if (addr) setForm(function (f) {
+              return _objectSpread(_objectSpread({}, f), {}, {
+                location: addr
+              });
+            });
+            setBusy(false);
+          case 4:
+            return _context.a(2);
+        }
+      }, _callee);
+    }));
+    return _handleParse.apply(this, arguments);
+  }
+  var inp = {
+    width: '100%',
+    padding: '10px 13px',
+    background: 'rgba(200,160,120,0.12)',
+    border: '1px solid rgba(180,140,110,0.28)',
+    borderRadius: 10,
+    fontFamily: "'Lora',serif",
+    fontSize: 14,
+    color: '#1e0e04',
+    outline: 'none',
+    boxSizing: 'border-box'
+  };
+  var lbl = {
+    display: 'block',
+    fontFamily: "'DM Serif Display',serif",
+    fontSize: 11,
+    letterSpacing: '0.08em',
+    color: 'rgba(100,70,40,0.55)',
+    marginBottom: 5,
+    textTransform: 'uppercase'
+  };
+  var canSave = (form === null || form === void 0 || (_form$name = form.name) === null || _form$name === void 0 ? void 0 : _form$name.trim()) && (form === null || form === void 0 || (_form$recommender = form.recommender) === null || _form$recommender === void 0 ? void 0 : _form$recommender.trim());
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'fixed',
+      inset: 0,
+      zIndex: 300,
+      background: 'rgba(20,12,6,0.5)',
+      backdropFilter: 'blur(8px)',
+      WebkitBackdropFilter: 'blur(8px)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 20,
+      animation: 'fadeIn 0.2s ease'
+    },
+    onClick: onClose
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: '100%',
+      maxWidth: 440,
+      maxHeight: '88vh',
+      overflowY: 'auto',
+      borderRadius: 22,
+      background: 'rgba(255,248,240,0.92)',
+      backdropFilter: 'blur(32px)',
+      WebkitBackdropFilter: 'blur(32px)',
+      border: '1px solid rgba(255,255,255,0.7)',
+      boxShadow: '0 24px 64px rgba(30,14,4,0.2)',
+      padding: 28,
+      animation: 'slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)'
+    },
+    onClick: function onClick(e) {
+      return e.stopPropagation();
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 20
+    }
+  }, /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 20,
+      color: '#1e0e04',
+      margin: 0
+    }
+  }, step === 'paste' ? 'Import from Google Maps' : 'Confirm Details'), /*#__PURE__*/React.createElement("button", {
+    onClick: onClose,
+    style: {
+      background: 'rgba(180,140,110,0.15)',
+      border: '1px solid rgba(180,140,110,0.25)',
+      color: 'rgba(100,70,40,0.5)',
+      borderRadius: '50%',
+      width: 30,
+      height: 30,
+      cursor: 'pointer',
+      fontSize: 13,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
+  }, "\u2715")), step === 'paste' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 13,
+      color: 'rgba(100,70,40,0.6)',
+      marginBottom: 16,
+      lineHeight: 1.6
+    }
+  }, "Open ", /*#__PURE__*/React.createElement("strong", null, "Google Maps"), ", find the restaurant, tap ", /*#__PURE__*/React.createElement("strong", null, "Share \u2192 Copy link"), ", then paste it below."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 16
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Google Maps URL"), /*#__PURE__*/React.createElement("input", {
+    style: inp,
+    value: url,
+    onChange: function onChange(e) {
+      return setUrl(e.target.value);
+    },
+    placeholder: "https://www.google.com/maps/place/...",
+    autoFocus: true
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: onClose,
+    style: {
+      flex: 1,
+      padding: 11,
+      borderRadius: 10,
+      background: 'rgba(180,140,110,0.1)',
+      border: '1px solid rgba(180,140,110,0.2)',
+      color: 'rgba(100,70,40,0.5)',
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 14,
+      cursor: 'pointer'
+    }
+  }, "Cancel"), /*#__PURE__*/React.createElement("button", {
+    onClick: handleParse,
+    style: {
+      flex: 2,
+      padding: 11,
+      borderRadius: 10,
+      background: url ? '#2c1f14' : 'rgba(180,140,110,0.12)',
+      border: 'none',
+      color: url ? '#fdf8f3' : 'rgba(100,70,40,0.3)',
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 14,
+      cursor: url ? 'pointer' : 'default'
+    }
+  }, "Import \u2192"))), step === 'preview' && form && /*#__PURE__*/React.createElement(React.Fragment, null, busy && /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 12,
+      color: '#c8773a',
+      marginBottom: 12
+    }
+  }, "\uD83D\uDCCD Getting address\u2026"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 13
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Restaurant Name *"), /*#__PURE__*/React.createElement("input", {
+    style: inp,
+    value: form.name,
+    onChange: function onChange(e) {
+      return set('name', e.target.value);
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Cuisine"), /*#__PURE__*/React.createElement("select", {
+    style: _objectSpread(_objectSpread({}, inp), {}, {
+      cursor: 'pointer'
+    }),
+    value: form.cuisine,
+    onChange: function onChange(e) {
+      return set('cuisine', e.target.value);
+    }
+  }, CUISINES.map(function (c) {
+    return /*#__PURE__*/React.createElement("option", {
+      key: c
+    }, c);
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Recommended By *"), /*#__PURE__*/React.createElement("input", {
+    style: inp,
+    value: form.recommender,
+    onChange: function onChange(e) {
+      return set('recommender', e.target.value);
+    },
+    placeholder: "e.g. Sarah"
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Location"), /*#__PURE__*/React.createElement("input", {
+    style: inp,
+    value: form.location,
+    onChange: function onChange(e) {
+      return set('location', e.target.value);
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Website"), /*#__PURE__*/React.createElement("input", {
+    style: inp,
+    value: form.website,
+    onChange: function onChange(e) {
+      return set('website', e.target.value);
+    },
+    placeholder: "restaurant.com"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Phone"), /*#__PURE__*/React.createElement("input", {
+    style: inp,
+    value: form.phone,
+    onChange: function onChange(e) {
+      return set('phone', e.target.value);
+    },
+    placeholder: "+1 (212) 000-0000"
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Notes"), /*#__PURE__*/React.createElement("textarea", {
+    style: _objectSpread(_objectSpread({}, inp), {}, {
+      resize: 'vertical',
+      minHeight: 60
+    }),
+    value: form.note,
+    onChange: function onChange(e) {
+      return set('note', e.target.value);
+    },
+    placeholder: "What to order, tips\u2026"
+  })), form.lat && form.lng && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: 'rgba(90,154,106,0.1)',
+      border: '1px solid rgba(90,154,106,0.25)',
+      borderRadius: 10,
+      padding: '9px 12px'
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 12,
+      color: '#3d7a4f',
+      margin: 0
+    }
+  }, "\u2713 Coordinates found \u2014 will appear on map"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 10,
+      marginTop: 20
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return setStep('paste');
+    },
+    style: {
+      flex: 1,
+      padding: 11,
+      borderRadius: 10,
+      background: 'rgba(180,140,110,0.1)',
+      border: '1px solid rgba(180,140,110,0.2)',
+      color: 'rgba(100,70,40,0.5)',
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 14,
+      cursor: 'pointer'
+    }
+  }, "\u2190 Back"), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return canSave && onImport(form);
+    },
+    style: {
+      flex: 2,
+      padding: 11,
+      borderRadius: 10,
+      background: canSave ? '#2c1f14' : 'rgba(180,140,110,0.12)',
+      border: 'none',
+      color: canSave ? '#fdf8f3' : 'rgba(100,70,40,0.3)',
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 14,
+      cursor: canSave ? 'pointer' : 'default',
+      transition: 'all 0.2s'
+    }
+  }, "\uD83D\uDCCD Pin It")))));
 };
 
 // ── Detail panel ─────────────────────────────────────────────
-const DetailPanel = ({ r, onClose, onEdit, onMarkVisited, onRate }) => {
-  const [tab, setTab] = useState('info');
-
+var DetailPanel = function DetailPanel(_ref4) {
+  var r = _ref4.r,
+    onClose = _ref4.onClose,
+    onEdit = _ref4.onEdit,
+    onMarkVisited = _ref4.onMarkVisited,
+    onRate = _ref4.onRate;
+  var _useState9 = useState('info'),
+    _useState0 = _slicedToArray(_useState9, 2),
+    tab = _useState0[0],
+    setTab = _useState0[1];
   function directions() {
-    const q = r.lat&&r.lng ? `${r.lat},${r.lng}` : encodeURIComponent([r.name,r.location].filter(Boolean).join(' '));
-    window.open(`https://maps.google.com/maps?daddr=${q}`,'_blank');
+    var q = r.lat && r.lng ? "".concat(r.lat, ",").concat(r.lng) : encodeURIComponent([r.name, r.location].filter(Boolean).join(' '));
+    window.open("https://maps.google.com/maps?daddr=".concat(q), '_blank');
   }
-  function openSite(url) { window.open(url.startsWith('http')?url:'https://'+url,'_blank'); }
+  function openSite(url) {
+    window.open(url.startsWith('http') ? url : 'https://' + url, '_blank');
+  }
   function menu() {
     if (r.menuUrl) return openSite(r.menuUrl);
-    window.open(`https://www.google.com/search?q=${encodeURIComponent(r.name+' '+(r.location||'')+' menu')}`,'_blank');
+    window.open("https://www.google.com/search?q=".concat(encodeURIComponent(r.name + ' ' + (r.location || '') + ' menu')), '_blank');
   }
-
-  return (
-    <div style={{position:'fixed',inset:0,zIndex:200,background:'rgba(20,12,6,0.55)',backdropFilter:'blur(6px)',WebkitBackdropFilter:'blur(6px)',display:'flex',alignItems:'center',justifyContent:'center',padding:16,animation:'fadeIn 0.2s ease'}} onClick={onClose}>
-      <div style={{width:'100%',maxWidth:500,maxHeight:'88vh',borderRadius:24,overflow:'hidden',background:'rgba(255,248,240,0.75)',backdropFilter:'blur(32px)',WebkitBackdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.55)',boxShadow:'0 24px 64px rgba(30,14,4,0.22), inset 0 1px 0 rgba(255,255,255,0.7)',display:'flex',flexDirection:'column',animation:'slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)'}} onClick={e=>e.stopPropagation()}>
-
-        {/* Hero */}
-        <div style={{padding:'22px 22px 16px',borderBottom:'1px solid rgba(180,140,110,0.18)'}}>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
-            <div style={{flex:1,minWidth:0}}>
-              <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:5,flexWrap:'wrap'}}>
-                <span style={{fontSize:11,letterSpacing:'0.1em',textTransform:'uppercase',color:'#c8773a',fontFamily:"'Lora',serif",fontWeight:500}}>{r.cuisine}</span>
-                {r.priceRange&&<><span style={{color:'rgba(120,80,40,0.3)'}}>·</span><span style={{fontSize:11,color:'rgba(100,70,40,0.6)',fontFamily:"'Lora',serif"}}>{r.priceRange}</span></>}
-                <span style={{color:'rgba(120,80,40,0.3)'}}>·</span>
-                <span style={{fontSize:11,fontFamily:"'Lora',serif",color:r.status==='visited'?'#5a9a6a':'#b8873a'}}>{r.status==='visited'?'✓ Visited':'◎ Want to Try'}</span>
-              </div>
-              <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:24,color:'#1e0e04',margin:0,lineHeight:1.1}}>{r.name}</h2>
-            </div>
-            <button onClick={onClose} style={{background:'rgba(180,140,110,0.15)',border:'1px solid rgba(180,140,110,0.25)',color:'rgba(100,70,40,0.6)',borderRadius:'50%',width:32,height:32,cursor:'pointer',fontSize:14,flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',marginLeft:12}}>✕</button>
-          </div>
-          {r.location&&<p style={{fontSize:13,color:'rgba(100,70,40,0.55)',fontFamily:"'Lora',serif",margin:'0 0 10px'}}>📍 {r.location}</p>}
-          {r.status==='visited'&&r.rating&&<StarRating value={r.rating} readonly size={15}/>}
-
-          {/* Action buttons */}
-          <div style={{display:'flex',gap:8,marginTop:14}}>
-            <button onClick={directions} style={{flex:1,padding:'9px 6px',borderRadius:10,background:'rgba(200,119,58,0.12)',border:'1px solid rgba(200,119,58,0.25)',color:'#c8773a',fontFamily:"'Lora',serif",fontSize:12,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:4}}>🧭 Directions</button>
-            {r.website&&<button onClick={()=>openSite(r.website)} style={{flex:1,padding:'9px 6px',borderRadius:10,background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.22)',color:'rgba(60,35,14,0.65)',fontFamily:"'Lora',serif",fontSize:12,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:4}}>🌐 Website</button>}
-            <button onClick={menu} style={{flex:1,padding:'9px 6px',borderRadius:10,background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.22)',color:'rgba(60,35,14,0.65)',fontFamily:"'Lora',serif",fontSize:12,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:4}}>📋 Menu</button>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div style={{display:'flex',padding:'0 18px',borderBottom:'1px solid rgba(180,140,110,0.15)',background:'rgba(255,248,240,0.4)'}}>
-          {['info','hours','reviews','photos'].map(t=>(
-            <button key={t} onClick={()=>setTab(t)} style={{padding:'12px 12px 10px',background:'none',border:'none',cursor:'pointer',fontFamily:"'Lora',serif",fontSize:12,letterSpacing:'0.05em',textTransform:'capitalize',color:tab===t?'#1e0e04':'rgba(100,70,40,0.45)',borderBottom:`2px solid ${tab===t?'#c8773a':'transparent'}`,marginBottom:-1,transition:'all 0.15s'}}>{t}</button>
-          ))}
-        </div>
-
-        {/* Body */}
-        <div style={{flex:1,overflowY:'auto',padding:'20px 22px'}}>
-          {tab==='info'&&(
-            <div style={{display:'flex',flexDirection:'column',gap:12}}>
-              {r.note&&(
-                <div style={{background:'rgba(200,120,58,0.08)',border:'1px solid rgba(200,120,58,0.2)',borderLeft:'3px solid #c8773a',borderRadius:10,padding:'12px 14px'}}>
-                  <p style={{fontSize:11,color:'#c8773a',letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:"'Lora',serif",marginBottom:4}}>Note from {r.recommender}</p>
-                  <p style={{fontFamily:"'Lora',serif",fontSize:14,color:'rgba(30,14,4,0.8)',fontStyle:'italic',lineHeight:1.5,margin:0}}>"{r.note}"</p>
-                </div>
-              )}
-              {(r.phone||r.website)&&(
-                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
-                  {r.phone&&<div style={{background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.2)',borderRadius:10,padding:'10px 12px'}}><p style={{fontSize:10,color:'rgba(100,70,40,0.5)',letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:"'Lora',serif",marginBottom:3}}>Phone</p><p style={{fontSize:13,color:'#1e0e04',fontFamily:"'Lora',serif"}}>{r.phone}</p></div>}
-                  {r.website&&<div style={{background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.2)',borderRadius:10,padding:'10px 12px'}}><p style={{fontSize:10,color:'rgba(100,70,40,0.5)',letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:"'Lora',serif",marginBottom:3}}>Website</p><p style={{fontSize:13,color:'#c8773a',fontFamily:"'Lora',serif",overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.website}</p></div>}
-                </div>
-              )}
-              <div>
-                <p style={{fontSize:11,color:'rgba(100,70,40,0.5)',letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:"'DM Serif Display',serif",marginBottom:8}}>Rating</p>
-                <StarRating value={r.rating} onChange={v=>onRate(r.id,v)} size={26}/>
-              </div>
-              <div style={{display:'flex',gap:8}}>
-                <button onClick={()=>onEdit(r)} style={{flex:1,padding:10,borderRadius:10,background:'rgba(180,140,110,0.12)',border:'1px solid rgba(180,140,110,0.22)',color:'rgba(60,35,14,0.7)',fontFamily:"'DM Serif Display',serif",fontSize:14,cursor:'pointer'}}>✏️ Edit</button>
-                {r.status==='want'&&<button onClick={()=>onMarkVisited(r.id)} style={{flex:2,padding:10,borderRadius:10,background:'rgba(90,154,106,0.15)',border:'1px solid rgba(90,154,106,0.3)',color:'#3d7a4f',fontFamily:"'DM Serif Display',serif",fontSize:14,cursor:'pointer'}}>✓ Mark as Visited</button>}
-              </div>
-            </div>
-          )}
-          {tab==='hours'&&(
-            <div style={{display:'flex',flexDirection:'column',gap:8}}>
-              {r.hours&&r.hours.length>0?r.hours.map((h,i)=>(
-                <div key={i} style={{display:'flex',justifyContent:'space-between',padding:'10px 13px',background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.18)',borderRadius:10}}>
-                  <span style={{fontFamily:"'Lora',serif",fontSize:13,color:'rgba(60,35,14,0.6)'}}>{h.day}</span>
-                  <span style={{fontFamily:"'Lora',serif",fontSize:13,color:h.time==='Closed'?'#b05050':'#3d7a4f',fontWeight:500}}>{h.time}</span>
-                </div>
-              )):<p style={{fontFamily:"'Lora',serif",fontSize:14,color:'rgba(100,70,40,0.4)',textAlign:'center',padding:'20px 0'}}>No hours added yet</p>}
-            </div>
-          )}
-          {tab==='reviews'&&(
-            <div style={{display:'flex',flexDirection:'column',gap:10}}>
-              {r.reviews&&r.reviews.length>0?r.reviews.map((rv,i)=>(
-                <div key={i} style={{background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.18)',borderRadius:12,padding:'12px 14px'}}>
-                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
-                    <span style={{fontFamily:"'DM Serif Display',serif",fontSize:15,color:'#1e0e04'}}>{rv.author}</span>
-                    <StarRating value={rv.stars} readonly size={12}/>
-                  </div>
-                  <p style={{fontFamily:"'Lora',serif",fontSize:13,color:'rgba(60,35,14,0.7)',fontStyle:'italic',lineHeight:1.5,margin:0}}>{rv.text}</p>
-                </div>
-              )):<p style={{fontFamily:"'Lora',serif",fontSize:14,color:'rgba(100,70,40,0.4)',textAlign:'center',padding:'20px 0'}}>No reviews yet</p>}
-            </div>
-          )}
-          {tab==='photos'&&(
-            <div>
-              {r.photos&&r.photos.length>0?(
-                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
-                  {r.photos.map((p,i)=>(
-                    typeof p==='string'&&p.startsWith('http')
-                      ?<img key={i} src={p} style={{width:'100%',aspectRatio:'1',objectFit:'cover',borderRadius:10,border:'1px solid rgba(180,140,110,0.2)'}} alt=""/>
-                      :<div key={i} style={{aspectRatio:'1',background:'rgba(200,160,120,0.15)',border:'1px solid rgba(200,160,120,0.25)',borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center',fontSize:32}}>{p}</div>
-                  ))}
-                </div>
-              ):(
-                <div style={{textAlign:'center',padding:'40px 0'}}>
-                  <div style={{fontSize:32,marginBottom:10,opacity:0.3}}>📸</div>
-                  <p style={{fontFamily:"'Lora',serif",fontSize:14,color:'rgba(100,70,40,0.4)'}}>No photos yet</p>
-                  <p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(100,70,40,0.3)',marginTop:4}}>Edit the spot to add photo URLs</p>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'fixed',
+      inset: 0,
+      zIndex: 200,
+      background: 'rgba(20,12,6,0.55)',
+      backdropFilter: 'blur(6px)',
+      WebkitBackdropFilter: 'blur(6px)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 16,
+      animation: 'fadeIn 0.2s ease'
+    },
+    onClick: onClose
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: '100%',
+      maxWidth: 500,
+      maxHeight: '88vh',
+      borderRadius: 24,
+      overflow: 'hidden',
+      background: 'rgba(255,248,240,0.75)',
+      backdropFilter: 'blur(32px)',
+      WebkitBackdropFilter: 'blur(32px)',
+      border: '1px solid rgba(255,255,255,0.55)',
+      boxShadow: '0 24px 64px rgba(30,14,4,0.22), inset 0 1px 0 rgba(255,255,255,0.7)',
+      display: 'flex',
+      flexDirection: 'column',
+      animation: 'slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)'
+    },
+    onClick: function onClick(e) {
+      return e.stopPropagation();
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '22px 22px 16px',
+      borderBottom: '1px solid rgba(180,140,110,0.18)'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      minWidth: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8,
+      alignItems: 'center',
+      marginBottom: 5,
+      flexWrap: 'wrap'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      letterSpacing: '0.1em',
+      textTransform: 'uppercase',
+      color: '#c8773a',
+      fontFamily: "'Lora',serif",
+      fontWeight: 500
+    }
+  }, r.cuisine), r.priceRange && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'rgba(120,80,40,0.3)'
+    }
+  }, "\xB7"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      color: 'rgba(100,70,40,0.6)',
+      fontFamily: "'Lora',serif"
+    }
+  }, r.priceRange)), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'rgba(120,80,40,0.3)'
+    }
+  }, "\xB7"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      fontFamily: "'Lora',serif",
+      color: r.status === 'visited' ? '#5a9a6a' : '#b8873a'
+    }
+  }, r.status === 'visited' ? '✓ Visited' : '◎ Want to Try')), /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 24,
+      color: '#1e0e04',
+      margin: 0,
+      lineHeight: 1.1
+    }
+  }, r.name)), /*#__PURE__*/React.createElement("button", {
+    onClick: onClose,
+    style: {
+      background: 'rgba(180,140,110,0.15)',
+      border: '1px solid rgba(180,140,110,0.25)',
+      color: 'rgba(100,70,40,0.6)',
+      borderRadius: '50%',
+      width: 32,
+      height: 32,
+      cursor: 'pointer',
+      fontSize: 14,
+      flexShrink: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginLeft: 12
+    }
+  }, "\u2715")), r.location && /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 13,
+      color: 'rgba(100,70,40,0.55)',
+      fontFamily: "'Lora',serif",
+      margin: '0 0 10px'
+    }
+  }, "\uD83D\uDCCD ", r.location), r.status === 'visited' && r.rating && /*#__PURE__*/React.createElement(StarRating, {
+    value: r.rating,
+    readonly: true,
+    size: 15
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8,
+      marginTop: 14
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: directions,
+    style: {
+      flex: 1,
+      padding: '9px 6px',
+      borderRadius: 10,
+      background: 'rgba(200,119,58,0.12)',
+      border: '1px solid rgba(200,119,58,0.25)',
+      color: '#c8773a',
+      fontFamily: "'Lora',serif",
+      fontSize: 12,
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 4
+    }
+  }, "\uD83E\uDDED Directions"), r.website && /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return openSite(r.website);
+    },
+    style: {
+      flex: 1,
+      padding: '9px 6px',
+      borderRadius: 10,
+      background: 'rgba(180,140,110,0.1)',
+      border: '1px solid rgba(180,140,110,0.22)',
+      color: 'rgba(60,35,14,0.65)',
+      fontFamily: "'Lora',serif",
+      fontSize: 12,
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 4
+    }
+  }, "\uD83C\uDF10 Website"), /*#__PURE__*/React.createElement("button", {
+    onClick: menu,
+    style: {
+      flex: 1,
+      padding: '9px 6px',
+      borderRadius: 10,
+      background: 'rgba(180,140,110,0.1)',
+      border: '1px solid rgba(180,140,110,0.22)',
+      color: 'rgba(60,35,14,0.65)',
+      fontFamily: "'Lora',serif",
+      fontSize: 12,
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 4
+    }
+  }, "\uD83D\uDCCB Menu"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      padding: '0 18px',
+      borderBottom: '1px solid rgba(180,140,110,0.15)',
+      background: 'rgba(255,248,240,0.4)'
+    }
+  }, ['info', 'hours', 'reviews', 'photos'].map(function (t) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: t,
+      onClick: function onClick() {
+        return setTab(t);
+      },
+      style: {
+        padding: '12px 12px 10px',
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        fontFamily: "'Lora',serif",
+        fontSize: 12,
+        letterSpacing: '0.05em',
+        textTransform: 'capitalize',
+        color: tab === t ? '#1e0e04' : 'rgba(100,70,40,0.45)',
+        borderBottom: "2px solid ".concat(tab === t ? '#c8773a' : 'transparent'),
+        marginBottom: -1,
+        transition: 'all 0.15s'
+      }
+    }, t);
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      overflowY: 'auto',
+      padding: '20px 22px'
+    }
+  }, tab === 'info' && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 12
+    }
+  }, r.note && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: 'rgba(200,120,58,0.08)',
+      border: '1px solid rgba(200,120,58,0.2)',
+      borderLeft: '3px solid #c8773a',
+      borderRadius: 10,
+      padding: '12px 14px'
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 11,
+      color: '#c8773a',
+      letterSpacing: '0.1em',
+      textTransform: 'uppercase',
+      fontFamily: "'Lora',serif",
+      marginBottom: 4
+    }
+  }, "Note from ", r.recommender), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 14,
+      color: 'rgba(30,14,4,0.8)',
+      fontStyle: 'italic',
+      lineHeight: 1.5,
+      margin: 0
+    }
+  }, "\"", r.note, "\"")), (r.phone || r.website) && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: 8
+    }
+  }, r.phone && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: 'rgba(180,140,110,0.1)',
+      border: '1px solid rgba(180,140,110,0.2)',
+      borderRadius: 10,
+      padding: '10px 12px'
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 10,
+      color: 'rgba(100,70,40,0.5)',
+      letterSpacing: '0.1em',
+      textTransform: 'uppercase',
+      fontFamily: "'Lora',serif",
+      marginBottom: 3
+    }
+  }, "Phone"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 13,
+      color: '#1e0e04',
+      fontFamily: "'Lora',serif"
+    }
+  }, r.phone)), r.website && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: 'rgba(180,140,110,0.1)',
+      border: '1px solid rgba(180,140,110,0.2)',
+      borderRadius: 10,
+      padding: '10px 12px'
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 10,
+      color: 'rgba(100,70,40,0.5)',
+      letterSpacing: '0.1em',
+      textTransform: 'uppercase',
+      fontFamily: "'Lora',serif",
+      marginBottom: 3
+    }
+  }, "Website"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 13,
+      color: '#c8773a',
+      fontFamily: "'Lora',serif",
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap'
+    }
+  }, r.website))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 11,
+      color: 'rgba(100,70,40,0.5)',
+      letterSpacing: '0.1em',
+      textTransform: 'uppercase',
+      fontFamily: "'DM Serif Display',serif",
+      marginBottom: 8
+    }
+  }, "Rating"), /*#__PURE__*/React.createElement(StarRating, {
+    value: r.rating,
+    onChange: function onChange(v) {
+      return onRate(r.id, v);
+    },
+    size: 26
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return onEdit(r);
+    },
+    style: {
+      flex: 1,
+      padding: 10,
+      borderRadius: 10,
+      background: 'rgba(180,140,110,0.12)',
+      border: '1px solid rgba(180,140,110,0.22)',
+      color: 'rgba(60,35,14,0.7)',
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 14,
+      cursor: 'pointer'
+    }
+  }, "\u270F\uFE0F Edit"), r.status === 'want' && /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return onMarkVisited(r.id);
+    },
+    style: {
+      flex: 2,
+      padding: 10,
+      borderRadius: 10,
+      background: 'rgba(90,154,106,0.15)',
+      border: '1px solid rgba(90,154,106,0.3)',
+      color: '#3d7a4f',
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 14,
+      cursor: 'pointer'
+    }
+  }, "\u2713 Mark as Visited"))), tab === 'hours' && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 8
+    }
+  }, r.hours && r.hours.length > 0 ? r.hours.map(function (h, i) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      style: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '10px 13px',
+        background: 'rgba(180,140,110,0.1)',
+        border: '1px solid rgba(180,140,110,0.18)',
+        borderRadius: 10
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontFamily: "'Lora',serif",
+        fontSize: 13,
+        color: 'rgba(60,35,14,0.6)'
+      }
+    }, h.day), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontFamily: "'Lora',serif",
+        fontSize: 13,
+        color: h.time === 'Closed' ? '#b05050' : '#3d7a4f',
+        fontWeight: 500
+      }
+    }, h.time));
+  }) : /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 14,
+      color: 'rgba(100,70,40,0.4)',
+      textAlign: 'center',
+      padding: '20px 0'
+    }
+  }, "No hours added yet")), tab === 'reviews' && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 10
+    }
+  }, r.reviews && r.reviews.length > 0 ? r.reviews.map(function (rv, i) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      style: {
+        background: 'rgba(180,140,110,0.1)',
+        border: '1px solid rgba(180,140,110,0.18)',
+        borderRadius: 12,
+        padding: '12px 14px'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 6
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontFamily: "'DM Serif Display',serif",
+        fontSize: 15,
+        color: '#1e0e04'
+      }
+    }, rv.author), /*#__PURE__*/React.createElement(StarRating, {
+      value: rv.stars,
+      readonly: true,
+      size: 12
+    })), /*#__PURE__*/React.createElement("p", {
+      style: {
+        fontFamily: "'Lora',serif",
+        fontSize: 13,
+        color: 'rgba(60,35,14,0.7)',
+        fontStyle: 'italic',
+        lineHeight: 1.5,
+        margin: 0
+      }
+    }, rv.text));
+  }) : /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 14,
+      color: 'rgba(100,70,40,0.4)',
+      textAlign: 'center',
+      padding: '20px 0'
+    }
+  }, "No reviews yet")), tab === 'photos' && /*#__PURE__*/React.createElement("div", null, r.photos && r.photos.length > 0 ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: 8
+    }
+  }, r.photos.map(function (p, i) {
+    return typeof p === 'string' && p.startsWith('http') ? /*#__PURE__*/React.createElement("img", {
+      key: i,
+      src: p,
+      style: {
+        width: '100%',
+        aspectRatio: '1',
+        objectFit: 'cover',
+        borderRadius: 10,
+        border: '1px solid rgba(180,140,110,0.2)'
+      },
+      alt: ""
+    }) : /*#__PURE__*/React.createElement("div", {
+      key: i,
+      style: {
+        aspectRatio: '1',
+        background: 'rgba(200,160,120,0.15)',
+        border: '1px solid rgba(200,160,120,0.25)',
+        borderRadius: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 32
+      }
+    }, p);
+  })) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: 'center',
+      padding: '40px 0'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 32,
+      marginBottom: 10,
+      opacity: 0.3
+    }
+  }, "\uD83D\uDCF8"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 14,
+      color: 'rgba(100,70,40,0.4)'
+    }
+  }, "No photos yet"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 12,
+      color: 'rgba(100,70,40,0.3)',
+      marginTop: 4
+    }
+  }, "Edit the spot to add photo URLs"))))));
 };
 
 // ── Add / Edit modal ─────────────────────────────────────────
-const EditModal = ({ onClose, onSave, editData }) => {
-  const [form, setForm] = useState(editData||{
-    name:'',cuisine:'Italian',location:'',recommender:'',note:'',
-    status:'want',rating:null,priceRange:'',phone:'',website:'',
-    menuUrl:'',hours:[],photos:[],reviews:[],lat:null,lng:null,googleMapsUrl:'',
-  });
-  const set=(k,v)=>setForm(f=>({...f,[k]:v}));
-  const inp={width:'100%',padding:'10px 13px',background:'rgba(200,160,120,0.12)',border:'1px solid rgba(180,140,110,0.28)',borderRadius:10,fontFamily:"'Lora',serif",fontSize:14,color:'#1e0e04',outline:'none',boxSizing:'border-box'};
-  const lbl={display:'block',fontFamily:"'DM Serif Display',serif",fontSize:11,letterSpacing:'0.08em',color:'rgba(100,70,40,0.55)',marginBottom:5,textTransform:'uppercase'};
-  const ok=form.name.trim()&&form.recommender.trim();
-  return (
-    <div style={{position:'fixed',inset:0,zIndex:300,background:'rgba(20,12,6,0.5)',backdropFilter:'blur(8px)',WebkitBackdropFilter:'blur(8px)',display:'flex',alignItems:'center',justifyContent:'center',padding:20,animation:'fadeIn 0.2s ease'}} onClick={onClose}>
-      <div style={{width:'100%',maxWidth:440,maxHeight:'88vh',overflowY:'auto',borderRadius:22,background:'rgba(255,248,240,0.92)',backdropFilter:'blur(32px)',WebkitBackdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.7)',boxShadow:'0 24px 64px rgba(30,14,4,0.2)',padding:28,animation:'slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)'}} onClick={e=>e.stopPropagation()}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:22}}>
-          <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:20,color:'#1e0e04',margin:0}}>{editData?'Edit Restaurant':'Add Manually'}</h2>
-          <button onClick={onClose} style={{background:'rgba(180,140,110,0.15)',border:'1px solid rgba(180,140,110,0.25)',color:'rgba(100,70,40,0.5)',borderRadius:'50%',width:30,height:30,cursor:'pointer',fontSize:13,display:'flex',alignItems:'center',justifyContent:'center'}}>✕</button>
-        </div>
-        <div style={{display:'flex',flexDirection:'column',gap:13}}>
-          <div><label style={lbl}>Restaurant Name *</label><input style={inp} value={form.name} onChange={e=>set('name',e.target.value)} placeholder="e.g. Chez Pierre"/></div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-            <div><label style={lbl}>Cuisine</label><select style={{...inp,cursor:'pointer'}} value={form.cuisine} onChange={e=>set('cuisine',e.target.value)}>{CUISINES.map(c=><option key={c}>{c}</option>)}</select></div>
-            <div><label style={lbl}>Recommended By *</label><input style={inp} value={form.recommender} onChange={e=>set('recommender',e.target.value)} placeholder="e.g. Sarah"/></div>
-          </div>
-          <div><label style={lbl}>Location</label><input style={inp} value={form.location} onChange={e=>set('location',e.target.value)} placeholder="e.g. West Village, NYC"/></div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-            <div><label style={lbl}>Website</label><input style={inp} value={form.website} onChange={e=>set('website',e.target.value)} placeholder="restaurant.com"/></div>
-            <div><label style={lbl}>Menu URL</label><input style={inp} value={form.menuUrl} onChange={e=>set('menuUrl',e.target.value)} placeholder="restaurant.com/menu"/></div>
-          </div>
-          <div><label style={lbl}>Phone</label><input style={inp} value={form.phone} onChange={e=>set('phone',e.target.value)} placeholder="+1 (212) 000-0000"/></div>
-          <div><label style={lbl}>Notes</label><textarea style={{...inp,resize:'vertical',minHeight:64}} value={form.note} onChange={e=>set('note',e.target.value)} placeholder="What to order, tips, vibes…"/></div>
-          <div>
-            <label style={lbl}>Status</label>
-            <div style={{display:'flex',gap:10}}>
-              {['want','visited'].map(s=>(
-                <button key={s} onClick={()=>set('status',s)} style={{flex:1,padding:10,borderRadius:10,border:`1.5px solid ${form.status===s?'#c8773a':'rgba(180,140,110,0.25)'}`,background:form.status===s?'rgba(200,119,58,0.1)':'transparent',color:form.status===s?'#c8773a':'rgba(100,70,40,0.45)',fontFamily:"'DM Serif Display',serif",fontSize:13,cursor:'pointer',transition:'all 0.15s'}}>
-                  {s==='want'?'◎ Want to Try':'✓ Been There'}
-                </button>
-              ))}
-            </div>
-          </div>
-          {form.status==='visited'&&<div><label style={lbl}>Your Rating</label><StarRating value={form.rating} onChange={v=>set('rating',v)} size={22}/></div>}
-        </div>
-        <div style={{display:'flex',gap:10,marginTop:22}}>
-          <button onClick={onClose} style={{flex:1,padding:11,borderRadius:10,background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.2)',color:'rgba(100,70,40,0.5)',fontFamily:"'DM Serif Display',serif",fontSize:14,cursor:'pointer'}}>Cancel</button>
-          <button onClick={()=>ok&&onSave(form)} style={{flex:2,padding:11,borderRadius:10,background:ok?'#2c1f14':'rgba(180,140,110,0.12)',border:'none',color:ok?'#fdf8f3':'rgba(100,70,40,0.3)',fontFamily:"'DM Serif Display',serif",fontSize:14,cursor:ok?'pointer':'default',transition:'all 0.2s'}}>Save Restaurant</button>
-        </div>
-      </div>
-    </div>
-  );
+var EditModal = function EditModal(_ref5) {
+  var onClose = _ref5.onClose,
+    onSave = _ref5.onSave,
+    editData = _ref5.editData;
+  var _useState1 = useState(editData || {
+      name: '',
+      cuisine: 'Italian',
+      location: '',
+      recommender: '',
+      note: '',
+      status: 'want',
+      rating: null,
+      priceRange: '',
+      phone: '',
+      website: '',
+      menuUrl: '',
+      hours: [],
+      photos: [],
+      reviews: [],
+      lat: null,
+      lng: null,
+      googleMapsUrl: ''
+    }),
+    _useState10 = _slicedToArray(_useState1, 2),
+    form = _useState10[0],
+    setForm = _useState10[1];
+  var set = function set(k, v) {
+    return setForm(function (f) {
+      return _objectSpread(_objectSpread({}, f), {}, _defineProperty({}, k, v));
+    });
+  };
+  var inp = {
+    width: '100%',
+    padding: '10px 13px',
+    background: 'rgba(200,160,120,0.12)',
+    border: '1px solid rgba(180,140,110,0.28)',
+    borderRadius: 10,
+    fontFamily: "'Lora',serif",
+    fontSize: 14,
+    color: '#1e0e04',
+    outline: 'none',
+    boxSizing: 'border-box'
+  };
+  var lbl = {
+    display: 'block',
+    fontFamily: "'DM Serif Display',serif",
+    fontSize: 11,
+    letterSpacing: '0.08em',
+    color: 'rgba(100,70,40,0.55)',
+    marginBottom: 5,
+    textTransform: 'uppercase'
+  };
+  var ok = form.name.trim() && form.recommender.trim();
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'fixed',
+      inset: 0,
+      zIndex: 300,
+      background: 'rgba(20,12,6,0.5)',
+      backdropFilter: 'blur(8px)',
+      WebkitBackdropFilter: 'blur(8px)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 20,
+      animation: 'fadeIn 0.2s ease'
+    },
+    onClick: onClose
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: '100%',
+      maxWidth: 440,
+      maxHeight: '88vh',
+      overflowY: 'auto',
+      borderRadius: 22,
+      background: 'rgba(255,248,240,0.92)',
+      backdropFilter: 'blur(32px)',
+      WebkitBackdropFilter: 'blur(32px)',
+      border: '1px solid rgba(255,255,255,0.7)',
+      boxShadow: '0 24px 64px rgba(30,14,4,0.2)',
+      padding: 28,
+      animation: 'slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)'
+    },
+    onClick: function onClick(e) {
+      return e.stopPropagation();
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 22
+    }
+  }, /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 20,
+      color: '#1e0e04',
+      margin: 0
+    }
+  }, editData ? 'Edit Restaurant' : 'Add Manually'), /*#__PURE__*/React.createElement("button", {
+    onClick: onClose,
+    style: {
+      background: 'rgba(180,140,110,0.15)',
+      border: '1px solid rgba(180,140,110,0.25)',
+      color: 'rgba(100,70,40,0.5)',
+      borderRadius: '50%',
+      width: 30,
+      height: 30,
+      cursor: 'pointer',
+      fontSize: 13,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
+  }, "\u2715")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 13
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Restaurant Name *"), /*#__PURE__*/React.createElement("input", {
+    style: inp,
+    value: form.name,
+    onChange: function onChange(e) {
+      return set('name', e.target.value);
+    },
+    placeholder: "e.g. Chez Pierre"
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Cuisine"), /*#__PURE__*/React.createElement("select", {
+    style: _objectSpread(_objectSpread({}, inp), {}, {
+      cursor: 'pointer'
+    }),
+    value: form.cuisine,
+    onChange: function onChange(e) {
+      return set('cuisine', e.target.value);
+    }
+  }, CUISINES.map(function (c) {
+    return /*#__PURE__*/React.createElement("option", {
+      key: c
+    }, c);
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Recommended By *"), /*#__PURE__*/React.createElement("input", {
+    style: inp,
+    value: form.recommender,
+    onChange: function onChange(e) {
+      return set('recommender', e.target.value);
+    },
+    placeholder: "e.g. Sarah"
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Location"), /*#__PURE__*/React.createElement("input", {
+    style: inp,
+    value: form.location,
+    onChange: function onChange(e) {
+      return set('location', e.target.value);
+    },
+    placeholder: "e.g. West Village, NYC"
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Website"), /*#__PURE__*/React.createElement("input", {
+    style: inp,
+    value: form.website,
+    onChange: function onChange(e) {
+      return set('website', e.target.value);
+    },
+    placeholder: "restaurant.com"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Menu URL"), /*#__PURE__*/React.createElement("input", {
+    style: inp,
+    value: form.menuUrl,
+    onChange: function onChange(e) {
+      return set('menuUrl', e.target.value);
+    },
+    placeholder: "restaurant.com/menu"
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Phone"), /*#__PURE__*/React.createElement("input", {
+    style: inp,
+    value: form.phone,
+    onChange: function onChange(e) {
+      return set('phone', e.target.value);
+    },
+    placeholder: "+1 (212) 000-0000"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Notes"), /*#__PURE__*/React.createElement("textarea", {
+    style: _objectSpread(_objectSpread({}, inp), {}, {
+      resize: 'vertical',
+      minHeight: 64
+    }),
+    value: form.note,
+    onChange: function onChange(e) {
+      return set('note', e.target.value);
+    },
+    placeholder: "What to order, tips, vibes\u2026"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Status"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 10
+    }
+  }, ['want', 'visited'].map(function (s) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: s,
+      onClick: function onClick() {
+        return set('status', s);
+      },
+      style: {
+        flex: 1,
+        padding: 10,
+        borderRadius: 10,
+        border: "1.5px solid ".concat(form.status === s ? '#c8773a' : 'rgba(180,140,110,0.25)'),
+        background: form.status === s ? 'rgba(200,119,58,0.1)' : 'transparent',
+        color: form.status === s ? '#c8773a' : 'rgba(100,70,40,0.45)',
+        fontFamily: "'DM Serif Display',serif",
+        fontSize: 13,
+        cursor: 'pointer',
+        transition: 'all 0.15s'
+      }
+    }, s === 'want' ? '◎ Want to Try' : '✓ Been There');
+  }))), form.status === 'visited' && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Your Rating"), /*#__PURE__*/React.createElement(StarRating, {
+    value: form.rating,
+    onChange: function onChange(v) {
+      return set('rating', v);
+    },
+    size: 22
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 10,
+      marginTop: 22
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: onClose,
+    style: {
+      flex: 1,
+      padding: 11,
+      borderRadius: 10,
+      background: 'rgba(180,140,110,0.1)',
+      border: '1px solid rgba(180,140,110,0.2)',
+      color: 'rgba(100,70,40,0.5)',
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 14,
+      cursor: 'pointer'
+    }
+  }, "Cancel"), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return ok && onSave(form);
+    },
+    style: {
+      flex: 2,
+      padding: 11,
+      borderRadius: 10,
+      background: ok ? '#2c1f14' : 'rgba(180,140,110,0.12)',
+      border: 'none',
+      color: ok ? '#fdf8f3' : 'rgba(100,70,40,0.3)',
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 14,
+      cursor: ok ? 'pointer' : 'default',
+      transition: 'all 0.2s'
+    }
+  }, "Save Restaurant"))));
 };
 
 // ── Card ─────────────────────────────────────────────────────
-const Card = ({ r, onClick }) => {
+var Card = function Card(_ref6) {
+  var r = _ref6.r,
+    onClick = _ref6.onClick;
   function nav(e) {
     e.stopPropagation();
-    const q=r.lat&&r.lng?`${r.lat},${r.lng}`:encodeURIComponent([r.name,r.location].filter(Boolean).join(' '));
-    window.open(`https://maps.google.com/maps?daddr=${q}`,'_blank');
+    var q = r.lat && r.lng ? "".concat(r.lat, ",").concat(r.lng) : encodeURIComponent([r.name, r.location].filter(Boolean).join(' '));
+    window.open("https://maps.google.com/maps?daddr=".concat(q), '_blank');
   }
   function site(e) {
     e.stopPropagation();
-    const url=r.website.startsWith('http')?r.website:'https://'+r.website;
-    window.open(url,'_blank');
+    var url = r.website.startsWith('http') ? r.website : 'https://' + r.website;
+    window.open(url, '_blank');
   }
-  return (
-    <div onClick={onClick} style={{background:'rgba(255,248,240,0.6)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',border:'1px solid rgba(255,255,255,0.5)',borderRadius:14,padding:'14px 15px',cursor:'pointer',boxShadow:'0 2px 12px rgba(30,14,4,0.07), inset 0 1px 0 rgba(255,255,255,0.7)',transition:'transform 0.18s, box-shadow 0.18s'}}
-    onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-2px)';e.currentTarget.style.boxShadow='0 6px 24px rgba(30,14,4,0.11), inset 0 1px 0 rgba(255,255,255,0.8)';}}
-    onMouseLeave={e=>{e.currentTarget.style.transform='';e.currentTarget.style.boxShadow='0 2px 12px rgba(30,14,4,0.07), inset 0 1px 0 rgba(255,255,255,0.7)';}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:5}}>
-        <h3 style={{fontFamily:"'DM Serif Display',serif",fontSize:15,color:'#1e0e04',margin:0,lineHeight:1.2,flex:1,minWidth:0,paddingRight:8}}>{r.name}</h3>
-        {r.status==='visited'&&r.rating&&<StarRating value={r.rating} readonly size={11}/>}
-      </div>
-      <div style={{display:'flex',gap:4,alignItems:'center',flexWrap:'wrap',marginBottom:6}}>
-        <span style={{fontSize:10,color:'#c8773a',fontFamily:"'Lora',serif",letterSpacing:'0.05em'}}>{r.cuisine}</span>
-        {r.location&&<><span style={{color:'rgba(120,80,40,0.3)',fontSize:9}}>·</span><span style={{fontSize:10,color:'rgba(100,70,40,0.45)',fontFamily:"'Lora',serif",overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:110,display:'inline-block'}}>📍 {r.location}</span></>}
-      </div>
-      {r.note&&<p style={{fontFamily:"'Lora',serif",fontSize:11,color:'rgba(60,35,14,0.5)',margin:'0 0 8px',fontStyle:'italic',lineHeight:1.4,overflow:'hidden',display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical'}}>"{r.note}"</p>}
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-        <span style={{fontSize:10,color:'rgba(100,70,40,0.4)',fontFamily:"'Lora',serif"}}>by <span style={{color:'#c8773a'}}>{r.recommender}</span></span>
-        <div style={{display:'flex',gap:4}}>
-          <button onClick={nav} title="Directions" style={{padding:'4px 8px',borderRadius:6,background:'rgba(200,119,58,0.12)',border:'1px solid rgba(200,119,58,0.2)',color:'#c8773a',fontSize:11,cursor:'pointer'}}>🧭</button>
-          {r.website&&<button onClick={site} title="Website" style={{padding:'4px 8px',borderRadius:6,background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.2)',color:'rgba(60,35,14,0.6)',fontSize:11,cursor:'pointer'}}>🌐</button>}
-        </div>
-      </div>
-    </div>
-  );
+  return /*#__PURE__*/React.createElement("div", {
+    onClick: onClick,
+    style: {
+      background: 'rgba(255,248,240,0.6)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      border: '1px solid rgba(255,255,255,0.5)',
+      borderRadius: 14,
+      padding: '14px 15px',
+      cursor: 'pointer',
+      boxShadow: '0 2px 12px rgba(30,14,4,0.07), inset 0 1px 0 rgba(255,255,255,0.7)',
+      transition: 'transform 0.18s, box-shadow 0.18s'
+    },
+    onMouseEnter: function onMouseEnter(e) {
+      e.currentTarget.style.transform = 'translateY(-2px)';
+      e.currentTarget.style.boxShadow = '0 6px 24px rgba(30,14,4,0.11), inset 0 1px 0 rgba(255,255,255,0.8)';
+    },
+    onMouseLeave: function onMouseLeave(e) {
+      e.currentTarget.style.transform = '';
+      e.currentTarget.style.boxShadow = '0 2px 12px rgba(30,14,4,0.07), inset 0 1px 0 rgba(255,255,255,0.7)';
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: 5
+    }
+  }, /*#__PURE__*/React.createElement("h3", {
+    style: {
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 15,
+      color: '#1e0e04',
+      margin: 0,
+      lineHeight: 1.2,
+      flex: 1,
+      minWidth: 0,
+      paddingRight: 8
+    }
+  }, r.name), r.status === 'visited' && r.rating && /*#__PURE__*/React.createElement(StarRating, {
+    value: r.rating,
+    readonly: true,
+    size: 11
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 4,
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      marginBottom: 6
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 10,
+      color: '#c8773a',
+      fontFamily: "'Lora',serif",
+      letterSpacing: '0.05em'
+    }
+  }, r.cuisine), r.location && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'rgba(120,80,40,0.3)',
+      fontSize: 9
+    }
+  }, "\xB7"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 10,
+      color: 'rgba(100,70,40,0.45)',
+      fontFamily: "'Lora',serif",
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      maxWidth: 110,
+      display: 'inline-block'
+    }
+  }, "\uD83D\uDCCD ", r.location))), r.note && /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 11,
+      color: 'rgba(60,35,14,0.5)',
+      margin: '0 0 8px',
+      fontStyle: 'italic',
+      lineHeight: 1.4,
+      overflow: 'hidden',
+      display: '-webkit-box',
+      WebkitLineClamp: 2,
+      WebkitBoxOrient: 'vertical'
+    }
+  }, "\"", r.note, "\""), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 10,
+      color: 'rgba(100,70,40,0.4)',
+      fontFamily: "'Lora',serif"
+    }
+  }, "by ", /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: '#c8773a'
+    }
+  }, r.recommender)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 4
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: nav,
+    title: "Directions",
+    style: {
+      padding: '4px 8px',
+      borderRadius: 6,
+      background: 'rgba(200,119,58,0.12)',
+      border: '1px solid rgba(200,119,58,0.2)',
+      color: '#c8773a',
+      fontSize: 11,
+      cursor: 'pointer'
+    }
+  }, "\uD83E\uDDED"), r.website && /*#__PURE__*/React.createElement("button", {
+    onClick: site,
+    title: "Website",
+    style: {
+      padding: '4px 8px',
+      borderRadius: 6,
+      background: 'rgba(180,140,110,0.1)',
+      border: '1px solid rgba(180,140,110,0.2)',
+      color: 'rgba(60,35,14,0.6)',
+      fontSize: 11,
+      cursor: 'pointer'
+    }
+  }, "\uD83C\uDF10"))));
 };
 
 // ── Column ───────────────────────────────────────────────────
-const Column = ({ title, icon, items, onCardClick }) => (
-  <div style={{flex:1,minWidth:0}}>
-    <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
-      <span style={{fontSize:13}}>{icon}</span>
-      <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:15,color:'#1e0e04',margin:0,flex:1}}>{title}</h2>
-      <span style={{fontSize:11,fontFamily:"'Lora',serif",color:'rgba(100,70,40,0.4)',background:'rgba(180,140,110,0.15)',borderRadius:20,padding:'2px 8px'}}>{items.length}</span>
-    </div>
-    <div style={{display:'flex',flexDirection:'column',gap:8}}>
-      {items.length===0?(
-        <div style={{textAlign:'center',padding:'28px 12px',background:'rgba(255,248,240,0.3)',borderRadius:12,border:'1px dashed rgba(180,140,110,0.3)'}}>
-          <p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(100,70,40,0.35)'}}>Nothing yet</p>
-        </div>
-      ):items.map(r=><Card key={r.id} r={r} onClick={()=>onCardClick(r)}/>)}
-    </div>
-  </div>
-);
+var Column = function Column(_ref7) {
+  var title = _ref7.title,
+    icon = _ref7.icon,
+    items = _ref7.items,
+    onCardClick = _ref7.onCardClick;
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      minWidth: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      marginBottom: 12
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13
+    }
+  }, icon), /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 15,
+      color: '#1e0e04',
+      margin: 0,
+      flex: 1
+    }
+  }, title), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      fontFamily: "'Lora',serif",
+      color: 'rgba(100,70,40,0.4)',
+      background: 'rgba(180,140,110,0.15)',
+      borderRadius: 20,
+      padding: '2px 8px'
+    }
+  }, items.length)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 8
+    }
+  }, items.length === 0 ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: 'center',
+      padding: '28px 12px',
+      background: 'rgba(255,248,240,0.3)',
+      borderRadius: 12,
+      border: '1px dashed rgba(180,140,110,0.3)'
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 12,
+      color: 'rgba(100,70,40,0.35)'
+    }
+  }, "Nothing yet")) : items.map(function (r) {
+    return /*#__PURE__*/React.createElement(Card, {
+      key: r.id,
+      r: r,
+      onClick: function onClick() {
+        return onCardClick(r);
+      }
+    });
+  })));
+};
 
 // ── App ──────────────────────────────────────────────────────
 function App() {
-  const [restaurants,setRestaurants] = useState([]);
-  const [loading,setLoading]         = useState(true);
-  const [tab,setTab]                 = useState('home');
-  const [showEdit,setShowEdit]       = useState(false);
-  const [showImport,setShowImport]   = useState(false);
-  const [showAddMenu,setShowAddMenu] = useState(false);
-  const [editTarget,setEditTarget]   = useState(null);
-  const [detail,setDetail]           = useState(null);
-  const [search,setSearch]           = useState('');
-  const [toast,setToast]             = useState(null);
-
-  function showToast(msg) { setToast(msg); setTimeout(()=>setToast(null),2500); }
-
-  async function loadSpots() {
-    const {data,error} = await sb.from('spots').select('*').order('created_at',{ascending:false});
-    if (error) { showToast('Failed to load'); return; }
-    setRestaurants((data||[]).map(dbToApp));
-    setLoading(false);
+  var _useState11 = useState([]),
+    _useState12 = _slicedToArray(_useState11, 2),
+    restaurants = _useState12[0],
+    setRestaurants = _useState12[1];
+  var _useState13 = useState(true),
+    _useState14 = _slicedToArray(_useState13, 2),
+    loading = _useState14[0],
+    setLoading = _useState14[1];
+  var _useState15 = useState('home'),
+    _useState16 = _slicedToArray(_useState15, 2),
+    tab = _useState16[0],
+    setTab = _useState16[1];
+  var _useState17 = useState(false),
+    _useState18 = _slicedToArray(_useState17, 2),
+    showEdit = _useState18[0],
+    setShowEdit = _useState18[1];
+  var _useState19 = useState(false),
+    _useState20 = _slicedToArray(_useState19, 2),
+    showImport = _useState20[0],
+    setShowImport = _useState20[1];
+  var _useState21 = useState(false),
+    _useState22 = _slicedToArray(_useState21, 2),
+    showAddMenu = _useState22[0],
+    setShowAddMenu = _useState22[1];
+  var _useState23 = useState(null),
+    _useState24 = _slicedToArray(_useState23, 2),
+    editTarget = _useState24[0],
+    setEditTarget = _useState24[1];
+  var _useState25 = useState(null),
+    _useState26 = _slicedToArray(_useState25, 2),
+    detail = _useState26[0],
+    setDetail = _useState26[1];
+  var _useState27 = useState(''),
+    _useState28 = _slicedToArray(_useState27, 2),
+    search = _useState28[0],
+    setSearch = _useState28[1];
+  var _useState29 = useState(null),
+    _useState30 = _slicedToArray(_useState29, 2),
+    toast = _useState30[0],
+    setToast = _useState30[1];
+  function showToast(msg) {
+    setToast(msg);
+    setTimeout(function () {
+      return setToast(null);
+    }, 2500);
   }
-
-  useEffect(()=>{ loadSpots(); },[]);
-
-  const filtered = useMemo(()=>{
-    const q=search.toLowerCase();
-    return restaurants.filter(r=>!q||
-      r.name.toLowerCase().includes(q)||
-      r.cuisine.toLowerCase().includes(q)||
-      r.recommender.toLowerCase().includes(q)||
-      (r.location||'').toLowerCase().includes(q));
-  },[restaurants,search]);
-
-  const wantList    = filtered.filter(r=>r.status==='want');
-  const visitedList = filtered.filter(r=>r.status==='visited');
-
-  async function handleSave(form) {
-    const payload=appToDb(form);
-    let error;
-    if (editTarget) ({ error }=await sb.from('spots').update(payload).eq('id',editTarget.id));
-    else            ({ error }=await sb.from('spots').insert(payload));
-    if (error) { showToast('Save failed: '+error.message); return; }
-    setShowEdit(false); setShowImport(false); setEditTarget(null); setDetail(null);
-    showToast(editTarget?'Updated!':'Pinned! 📍');
-    await loadSpots();
+  function loadSpots() {
+    return _loadSpots.apply(this, arguments);
   }
-
-  async function handleMarkVisited(id) {
-    const {error}=await sb.from('spots').update({visited:true}).eq('id',id);
-    if (error) { showToast('Update failed'); return; }
-    setRestaurants(rs=>rs.map(r=>r.id===id?{...r,status:'visited'}:r));
-    setDetail(d=>d?.id===id?{...d,status:'visited'}:d);
-    showToast('Marked as visited! ✓');
+  function _loadSpots() {
+    _loadSpots = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+      var _yield$sb$from$select, data, error;
+      return _regenerator().w(function (_context2) {
+        while (1) switch (_context2.n) {
+          case 0:
+            _context2.n = 1;
+            return sb.from('spots').select('*').order('created_at', {
+              ascending: false
+            });
+          case 1:
+            _yield$sb$from$select = _context2.v;
+            data = _yield$sb$from$select.data;
+            error = _yield$sb$from$select.error;
+            if (!error) {
+              _context2.n = 2;
+              break;
+            }
+            showToast('Failed to load');
+            return _context2.a(2);
+          case 2:
+            setRestaurants((data || []).map(dbToApp));
+            setLoading(false);
+          case 3:
+            return _context2.a(2);
+        }
+      }, _callee2);
+    }));
+    return _loadSpots.apply(this, arguments);
   }
-
-  async function handleRate(id,rating) {
-    const {error}=await sb.from('spots').update({rating,visited:true}).eq('id',id);
-    if (error) { showToast('Rating failed'); return; }
-    setRestaurants(rs=>rs.map(r=>r.id===id?{...r,rating,status:'visited'}:r));
-    setDetail(d=>d?.id===id?{...d,rating,status:'visited'}:d);
-    showToast('★'.repeat(rating)+' Saved!');
+  useEffect(function () {
+    loadSpots();
+  }, []);
+  var filtered = useMemo(function () {
+    var q = search.toLowerCase();
+    return restaurants.filter(function (r) {
+      return !q || r.name.toLowerCase().includes(q) || r.cuisine.toLowerCase().includes(q) || r.recommender.toLowerCase().includes(q) || (r.location || '').toLowerCase().includes(q);
+    });
+  }, [restaurants, search]);
+  var wantList = filtered.filter(function (r) {
+    return r.status === 'want';
+  });
+  var visitedList = filtered.filter(function (r) {
+    return r.status === 'visited';
+  });
+  function handleSave(_x3) {
+    return _handleSave.apply(this, arguments);
   }
-
-  return (<>
-    <style>{`
-      @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
-      *{box-sizing:border-box;margin:0;padding:0;}
-      body{background:#e8d9c8;}
-      ::placeholder{color:rgba(100,70,40,0.35)!important;}
-      ::-webkit-scrollbar{width:4px;}
-      ::-webkit-scrollbar-track{background:transparent;}
-      ::-webkit-scrollbar-thumb{background:rgba(180,140,110,0.3);border-radius:4px;}
-      select option{background:#f5ede0;}
-      .leaflet-container{font-family:'Lora',serif!important;}
-      @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-      @keyframes slideUp{from{opacity:0;transform:translateY(20px) scale(0.98)}to{opacity:1;transform:none}}
-    `}</style>
-
-    <div style={{minHeight:'100vh',display:'flex',flexDirection:'column',background:'linear-gradient(160deg,#e8d5be 0%,#ddc9b0 40%,#e0cfc0 100%)',fontFamily:"'Lora',serif"}}>
-      <div style={{position:'fixed',inset:0,pointerEvents:'none',background:'radial-gradient(ellipse at 20% 20%,rgba(255,245,230,0.4) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(200,160,110,0.15) 0%,transparent 60%)'}}/>
-
-      {/* Header */}
-      <div style={{position:'sticky',top:0,zIndex:50,background:'rgba(240,226,208,0.75)',backdropFilter:'blur(24px)',WebkitBackdropFilter:'blur(24px)',borderBottom:'1px solid rgba(255,255,255,0.5)',boxShadow:'0 1px 0 rgba(180,140,110,0.15)',padding:'13px 16px 11px'}}>
-        <div style={{maxWidth:780,margin:'0 auto'}}>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:tab==='home'?11:0}}>
-            <div>
-              <h1 style={{fontFamily:"'DM Serif Display',serif",fontSize:21,color:'#1e0e04',letterSpacing:'-0.01em'}}>PinPlate</h1>
-              <p style={{fontSize:11,color:'rgba(100,70,40,0.5)',marginTop:1,fontFamily:"'Lora',serif"}}>
-                {restaurants.filter(r=>r.status==='want').length} to try · {restaurants.filter(r=>r.status==='visited').length} visited
-              </p>
-            </div>
-            <div style={{display:'flex',gap:8,alignItems:'center'}}>
-              {/* Tab toggle */}
-              <div style={{display:'flex',background:'rgba(180,140,110,0.15)',borderRadius:10,padding:3,border:'1px solid rgba(180,140,110,0.2)'}}>
-                {[{k:'home',l:'🍽 List'},{k:'map',l:'🗺 Map'}].map(t=>(
-                  <button key={t.k} onClick={()=>setTab(t.k)} style={{padding:'6px 12px',borderRadius:8,border:'none',cursor:'pointer',fontFamily:"'Lora',serif",fontSize:12,transition:'all 0.15s',background:tab===t.k?'rgba(255,248,240,0.9)':'transparent',color:tab===t.k?'#1e0e04':'rgba(100,70,40,0.5)',boxShadow:tab===t.k?'0 1px 4px rgba(30,14,4,0.1)':'none'}}>{t.l}</button>
-                ))}
-              </div>
-              {/* Add menu */}
-              <div style={{position:'relative'}}>
-                <button onClick={()=>setShowAddMenu(v=>!v)} style={{background:'#2c1f14',color:'#fdf8f3',border:'none',borderRadius:10,padding:'8px 15px',fontFamily:"'DM Serif Display',serif",fontSize:13,cursor:'pointer',letterSpacing:'0.03em',boxShadow:'0 3px 10px rgba(30,14,4,0.22)'}}>+ Add</button>
-                {showAddMenu&&(
-                  <div style={{position:'absolute',top:'calc(100% + 8px)',right:0,background:'rgba(255,248,240,0.96)',backdropFilter:'blur(20px)',borderRadius:12,border:'1px solid rgba(180,140,110,0.25)',boxShadow:'0 8px 32px rgba(30,14,4,0.15)',padding:6,zIndex:100,minWidth:190,animation:'slideUp 0.15s ease'}} onClick={e=>e.stopPropagation()}>
-                    <button onClick={()=>{setShowAddMenu(false);setEditTarget(null);setShowEdit(true);}} style={{width:'100%',padding:'10px 14px',border:'none',background:'none',textAlign:'left',fontFamily:"'Lora',serif",fontSize:13,color:'#1e0e04',cursor:'pointer',borderRadius:8,display:'flex',gap:10,alignItems:'center'}}>✏️ Add manually</button>
-                    <button onClick={()=>{setShowAddMenu(false);setShowImport(true);}} style={{width:'100%',padding:'10px 14px',border:'none',background:'none',textAlign:'left',fontFamily:"'Lora',serif",fontSize:13,color:'#1e0e04',cursor:'pointer',borderRadius:8,display:'flex',gap:10,alignItems:'center'}}>📍 Import from Google Maps</button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          {tab==='home'&&(
-            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search restaurants, cuisine, city, friend…" style={{width:'100%',padding:'9px 14px',background:'rgba(255,248,240,0.55)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',border:'1px solid rgba(255,255,255,0.55)',borderRadius:10,color:'#1e0e04',fontFamily:"'Lora',serif",fontSize:13,outline:'none',boxShadow:'inset 0 1px 3px rgba(30,14,4,0.05)'}}/>
-          )}
-        </div>
-      </div>
-
-      {/* List view */}
-      {tab==='home'&&(
-        <div style={{maxWidth:780,margin:'0 auto',width:'100%',padding:'18px 16px 80px'}}>
-          {loading?(
-            <div style={{textAlign:'center',padding:'60px 0'}}><p style={{fontFamily:"'Lora',serif",fontSize:15,color:'rgba(60,35,14,0.4)'}}>Loading…</p></div>
-          ):(
-            <div style={{display:'flex',gap:14,alignItems:'flex-start'}}>
-              <Column title="Recommended" icon="◎" items={wantList} onCardClick={setDetail}/>
-              <Column title="Visited" icon="✓" items={visitedList} onCardClick={setDetail}/>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Map view */}
-      {tab==='map'&&!loading&&(
-        <MapView spots={restaurants} onMarkerClick={r=>setDetail(r)}/>
-      )}
-    </div>
-
-    {showAddMenu&&<div style={{position:'fixed',inset:0,zIndex:40}} onClick={()=>setShowAddMenu(false)}/>}
-
-    {detail&&<DetailPanel r={detail} onClose={()=>setDetail(null)} onEdit={r=>{setEditTarget(r);setDetail(null);setShowEdit(true);}} onMarkVisited={handleMarkVisited} onRate={handleRate}/>}
-    {showEdit&&<EditModal onClose={()=>{setShowEdit(false);setEditTarget(null);}} onSave={handleSave} editData={editTarget}/>}
-    {showImport&&<ImportModal onClose={()=>setShowImport(false)} onImport={handleSave}/>}
-
-    {toast&&<div style={{position:'fixed',bottom:24,left:'50%',transform:'translateX(-50%)',background:'#2c1f14',color:'#fdf8f3',padding:'10px 20px',borderRadius:50,fontFamily:"'Lora',serif",fontSize:14,zIndex:500,boxShadow:'0 4px 20px rgba(30,14,4,0.25)',animation:'slideUp 0.2s ease',whiteSpace:'nowrap'}}>{toast}</div>}
-  </>);
+  function _handleSave() {
+    _handleSave = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3(form) {
+      var payload, error, _yield$sb$from$update, _yield$sb$from$insert;
+      return _regenerator().w(function (_context3) {
+        while (1) switch (_context3.n) {
+          case 0:
+            payload = appToDb(form);
+            if (!editTarget) {
+              _context3.n = 2;
+              break;
+            }
+            _context3.n = 1;
+            return sb.from('spots').update(payload).eq('id', editTarget.id);
+          case 1:
+            _yield$sb$from$update = _context3.v;
+            error = _yield$sb$from$update.error;
+            _context3.n = 4;
+            break;
+          case 2:
+            _context3.n = 3;
+            return sb.from('spots').insert(payload);
+          case 3:
+            _yield$sb$from$insert = _context3.v;
+            error = _yield$sb$from$insert.error;
+          case 4:
+            if (!error) {
+              _context3.n = 5;
+              break;
+            }
+            showToast('Save failed: ' + error.message);
+            return _context3.a(2);
+          case 5:
+            setShowEdit(false);
+            setShowImport(false);
+            setEditTarget(null);
+            setDetail(null);
+            showToast(editTarget ? 'Updated!' : 'Pinned! 📍');
+            _context3.n = 6;
+            return loadSpots();
+          case 6:
+            return _context3.a(2);
+        }
+      }, _callee3);
+    }));
+    return _handleSave.apply(this, arguments);
+  }
+  function handleMarkVisited(_x4) {
+    return _handleMarkVisited.apply(this, arguments);
+  }
+  function _handleMarkVisited() {
+    _handleMarkVisited = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4(id) {
+      var _yield$sb$from$update2, error;
+      return _regenerator().w(function (_context4) {
+        while (1) switch (_context4.n) {
+          case 0:
+            _context4.n = 1;
+            return sb.from('spots').update({
+              visited: true
+            }).eq('id', id);
+          case 1:
+            _yield$sb$from$update2 = _context4.v;
+            error = _yield$sb$from$update2.error;
+            if (!error) {
+              _context4.n = 2;
+              break;
+            }
+            showToast('Update failed');
+            return _context4.a(2);
+          case 2:
+            setRestaurants(function (rs) {
+              return rs.map(function (r) {
+                return r.id === id ? _objectSpread(_objectSpread({}, r), {}, {
+                  status: 'visited'
+                }) : r;
+              });
+            });
+            setDetail(function (d) {
+              return (d === null || d === void 0 ? void 0 : d.id) === id ? _objectSpread(_objectSpread({}, d), {}, {
+                status: 'visited'
+              }) : d;
+            });
+            showToast('Marked as visited! ✓');
+          case 3:
+            return _context4.a(2);
+        }
+      }, _callee4);
+    }));
+    return _handleMarkVisited.apply(this, arguments);
+  }
+  function handleRate(_x5, _x6) {
+    return _handleRate.apply(this, arguments);
+  }
+  function _handleRate() {
+    _handleRate = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5(id, rating) {
+      var _yield$sb$from$update3, error;
+      return _regenerator().w(function (_context5) {
+        while (1) switch (_context5.n) {
+          case 0:
+            _context5.n = 1;
+            return sb.from('spots').update({
+              rating: rating,
+              visited: true
+            }).eq('id', id);
+          case 1:
+            _yield$sb$from$update3 = _context5.v;
+            error = _yield$sb$from$update3.error;
+            if (!error) {
+              _context5.n = 2;
+              break;
+            }
+            showToast('Rating failed');
+            return _context5.a(2);
+          case 2:
+            setRestaurants(function (rs) {
+              return rs.map(function (r) {
+                return r.id === id ? _objectSpread(_objectSpread({}, r), {}, {
+                  rating: rating,
+                  status: 'visited'
+                }) : r;
+              });
+            });
+            setDetail(function (d) {
+              return (d === null || d === void 0 ? void 0 : d.id) === id ? _objectSpread(_objectSpread({}, d), {}, {
+                rating: rating,
+                status: 'visited'
+              }) : d;
+            });
+            showToast('★'.repeat(rating) + ' Saved!');
+          case 3:
+            return _context5.a(2);
+        }
+      }, _callee5);
+    }));
+    return _handleRate.apply(this, arguments);
+  }
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("style", null, "\n      @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');\n      *{box-sizing:border-box;margin:0;padding:0;}\n      body{background:#e8d9c8;}\n      ::placeholder{color:rgba(100,70,40,0.35)!important;}\n      ::-webkit-scrollbar{width:4px;}\n      ::-webkit-scrollbar-track{background:transparent;}\n      ::-webkit-scrollbar-thumb{background:rgba(180,140,110,0.3);border-radius:4px;}\n      select option{background:#f5ede0;}\n      .leaflet-container{font-family:'Lora',serif!important;}\n      @keyframes fadeIn{from{opacity:0}to{opacity:1}}\n      @keyframes slideUp{from{opacity:0;transform:translateY(20px) scale(0.98)}to{opacity:1;transform:none}}\n    "), /*#__PURE__*/React.createElement("div", {
+    style: {
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      background: 'linear-gradient(160deg,#e8d5be 0%,#ddc9b0 40%,#e0cfc0 100%)',
+      fontFamily: "'Lora',serif"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'fixed',
+      inset: 0,
+      pointerEvents: 'none',
+      background: 'radial-gradient(ellipse at 20% 20%,rgba(255,245,230,0.4) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(200,160,110,0.15) 0%,transparent 60%)'
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'sticky',
+      top: 0,
+      zIndex: 50,
+      background: 'rgba(240,226,208,0.75)',
+      backdropFilter: 'blur(24px)',
+      WebkitBackdropFilter: 'blur(24px)',
+      borderBottom: '1px solid rgba(255,255,255,0.5)',
+      boxShadow: '0 1px 0 rgba(180,140,110,0.15)',
+      padding: '13px 16px 11px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      maxWidth: 780,
+      margin: '0 auto'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: tab === 'home' ? 11 : 0
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", {
+    style: {
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 21,
+      color: '#1e0e04',
+      letterSpacing: '-0.01em'
+    }
+  }, "PinPlate"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 11,
+      color: 'rgba(100,70,40,0.5)',
+      marginTop: 1,
+      fontFamily: "'Lora',serif"
+    }
+  }, restaurants.filter(function (r) {
+    return r.status === 'want';
+  }).length, " to try \xB7 ", restaurants.filter(function (r) {
+    return r.status === 'visited';
+  }).length, " visited")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8,
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      background: 'rgba(180,140,110,0.15)',
+      borderRadius: 10,
+      padding: 3,
+      border: '1px solid rgba(180,140,110,0.2)'
+    }
+  }, [{
+    k: 'home',
+    l: '🍽 List'
+  }, {
+    k: 'map',
+    l: '🗺 Map'
+  }].map(function (t) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: t.k,
+      onClick: function onClick() {
+        return setTab(t.k);
+      },
+      style: {
+        padding: '6px 12px',
+        borderRadius: 8,
+        border: 'none',
+        cursor: 'pointer',
+        fontFamily: "'Lora',serif",
+        fontSize: 12,
+        transition: 'all 0.15s',
+        background: tab === t.k ? 'rgba(255,248,240,0.9)' : 'transparent',
+        color: tab === t.k ? '#1e0e04' : 'rgba(100,70,40,0.5)',
+        boxShadow: tab === t.k ? '0 1px 4px rgba(30,14,4,0.1)' : 'none'
+      }
+    }, t.l);
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'relative'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return setShowAddMenu(function (v) {
+        return !v;
+      });
+    },
+    style: {
+      background: '#2c1f14',
+      color: '#fdf8f3',
+      border: 'none',
+      borderRadius: 10,
+      padding: '8px 15px',
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 13,
+      cursor: 'pointer',
+      letterSpacing: '0.03em',
+      boxShadow: '0 3px 10px rgba(30,14,4,0.22)'
+    }
+  }, "+ Add"), showAddMenu && /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'absolute',
+      top: 'calc(100% + 8px)',
+      right: 0,
+      background: 'rgba(255,248,240,0.96)',
+      backdropFilter: 'blur(20px)',
+      borderRadius: 12,
+      border: '1px solid rgba(180,140,110,0.25)',
+      boxShadow: '0 8px 32px rgba(30,14,4,0.15)',
+      padding: 6,
+      zIndex: 100,
+      minWidth: 190,
+      animation: 'slideUp 0.15s ease'
+    },
+    onClick: function onClick(e) {
+      return e.stopPropagation();
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      setShowAddMenu(false);
+      setEditTarget(null);
+      setShowEdit(true);
+    },
+    style: {
+      width: '100%',
+      padding: '10px 14px',
+      border: 'none',
+      background: 'none',
+      textAlign: 'left',
+      fontFamily: "'Lora',serif",
+      fontSize: 13,
+      color: '#1e0e04',
+      cursor: 'pointer',
+      borderRadius: 8,
+      display: 'flex',
+      gap: 10,
+      alignItems: 'center'
+    }
+  }, "\u270F\uFE0F Add manually"), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      setShowAddMenu(false);
+      setShowImport(true);
+    },
+    style: {
+      width: '100%',
+      padding: '10px 14px',
+      border: 'none',
+      background: 'none',
+      textAlign: 'left',
+      fontFamily: "'Lora',serif",
+      fontSize: 13,
+      color: '#1e0e04',
+      cursor: 'pointer',
+      borderRadius: 8,
+      display: 'flex',
+      gap: 10,
+      alignItems: 'center'
+    }
+  }, "\uD83D\uDCCD Import from Google Maps"))))), tab === 'home' && /*#__PURE__*/React.createElement("input", {
+    value: search,
+    onChange: function onChange(e) {
+      return setSearch(e.target.value);
+    },
+    placeholder: "Search restaurants, cuisine, city, friend\u2026",
+    style: {
+      width: '100%',
+      padding: '9px 14px',
+      background: 'rgba(255,248,240,0.55)',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
+      border: '1px solid rgba(255,255,255,0.55)',
+      borderRadius: 10,
+      color: '#1e0e04',
+      fontFamily: "'Lora',serif",
+      fontSize: 13,
+      outline: 'none',
+      boxShadow: 'inset 0 1px 3px rgba(30,14,4,0.05)'
+    }
+  }))), tab === 'home' && /*#__PURE__*/React.createElement("div", {
+    style: {
+      maxWidth: 780,
+      margin: '0 auto',
+      width: '100%',
+      padding: '18px 16px 80px'
+    }
+  }, loading ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: 'center',
+      padding: '60px 0'
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 15,
+      color: 'rgba(60,35,14,0.4)'
+    }
+  }, "Loading\u2026")) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 14,
+      alignItems: 'flex-start'
+    }
+  }, /*#__PURE__*/React.createElement(Column, {
+    title: "Recommended",
+    icon: "\u25CE",
+    items: wantList,
+    onCardClick: setDetail
+  }), /*#__PURE__*/React.createElement(Column, {
+    title: "Visited",
+    icon: "\u2713",
+    items: visitedList,
+    onCardClick: setDetail
+  }))), tab === 'map' && !loading && /*#__PURE__*/React.createElement(MapView, {
+    spots: restaurants,
+    onMarkerClick: function onMarkerClick(r) {
+      return setDetail(r);
+    }
+  })), showAddMenu && /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'fixed',
+      inset: 0,
+      zIndex: 40
+    },
+    onClick: function onClick() {
+      return setShowAddMenu(false);
+    }
+  }), detail && /*#__PURE__*/React.createElement(DetailPanel, {
+    r: detail,
+    onClose: function onClose() {
+      return setDetail(null);
+    },
+    onEdit: function onEdit(r) {
+      setEditTarget(r);
+      setDetail(null);
+      setShowEdit(true);
+    },
+    onMarkVisited: handleMarkVisited,
+    onRate: handleRate
+  }), showEdit && /*#__PURE__*/React.createElement(EditModal, {
+    onClose: function onClose() {
+      setShowEdit(false);
+      setEditTarget(null);
+    },
+    onSave: handleSave,
+    editData: editTarget
+  }), showImport && /*#__PURE__*/React.createElement(ImportModal, {
+    onClose: function onClose() {
+      return setShowImport(false);
+    },
+    onImport: handleSave
+  }), toast && /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'fixed',
+      bottom: 24,
+      left: '50%',
+      transform: 'translateX(-50%)',
+      background: '#2c1f14',
+      color: '#fdf8f3',
+      padding: '10px 20px',
+      borderRadius: 50,
+      fontFamily: "'Lora',serif",
+      fontSize: 14,
+      zIndex: 500,
+      boxShadow: '0 4px 20px rgba(30,14,4,0.25)',
+      animation: 'slideUp 0.2s ease',
+      whiteSpace: 'nowrap'
+    }
+  }, toast));
 }
+ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
