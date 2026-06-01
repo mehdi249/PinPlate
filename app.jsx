@@ -58,7 +58,9 @@ function parseGoogleMapsHtml(html) {
   const name =
     html.match(/<title>([^<|]+?) ?[-–|] ?Google Maps<\/title>/i)?.[1]?.trim() ||
     html.match(/property="og:title"[^>]+content="([^"]+)"/i)?.[1]?.trim() ||
-    html.match(/content="([^"]+)"[^>]+property="og:title"/i)?.[1]?.trim() || '';
+    html.match(/content="([^"]+)"[^>]+property="og:title"/i)?.[1]?.trim() ||
+    html.match(/"name"\s*:\s*"([^"]{2,80})"/)?.[1]?.trim() ||
+    html.match(/["']placeName["']\s*:\s*["']([^"']{2,80})["']/)?.[1]?.trim() || '';
   const latM = html.match(/"latitude"\s*:\s*(-?\d+\.\d+)/) || html.match(/itemprop="latitude"[^>]+content="(-?\d+\.\d+)"/i);
   const lngM = html.match(/"longitude"\s*:\s*(-?\d+\.\d+)/) || html.match(/itemprop="longitude"[^>]+content="(-?\d+\.\d+)"/i);
   return { name, lat: latM?parseFloat(latM[1]):null, lng: lngM?parseFloat(lngM[1]):null };
@@ -67,10 +69,13 @@ function parseGoogleMapsHtml(html) {
 // Extract full Google Maps URL embedded in Firebase Dynamic Link debug (?d=1) pages
 function extractMapsUrlFromFdl(html) {
   const patterns = [
-    /href="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/,
-    /content="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/,
-    /content="(https:\/\/maps\.app\.goo\.gl\/[^"]+)"/,
-    /"(https:\/\/www\.google\.com\/maps\/place\/[^"]{20,})"/,
+    /href="(https:\/\/(?:www\.)?google\.com\/maps\/place\/[^"]+)"/,
+    /content="(https:\/\/(?:www\.)?google\.com\/maps\/place\/[^"]+)"/,
+    /content="(https:\/\/maps\.(?:app\.)?goo\.gl\/[^"]+)"/,
+    /"(https:\/\/(?:www\.)?google\.com\/maps\/place\/[^"]{20,})"/,
+    /href="(https:\/\/maps\.google\.com\/maps\/place\/[^"]+)"/,
+    // FDL pages embed the destination in data- attributes or JS variables
+    /destinationUrl["'\s]*:["'\s]*(https:\/\/[^"'\s,]+google\.com\/maps\/place\/[^"'\s,]+)/,
   ];
   for (const p of patterns) {
     const m = html.match(p);
@@ -201,10 +206,13 @@ const ImportModal = ({ onClose, onImport }) => {
         try {
           const resp = await race(fetch(debugUrl));
           const html = await resp.text();
+          console.log('[PinPlate FDL] html snippet:', html.slice(0,2000));
           const mapsUrl = extractMapsUrlFromFdl(html);
-          if (mapsUrl) { resolved = mapsUrl; htmlData = parseGoogleMapsHtml(html) || htmlData; }
-          if (!htmlData.name) htmlData = parseGoogleMapsHtml(html);
-        } catch(e0) {}
+          console.log('[PinPlate FDL] extracted mapsUrl:', mapsUrl);
+          if (mapsUrl) resolved = mapsUrl;
+          htmlData = parseGoogleMapsHtml(html);
+          console.log('[PinPlate FDL] htmlData:', htmlData);
+        } catch(e0) { console.log('[PinPlate FDL] fetch error:', e0.message); }
         // Also try via proxy (works if proxy IP is allowed)
         if (!htmlData.name) {
           try {
@@ -315,13 +323,10 @@ const ImportModal = ({ onClose, onImport }) => {
           </div>}
           <div style={{display:'flex',flexDirection:'column',gap:13}}>
             <div><label style={lbl}>Restaurant Name *</label><input style={inp} value={form.name} onChange={e=>set('name',e.target.value)} autoFocus={!form.name}/></div>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-              <div><label style={lbl}>Cuisine</label>
-                <select style={{...inp,cursor:'pointer'}} value={form.cuisine} onChange={e=>set('cuisine',e.target.value)}>
-                  {CUISINES.map(c=><option key={c}>{c}</option>)}
-                </select>
-              </div>
-              <div><label style={lbl}>Recommended By</label><input style={inp} value={form.recommender} onChange={e=>set('recommender',e.target.value)} placeholder="e.g. Sarah"/></div>
+            <div><label style={lbl}>Cuisine</label>
+              <select style={{...inp,cursor:'pointer'}} value={form.cuisine} onChange={e=>set('cuisine',e.target.value)}>
+                {CUISINES.map(c=><option key={c}>{c}</option>)}
+              </select>
             </div>
             <div><label style={lbl}>Location</label><input style={inp} value={form.location} onChange={e=>set('location',e.target.value)}/></div>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>

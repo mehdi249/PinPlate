@@ -103,8 +103,8 @@ function parseGoogleMapsUrl(url) {
   return out;
 }
 function parseGoogleMapsHtml(html) {
-  var _html$match, _html$match2, _html$match3;
-  var name = ((_html$match = html.match(/<title>([^<|]+?) ?[-–|] ?Google Maps<\/title>/i)) === null || _html$match === void 0 || (_html$match = _html$match[1]) === null || _html$match === void 0 ? void 0 : _html$match.trim()) || ((_html$match2 = html.match(/property="og:title"[^>]+content="([^"]+)"/i)) === null || _html$match2 === void 0 || (_html$match2 = _html$match2[1]) === null || _html$match2 === void 0 ? void 0 : _html$match2.trim()) || ((_html$match3 = html.match(/content="([^"]+)"[^>]+property="og:title"/i)) === null || _html$match3 === void 0 || (_html$match3 = _html$match3[1]) === null || _html$match3 === void 0 ? void 0 : _html$match3.trim()) || '';
+  var _html$match, _html$match2, _html$match3, _html$match4, _html$match5;
+  var name = ((_html$match = html.match(/<title>([^<|]+?) ?[-–|] ?Google Maps<\/title>/i)) === null || _html$match === void 0 || (_html$match = _html$match[1]) === null || _html$match === void 0 ? void 0 : _html$match.trim()) || ((_html$match2 = html.match(/property="og:title"[^>]+content="([^"]+)"/i)) === null || _html$match2 === void 0 || (_html$match2 = _html$match2[1]) === null || _html$match2 === void 0 ? void 0 : _html$match2.trim()) || ((_html$match3 = html.match(/content="([^"]+)"[^>]+property="og:title"/i)) === null || _html$match3 === void 0 || (_html$match3 = _html$match3[1]) === null || _html$match3 === void 0 ? void 0 : _html$match3.trim()) || ((_html$match4 = html.match(/"name"\s*:\s*"([^"]{2,80})"/)) === null || _html$match4 === void 0 || (_html$match4 = _html$match4[1]) === null || _html$match4 === void 0 ? void 0 : _html$match4.trim()) || ((_html$match5 = html.match(/["']placeName["']\s*:\s*["']([^"']{2,80})["']/)) === null || _html$match5 === void 0 || (_html$match5 = _html$match5[1]) === null || _html$match5 === void 0 ? void 0 : _html$match5.trim()) || '';
   var latM = html.match(/"latitude"\s*:\s*(-?\d+\.\d+)/) || html.match(/itemprop="latitude"[^>]+content="(-?\d+\.\d+)"/i);
   var lngM = html.match(/"longitude"\s*:\s*(-?\d+\.\d+)/) || html.match(/itemprop="longitude"[^>]+content="(-?\d+\.\d+)"/i);
   return {
@@ -116,7 +116,9 @@ function parseGoogleMapsHtml(html) {
 
 // Extract full Google Maps URL embedded in Firebase Dynamic Link debug (?d=1) pages
 function extractMapsUrlFromFdl(html) {
-  var patterns = [/href="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/, /content="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/, /content="(https:\/\/maps\.app\.goo\.gl\/[^"]+)"/, /"(https:\/\/www\.google\.com\/maps\/place\/[^"]{20,})"/];
+  var patterns = [/href="(https:\/\/(?:www\.)?google\.com\/maps\/place\/[^"]+)"/, /content="(https:\/\/(?:www\.)?google\.com\/maps\/place\/[^"]+)"/, /content="(https:\/\/maps\.(?:app\.)?goo\.gl\/[^"]+)"/, /"(https:\/\/(?:www\.)?google\.com\/maps\/place\/[^"]{20,})"/, /href="(https:\/\/maps\.google\.com\/maps\/place\/[^"]+)"/,
+  // FDL pages embed the destination in data- attributes or JS variables
+  /destinationUrl["'\s]*:["'\s]*(https:\/\/[^"'\s,]+google\.com\/maps\/place\/[^"'\s,]+)/];
   for (var _i = 0, _patterns = patterns; _i < _patterns.length; _i++) {
     var p = _patterns[_i];
     var m = html.match(p);
@@ -444,17 +446,18 @@ var ImportModal = function ImportModal(_ref3) {
             return resp.text();
           case 4:
             html = _context.v;
+            console.log('[PinPlate FDL] html snippet:', html.slice(0, 2000));
             mapsUrl = extractMapsUrlFromFdl(html);
-            if (mapsUrl) {
-              resolved = mapsUrl;
-              htmlData = parseGoogleMapsHtml(html) || htmlData;
-            }
-            if (!htmlData.name) htmlData = parseGoogleMapsHtml(html);
+            console.log('[PinPlate FDL] extracted mapsUrl:', mapsUrl);
+            if (mapsUrl) resolved = mapsUrl;
+            htmlData = parseGoogleMapsHtml(html);
+            console.log('[PinPlate FDL] htmlData:', htmlData);
             _context.n = 6;
             break;
           case 5:
             _context.p = 5;
             _t = _context.v;
+            console.log('[PinPlate FDL] fetch error:', _t.message);
           case 6:
             if (htmlData.name) {
               _context.n = 13;
@@ -796,13 +799,7 @@ var ImportModal = function ImportModal(_ref3) {
       return set('name', e.target.value);
     },
     autoFocus: !form.name
-  })), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      gap: 10
-    }
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     style: lbl
   }, "Cuisine"), /*#__PURE__*/React.createElement("select", {
     style: _objectSpread(_objectSpread({}, inp), {}, {
@@ -816,15 +813,6 @@ var ImportModal = function ImportModal(_ref3) {
     return /*#__PURE__*/React.createElement("option", {
       key: c
     }, c);
-  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
-    style: lbl
-  }, "Recommended By"), /*#__PURE__*/React.createElement("input", {
-    style: inp,
-    value: form.recommender,
-    onChange: function onChange(e) {
-      return set('recommender', e.target.value);
-    },
-    placeholder: "e.g. Sarah"
   }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     style: lbl
   }, "Location"), /*#__PURE__*/React.createElement("input", {
