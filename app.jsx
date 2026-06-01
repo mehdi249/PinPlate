@@ -649,43 +649,48 @@ const Card = ({ r, onClick }) => {
   );
 };
 
-// ── Feed (side-by-side lanes with cuisine chips) ─────────────
+// ── Feed ─────────────────────────────────────────────────────
 const Feed = ({ restaurants, onCardClick }) => {
   const [cuisine, setCuisine] = useState('All');
 
-  const cuisines = useMemo(()=>[...new Set(restaurants.map(r=>r.cuisine).filter(Boolean))].sort(),[restaurants]);
-  const show      = cuisine==='All' ? restaurants : restaurants.filter(r=>r.cuisine===cuisine);
-  const wantList  = show.filter(r=>r.status==='want');
+  const cuisines    = useMemo(()=>[...new Set(restaurants.map(r=>r.cuisine).filter(Boolean))].sort(),[restaurants]);
+  const show        = cuisine==='All' ? restaurants : restaurants.filter(r=>r.cuisine===cuisine);
+  const wantList    = show.filter(r=>r.status==='want');
   const visitedList = show.filter(r=>r.status==='visited');
 
-  const chip = c => (
-    <button key={c} onClick={()=>setCuisine(c)} style={{flexShrink:0,padding:'6px 14px',borderRadius:20,border:`1px solid ${cuisine===c?C.espr:C.bd}`,background:cuisine===c?C.espr:'transparent',color:cuisine===c?'#fdf8f3':C.mid,fontFamily:C.ui,fontSize:12,fontWeight:500,cursor:'pointer',transition:'all 0.15s'}}>{c}</button>
-  );
-
-  const Lane = ({list, emptyMsg}) => (
-    <div style={{display:'flex',gap:10,overflowX:'auto',scrollSnapType:'x mandatory',WebkitOverflowScrolling:'touch',scrollbarWidth:'none',msOverflowStyle:'none',paddingBottom:8}}>
-      {list.length===0
-        ?<p style={{fontFamily:C.ui,fontSize:12,color:C.dim,padding:'16px 2px',flexShrink:0,lineHeight:1.5}}>{emptyMsg}</p>
-        :list.map(r=><div key={r.id} style={{flex:'0 0 calc(100% - 16px)',scrollSnapAlign:'start'}}><Card r={r} onClick={()=>onCardClick(r)}/></div>)
-      }
-    </div>
-  );
-
-  const LaneHead = ({title, count}) => (
-    <div style={{display:'flex',alignItems:'baseline',gap:6,marginBottom:10,paddingBottom:8,borderBottom:`1px solid ${C.bd}`}}>
-      <span style={{fontFamily:C.display,fontSize:17,color:C.text}}>{title}</span>
-      <span style={{fontFamily:C.ui,fontSize:11,color:C.dim,fontWeight:500}}>{count}</span>
+  const stickyHead = title => (
+    <div style={{position:'sticky',top:0,zIndex:10,background:C.bg,padding:'10px 0 8px',borderBottom:`1px solid ${C.bd}`,marginBottom:10}}>
+      <span style={{fontFamily:C.display,fontSize:18,color:C.text}}>{title}</span>
     </div>
   );
 
   return (
     <div style={{display:'flex',flexDirection:'column'}}>
-      <div style={{display:'flex',gap:8,overflowX:'auto',padding:'12px 16px 10px',scrollbarWidth:'none',WebkitOverflowScrolling:'touch',flexShrink:0}}>
-        {['All',...cuisines].map(chip)}
+      {/* Cuisine chips */}
+      <div style={{display:'flex',gap:8,overflowX:'auto',padding:'10px 16px 8px',scrollbarWidth:'none',WebkitOverflowScrolling:'touch',flexShrink:0}}>
+        {['All',...cuisines].map(c=>(
+          <button key={c} onClick={()=>setCuisine(c)} style={{flexShrink:0,padding:'6px 14px',borderRadius:20,border:`1px solid ${cuisine===c?C.espr:C.bd}`,background:cuisine===c?C.espr:'transparent',color:cuisine===c?'#fdf8f3':C.mid,fontFamily:C.ui,fontSize:12,fontWeight:500,cursor:'pointer',transition:'all 0.15s'}}>{c}</button>
+        ))}
       </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,padding:'4px 16px 80px'}}>
-        <div><LaneHead title="To Visit" count={wantList.length}/><Lane list={wantList} emptyMsg={cuisine==='All'?'Nothing saved yet':`No ${cuisine} spots to visit`}/></div>
-        <div><LaneHead title="Visited"  count={visitedList.length}/><Lane list={visitedList} emptyMsg={cuisine==='All'?'None yet':`No ${cuisine} visited`}/></div>
+
+      {/* Stat pills */}
+      <div style={{display:'flex',gap:8,padding:'4px 16px 12px'}}>
+        <span style={{fontFamily:C.ui,fontSize:12,fontWeight:500,color:C.amber,background:C.amberBg,border:`1px solid ${C.amberBd}`,borderRadius:20,padding:'4px 12px'}}>To Visit · {wantList.length}</span>
+        <span style={{fontFamily:C.ui,fontSize:12,fontWeight:500,color:C.sage,background:C.sageBg,border:`1px solid ${C.sageBd}`,borderRadius:20,padding:'4px 12px'}}>Visited · {visitedList.length}</span>
+      </div>
+
+      {/* Full-width card list */}
+      <div style={{padding:'0 16px 80px',display:'flex',flexDirection:'column'}}>
+        {stickyHead('To Visit')}
+        {wantList.length===0
+          ?<p style={{fontFamily:C.ui,fontSize:13,color:C.dim,padding:'20px 0 32px'}}>{cuisine==='All'?'Nothing saved yet — tap + Add to start':`No ${cuisine} spots to visit`}</p>
+          :<div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:32}}>{wantList.map(r=><Card key={r.id} r={r} onClick={()=>onCardClick(r)}/>)}</div>
+        }
+        {stickyHead('Visited')}
+        {visitedList.length===0
+          ?<p style={{fontFamily:C.ui,fontSize:13,color:C.dim,padding:'20px 0'}}>{cuisine==='All'?'None yet — mark a spot as visited to see it here':`No ${cuisine} spots visited`}</p>
+          :<div style={{display:'flex',flexDirection:'column',gap:10}}>{visitedList.map(r=><Card key={r.id} r={r} onClick={()=>onCardClick(r)}/>)}</div>
+        }
       </div>
     </div>
   );

@@ -2192,7 +2192,7 @@ var Card = function Card(_ref7) {
   })))));
 };
 
-// ── Feed (side-by-side lanes with cuisine chips) ─────────────
+// ── Feed ─────────────────────────────────────────────────────
 var Feed = function Feed(_ref8) {
   var restaurants = _ref8.restaurants,
     onCardClick = _ref8.onCardClick;
@@ -2214,7 +2214,41 @@ var Feed = function Feed(_ref8) {
   var visitedList = show.filter(function (r) {
     return r.status === 'visited';
   });
-  var chip = function chip(c) {
+  var stickyHead = function stickyHead(title) {
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
+        background: C.bg,
+        padding: '10px 0 8px',
+        borderBottom: "1px solid ".concat(C.bd),
+        marginBottom: 10
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontFamily: C.display,
+        fontSize: 18,
+        color: C.text
+      }
+    }, title));
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8,
+      overflowX: 'auto',
+      padding: '10px 16px 8px',
+      scrollbarWidth: 'none',
+      WebkitOverflowScrolling: 'touch',
+      flexShrink: 0
+    }
+  }, ['All'].concat(_toConsumableArray(cuisines)).map(function (c) {
     return /*#__PURE__*/React.createElement("button", {
       key: c,
       onClick: function onClick() {
@@ -2234,106 +2268,83 @@ var Feed = function Feed(_ref8) {
         transition: 'all 0.15s'
       }
     }, c);
-  };
-  var Lane = function Lane(_ref9) {
-    var list = _ref9.list,
-      emptyMsg = _ref9.emptyMsg;
-    return /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        gap: 10,
-        overflowX: 'auto',
-        scrollSnapType: 'x mandatory',
-        WebkitOverflowScrolling: 'touch',
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none',
-        paddingBottom: 8
-      }
-    }, list.length === 0 ? /*#__PURE__*/React.createElement("p", {
-      style: {
-        fontFamily: C.ui,
-        fontSize: 12,
-        color: C.dim,
-        padding: '16px 2px',
-        flexShrink: 0,
-        lineHeight: 1.5
-      }
-    }, emptyMsg) : list.map(function (r) {
-      return /*#__PURE__*/React.createElement("div", {
-        key: r.id,
-        style: {
-          flex: '0 0 calc(100% - 16px)',
-          scrollSnapAlign: 'start'
-        }
-      }, /*#__PURE__*/React.createElement(Card, {
-        r: r,
-        onClick: function onClick() {
-          return onCardClick(r);
-        }
-      }));
-    }));
-  };
-  var LaneHead = function LaneHead(_ref0) {
-    var title = _ref0.title,
-      count = _ref0.count;
-    return /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        alignItems: 'baseline',
-        gap: 6,
-        marginBottom: 10,
-        paddingBottom: 8,
-        borderBottom: "1px solid ".concat(C.bd)
-      }
-    }, /*#__PURE__*/React.createElement("span", {
-      style: {
-        fontFamily: C.display,
-        fontSize: 17,
-        color: C.text
-      }
-    }, title), /*#__PURE__*/React.createElement("span", {
-      style: {
-        fontFamily: C.ui,
-        fontSize: 11,
-        color: C.dim,
-        fontWeight: 500
-      }
-    }, count));
-  };
-  return /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     style: {
+      display: 'flex',
+      gap: 8,
+      padding: '4px 16px 12px'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 12,
+      fontWeight: 500,
+      color: C.amber,
+      background: C.amberBg,
+      border: "1px solid ".concat(C.amberBd),
+      borderRadius: 20,
+      padding: '4px 12px'
+    }
+  }, "To Visit \xB7 ", wantList.length), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 12,
+      fontWeight: 500,
+      color: C.sage,
+      background: C.sageBg,
+      border: "1px solid ".concat(C.sageBd),
+      borderRadius: 20,
+      padding: '4px 12px'
+    }
+  }, "Visited \xB7 ", visitedList.length)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '0 16px 80px',
       display: 'flex',
       flexDirection: 'column'
     }
-  }, /*#__PURE__*/React.createElement("div", {
+  }, stickyHead('To Visit'), wantList.length === 0 ? /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 13,
+      color: C.dim,
+      padding: '20px 0 32px'
+    }
+  }, cuisine === 'All' ? 'Nothing saved yet — tap + Add to start' : "No ".concat(cuisine, " spots to visit")) : /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
-      gap: 8,
-      overflowX: 'auto',
-      padding: '12px 16px 10px',
-      scrollbarWidth: 'none',
-      WebkitOverflowScrolling: 'touch',
-      flexShrink: 0
+      flexDirection: 'column',
+      gap: 10,
+      marginBottom: 32
     }
-  }, ['All'].concat(_toConsumableArray(cuisines)).map(chip)), /*#__PURE__*/React.createElement("div", {
+  }, wantList.map(function (r) {
+    return /*#__PURE__*/React.createElement(Card, {
+      key: r.id,
+      r: r,
+      onClick: function onClick() {
+        return onCardClick(r);
+      }
+    });
+  })), stickyHead('Visited'), visitedList.length === 0 ? /*#__PURE__*/React.createElement("p", {
     style: {
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      gap: 8,
-      padding: '4px 16px 80px'
+      fontFamily: C.ui,
+      fontSize: 13,
+      color: C.dim,
+      padding: '20px 0'
     }
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(LaneHead, {
-    title: "To Visit",
-    count: wantList.length
-  }), /*#__PURE__*/React.createElement(Lane, {
-    list: wantList,
-    emptyMsg: cuisine === 'All' ? 'Nothing saved yet' : "No ".concat(cuisine, " spots to visit")
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(LaneHead, {
-    title: "Visited",
-    count: visitedList.length
-  }), /*#__PURE__*/React.createElement(Lane, {
-    list: visitedList,
-    emptyMsg: cuisine === 'All' ? 'None yet' : "No ".concat(cuisine, " visited")
+  }, cuisine === 'All' ? 'None yet — mark a spot as visited to see it here' : "No ".concat(cuisine, " spots visited")) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 10
+    }
+  }, visitedList.map(function (r) {
+    return /*#__PURE__*/React.createElement(Card, {
+      key: r.id,
+      r: r,
+      onClick: function onClick() {
+        return onCardClick(r);
+      }
+    });
   }))));
 };
 
@@ -2627,8 +2638,8 @@ function App() {
 
   // Auth state
   useEffect(function () {
-    sb.auth.getSession().then(function (_ref1) {
-      var session = _ref1.data.session;
+    sb.auth.getSession().then(function (_ref9) {
+      var session = _ref9.data.session;
       setSession(session);
       setAuthChecked(true);
     });
@@ -2685,15 +2696,15 @@ function App() {
               _context3.n = 6;
               break;
             }
-            safe = toInsert.map(function (_ref10) {
-              var id = _ref10.id,
-                name = _ref10.name,
-                cuisine = _ref10.cuisine,
-                location = _ref10.location,
-                recommended_by = _ref10.recommended_by,
-                notes = _ref10.notes,
-                visited = _ref10.visited,
-                rating = _ref10.rating;
+            safe = toInsert.map(function (_ref0) {
+              var id = _ref0.id,
+                name = _ref0.name,
+                cuisine = _ref0.cuisine,
+                location = _ref0.location,
+                recommended_by = _ref0.recommended_by,
+                notes = _ref0.notes,
+                visited = _ref0.visited,
+                rating = _ref0.rating;
               return {
                 id: id,
                 name: name || '',
@@ -3322,7 +3333,7 @@ function App() {
 }
 
 
-const BUILD_TIME = 1780352254;
+const BUILD_TIME = 1780352311;
 (function(){
   var checking=false;
   async function checkUpdate(){
