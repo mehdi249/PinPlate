@@ -170,19 +170,51 @@ const ImportModal = ({ onClose, onImport }) => {
   async function handleParse() {
     const rawUrl = url.trim();
     if (!rawUrl) return;
-    const isShort = rawUrl.includes('share.google') || rawUrl.includes('maps.app.goo.gl') || rawUrl.includes('goo.gl/maps');
+    const isMapsGoo = rawUrl.includes('maps.app.goo.gl') || rawUrl.includes('goo.gl/maps');
+    const isShort = rawUrl.includes('share.google') || isMapsGoo;
     setBusy(true);
     let resolved = rawUrl;
     let htmlData = { name:'', lat:null, lng:null };
     if (isShort) {
       const race = p => Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))]);
-      // Try direct browser fetch first — browser can follow Google's redirects natively
-      try {
-        const resp = await race(fetch(rawUrl));
-        if (resp.url && resp.url !== rawUrl) resolved = resp.url;
-        try { htmlData = parseGoogleMapsHtml(await resp.text()); } catch(e) {}
-      } catch(e0) {}
-      // Try proxies if direct fetch didn't get a name or resolve URL
+
+      // For maps.app.goo.gl: try Firebase Dynamic Link debug endpoint (?d=1)
+      // This returns a plain HTML page (no auth redirect) that embeds the full Maps URL
+      if (isMapsGoo && !htmlData.name) {
+        const debugUrl = rawUrl.split('?')[0] + '?d=1';
+        try {
+          const resp = await race(fetch(debugUrl));
+          const html = await resp.text();
+          htmlData = parseGoogleMapsHtml(html);
+          const m = html.match(/href="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/);
+          if (m) resolved = m[1];
+          const m2 = html.match(/content="(https:\/\/(?:maps\.app\.goo\.gl|www\.google\.com\/maps)[^"]+)"/);
+          if (!resolved.includes('google.com/maps') && m2) resolved = m2[1];
+        } catch(e0) {}
+        // Also try via proxy in case direct fetch is CORS-blocked
+        if (!htmlData.name) {
+          const debugUrl2 = rawUrl.split('?')[0] + '?d=1';
+          try {
+            const d = await race(fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(debugUrl2)}`).then(r=>r.json()));
+            if (d.contents) {
+              htmlData = parseGoogleMapsHtml(d.contents);
+              const m = d.contents.match(/href="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/);
+              if (m) resolved = m[1];
+            }
+          } catch(e1) {}
+        }
+      }
+
+      // Fallback: try direct fetch of original URL (browser follows redirect natively)
+      if (!htmlData.name && resolved === rawUrl) {
+        try {
+          const resp = await race(fetch(rawUrl));
+          if (resp.url && resp.url !== rawUrl) resolved = resp.url;
+          try { htmlData = parseGoogleMapsHtml(await resp.text()); } catch(e) {}
+        } catch(e) {}
+      }
+
+      // Last resort: generic CORS proxies on original URL
       if (!htmlData.name && resolved === rawUrl) {
         try {
           const d = await race(fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(rawUrl)}`).then(r=>r.json()));

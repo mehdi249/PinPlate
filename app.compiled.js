@@ -118,7 +118,7 @@ function nominatimReverse(_x, _x2) {
 } // ── StarRating ───────────────────────────────────────────────
 function _nominatimReverse() {
   _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7(lat, lng) {
-    var r, d, a, _t6;
+    var r, d, a, _t8;
     return _regenerator().w(function (_context7) {
       while (1) switch (_context7.p = _context7.n) {
         case 0:
@@ -139,7 +139,7 @@ function _nominatimReverse() {
           return _context7.a(2, [a.road, a.neighbourhood || a.suburb, a.city || a.town || a.village, a.country].filter(Boolean).slice(0, 3).join(', '));
         case 3:
           _context7.p = 3;
-          _t6 = _context7.v;
+          _t8 = _context7.v;
           return _context7.a(2, '');
       }
     }, _callee7, null, [[0, 3]]);
@@ -387,7 +387,7 @@ var ImportModal = function ImportModal(_ref3) {
   function _handleParse() {
     _handleParse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
       var _urlData$lat, _urlData$lng;
-      var rawUrl, isShort, resolved, htmlData, race, resp, _d$status, d, html, m, urlData, parsed, location, base, _t, _t2, _t3, _t4, _t5;
+      var rawUrl, isMapsGoo, isShort, resolved, htmlData, race, debugUrl, resp, html, m, m2, debugUrl2, d, _m, _resp, _d$status, _d, _html, _m2, urlData, parsed, location, base, _t, _t2, _t3, _t4, _t5, _t6, _t7;
       return _regenerator().w(function (_context) {
         while (1) switch (_context.p = _context.n) {
           case 0:
@@ -398,7 +398,8 @@ var ImportModal = function ImportModal(_ref3) {
             }
             return _context.a(2);
           case 1:
-            isShort = rawUrl.includes('share.google') || rawUrl.includes('maps.app.goo.gl') || rawUrl.includes('goo.gl/maps');
+            isMapsGoo = rawUrl.includes('maps.app.goo.gl') || rawUrl.includes('goo.gl/maps');
+            isShort = rawUrl.includes('share.google') || isMapsGoo;
             setBusy(true);
             resolved = rawUrl;
             htmlData = {
@@ -407,7 +408,7 @@ var ImportModal = function ImportModal(_ref3) {
               lng: null
             };
             if (!isShort) {
-              _context.n = 16;
+              _context.n = 25;
               break;
             }
             race = function race(p) {
@@ -416,65 +417,118 @@ var ImportModal = function ImportModal(_ref3) {
                   return rej(new Error('timeout'));
                 }, 8000);
               })]);
-            }; // Try direct browser fetch first — browser can follow Google's redirects natively
-            _context.p = 2;
-            _context.n = 3;
-            return race(fetch(rawUrl));
-          case 3:
-            resp = _context.v;
-            if (resp.url && resp.url !== rawUrl) resolved = resp.url;
-            _context.p = 4;
-            _t = parseGoogleMapsHtml;
-            _context.n = 5;
-            return resp.text();
-          case 5:
-            htmlData = _t(_context.v);
-            _context.n = 7;
-            break;
-          case 6:
-            _context.p = 6;
-            _t2 = _context.v;
-          case 7:
-            _context.n = 9;
-            break;
-          case 8:
-            _context.p = 8;
-            _t3 = _context.v;
-          case 9:
-            if (!(!htmlData.name && resolved === rawUrl)) {
-              _context.n = 16;
+            }; // For maps.app.goo.gl: try Firebase Dynamic Link debug endpoint (?d=1)
+            // This returns a plain HTML page (no auth redirect) that embeds the full Maps URL
+            if (!(isMapsGoo && !htmlData.name)) {
+              _context.n = 10;
               break;
             }
-            _context.p = 10;
-            _context.n = 11;
-            return race(fetch("https://api.allorigins.win/get?url=".concat(encodeURIComponent(rawUrl))).then(function (r) {
-              return r.json();
-            }));
-          case 11:
-            d = _context.v;
-            if ((_d$status = d.status) !== null && _d$status !== void 0 && _d$status.url && d.status.url !== rawUrl) resolved = d.status.url;
-            if (d.contents) htmlData = parseGoogleMapsHtml(d.contents);
-            _context.n = 16;
-            break;
-          case 12:
-            _context.p = 12;
-            _t4 = _context.v;
-            _context.p = 13;
-            _context.n = 14;
-            return race(fetch("https://corsproxy.io/?".concat(encodeURIComponent(rawUrl))).then(function (r) {
-              return r.text();
-            }));
-          case 14:
+            debugUrl = rawUrl.split('?')[0] + '?d=1';
+            _context.p = 2;
+            _context.n = 3;
+            return race(fetch(debugUrl));
+          case 3:
+            resp = _context.v;
+            _context.n = 4;
+            return resp.text();
+          case 4:
             html = _context.v;
             htmlData = parseGoogleMapsHtml(html);
-            m = html.match(/"(https?:\/\/(?:www\.)?google\.com\/maps\/[^"]{20,})"/);
-            if (m) resolved = m[1].replace(/\\u003d/g, '=').replace(/\\u0026/g, '&');
+            m = html.match(/href="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/);
+            if (m) resolved = m[1];
+            m2 = html.match(/content="(https:\/\/(?:maps\.app\.goo\.gl|www\.google\.com\/maps)[^"]+)"/);
+            if (!resolved.includes('google.com/maps') && m2) resolved = m2[1];
+            _context.n = 6;
+            break;
+          case 5:
+            _context.p = 5;
+            _t = _context.v;
+          case 6:
+            if (htmlData.name) {
+              _context.n = 10;
+              break;
+            }
+            debugUrl2 = rawUrl.split('?')[0] + '?d=1';
+            _context.p = 7;
+            _context.n = 8;
+            return race(fetch("https://api.allorigins.win/get?url=".concat(encodeURIComponent(debugUrl2))).then(function (r) {
+              return r.json();
+            }));
+          case 8:
+            d = _context.v;
+            if (d.contents) {
+              htmlData = parseGoogleMapsHtml(d.contents);
+              _m = d.contents.match(/href="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/);
+              if (_m) resolved = _m[1];
+            }
+            _context.n = 10;
+            break;
+          case 9:
+            _context.p = 9;
+            _t2 = _context.v;
+          case 10:
+            if (!(!htmlData.name && resolved === rawUrl)) {
+              _context.n = 18;
+              break;
+            }
+            _context.p = 11;
+            _context.n = 12;
+            return race(fetch(rawUrl));
+          case 12:
+            _resp = _context.v;
+            if (_resp.url && _resp.url !== rawUrl) resolved = _resp.url;
+            _context.p = 13;
+            _t3 = parseGoogleMapsHtml;
+            _context.n = 14;
+            return _resp.text();
+          case 14:
+            htmlData = _t3(_context.v);
             _context.n = 16;
             break;
           case 15:
             _context.p = 15;
-            _t5 = _context.v;
+            _t4 = _context.v;
           case 16:
+            _context.n = 18;
+            break;
+          case 17:
+            _context.p = 17;
+            _t5 = _context.v;
+          case 18:
+            if (!(!htmlData.name && resolved === rawUrl)) {
+              _context.n = 25;
+              break;
+            }
+            _context.p = 19;
+            _context.n = 20;
+            return race(fetch("https://api.allorigins.win/get?url=".concat(encodeURIComponent(rawUrl))).then(function (r) {
+              return r.json();
+            }));
+          case 20:
+            _d = _context.v;
+            if ((_d$status = _d.status) !== null && _d$status !== void 0 && _d$status.url && _d.status.url !== rawUrl) resolved = _d.status.url;
+            if (_d.contents) htmlData = parseGoogleMapsHtml(_d.contents);
+            _context.n = 25;
+            break;
+          case 21:
+            _context.p = 21;
+            _t6 = _context.v;
+            _context.p = 22;
+            _context.n = 23;
+            return race(fetch("https://corsproxy.io/?".concat(encodeURIComponent(rawUrl))).then(function (r) {
+              return r.text();
+            }));
+          case 23:
+            _html = _context.v;
+            htmlData = parseGoogleMapsHtml(_html);
+            _m2 = _html.match(/"(https?:\/\/(?:www\.)?google\.com\/maps\/[^"]{20,})"/);
+            if (_m2) resolved = _m2[1].replace(/\\u003d/g, '=').replace(/\\u0026/g, '&');
+            _context.n = 25;
+            break;
+          case 24:
+            _context.p = 24;
+            _t7 = _context.v;
+          case 25:
             urlData = parseGoogleMapsUrl(resolved);
             parsed = {
               name: urlData.name || htmlData.name,
@@ -483,14 +537,14 @@ var ImportModal = function ImportModal(_ref3) {
             };
             location = '';
             if (!(parsed.lat && parsed.lng)) {
-              _context.n = 18;
+              _context.n = 27;
               break;
             }
-            _context.n = 17;
+            _context.n = 26;
             return nominatimReverse(parsed.lat, parsed.lng);
-          case 17:
+          case 26:
             location = _context.v;
-          case 18:
+          case 27:
             base = {
               name: parsed.name || '',
               cuisine: 'Other',
@@ -517,10 +571,10 @@ var ImportModal = function ImportModal(_ref3) {
               setStep('preview');
             }
             setBusy(false);
-          case 19:
+          case 28:
             return _context.a(2);
         }
-      }, _callee, null, [[13, 15], [10, 12], [4, 6], [2, 8]]);
+      }, _callee, null, [[22, 24], [19, 21], [13, 15], [11, 17], [7, 9], [2, 5]]);
     }));
     return _handleParse.apply(this, arguments);
   }
