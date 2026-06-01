@@ -776,6 +776,20 @@ const PENDING_SPOTS = [
     hours: ['Monday: 5–10 PM','Tuesday: Closed','Wednesday: 5–10 PM','Thursday: 5–10 PM','Friday: 5–11 PM','Saturday: 5–11 PM','Sunday: 5–10 PM'],
     lat: 49.2769, lng: -123.1363,
   },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440005',
+    name: 'Linh Café',
+    cuisine: 'Vietnamese',
+    location: '1428 Granville St Unit 130, Vancouver, BC V6Z 1N2',
+    recommended_by: '',
+    notes: 'French-Vietnamese all-day café · pho, bánh mì & Vietnamese coffee · bright airy space · Beach District near Granville Bridge',
+    visited: false,
+    price_range: '$20-80',
+    phone: '604-564-9668',
+    website: 'https://www.linhcafe.com',
+    hours: ['Monday: 9 AM–9 PM','Tuesday: 9 AM–9 PM','Wednesday: 9 AM–9 PM','Thursday: 9 AM–9 PM','Friday: 9 AM–10 PM','Saturday: 9 AM–10 PM','Sunday: 9 AM–9 PM'],
+    lat: 49.2694, lng: -123.1399,
+  },
 ];
 
 // ── App ──────────────────────────────────────────────────────
