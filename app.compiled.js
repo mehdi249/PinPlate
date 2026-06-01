@@ -2020,9 +2020,22 @@ var EditModal = function EditModal(_ref6) {
 };
 
 // ── Card ─────────────────────────────────────────────────────
+function getPriorityList() {
+  try {
+    return JSON.parse(localStorage.getItem('pinplate_priority') || '[]');
+  } catch (e) {
+    return [];
+  }
+}
+function savePriorityList(list) {
+  localStorage.setItem('pinplate_priority', JSON.stringify(list));
+}
 var Card = function Card(_ref7) {
   var r = _ref7.r,
-    onClick = _ref7.onClick;
+    onClick = _ref7.onClick,
+    isPriority = _ref7.isPriority,
+    priorityNum = _ref7.priorityNum,
+    onTogglePriority = _ref7.onTogglePriority;
   var isVisited = r.status === 'visited';
   var accent = isVisited ? C.sage : C.amber;
   var accentBg = isVisited ? C.sageBg : C.amberBg;
@@ -2042,17 +2055,17 @@ var Card = function Card(_ref7) {
       borderRadius: 14,
       padding: '17px 18px',
       cursor: 'pointer',
-      borderLeft: "3px solid ".concat(accent),
-      boxShadow: '0 1px 3px rgba(0,0,0,0.05),0 3px 10px rgba(0,0,0,0.04)',
+      borderLeft: "3px solid ".concat(isPriority ? C.amber : accent),
+      boxShadow: isPriority ? '0 2px 12px rgba(192,112,48,0.13)' : '0 1px 3px rgba(0,0,0,0.05),0 3px 10px rgba(0,0,0,0.04)',
       transition: 'transform 0.16s,box-shadow 0.16s'
     },
     onMouseEnter: function onMouseEnter(e) {
       e.currentTarget.style.transform = 'translateY(-1px)';
-      e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.09)';
+      e.currentTarget.style.boxShadow = isPriority ? '0 6px 20px rgba(192,112,48,0.18)' : '0 4px 16px rgba(0,0,0,0.09)';
     },
     onMouseLeave: function onMouseLeave(e) {
       e.currentTarget.style.transform = '';
-      e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05),0 3px 10px rgba(0,0,0,0.04)';
+      e.currentTarget.style.boxShadow = isPriority ? '0 2px 12px rgba(192,112,48,0.13)' : '0 1px 3px rgba(0,0,0,0.05),0 3px 10px rgba(0,0,0,0.04)';
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -2061,21 +2074,68 @@ var Card = function Card(_ref7) {
       alignItems: 'flex-start',
       marginBottom: 8
     }
-  }, /*#__PURE__*/React.createElement("h3", {
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      paddingRight: 8,
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: 7
+    }
+  }, isPriority && priorityNum && /*#__PURE__*/React.createElement("span", {
+    style: {
+      flexShrink: 0,
+      marginTop: 2,
+      minWidth: 18,
+      height: 18,
+      borderRadius: 9,
+      background: C.amber,
+      color: '#fff',
+      fontFamily: C.ui,
+      fontSize: 10,
+      fontWeight: 700,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '0 5px'
+    }
+  }, priorityNum), /*#__PURE__*/React.createElement("h3", {
     style: {
       fontFamily: C.display,
       fontSize: 17,
       color: C.text,
       margin: 0,
-      lineHeight: 1.25,
-      flex: 1,
-      paddingRight: 8
+      lineHeight: 1.25
     }
-  }, r.name), isVisited && r.rating && /*#__PURE__*/React.createElement(StarRating, {
+  }, r.name)), isVisited && r.rating ? /*#__PURE__*/React.createElement(StarRating, {
     value: r.rating,
     readonly: true,
     size: 11
-  })), /*#__PURE__*/React.createElement("div", {
+  }) : !isVisited && /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick(e) {
+      e.stopPropagation();
+      onTogglePriority && onTogglePriority();
+    },
+    style: {
+      background: 'none',
+      border: 'none',
+      padding: '1px 0 0',
+      cursor: 'pointer',
+      flexShrink: 0,
+      lineHeight: 1
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: 17,
+    height: 17,
+    viewBox: "0 0 24 24",
+    fill: isPriority ? C.amber : 'none',
+    stroke: isPriority ? C.amber : 'rgba(168,144,122,0.35)',
+    strokeWidth: "1.8",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, /*#__PURE__*/React.createElement("polygon", {
+    points: "12,2 15.1,8.3 22,9.3 17,14.1 18.2,21 12,17.8 5.8,21 7,14.1 2,9.3 8.9,8.3"
+  })))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       gap: 7,
@@ -2181,6 +2241,21 @@ var Feed = function Feed(_ref8) {
     _useState14 = _slicedToArray(_useState13, 2),
     section = _useState14[0],
     setSection = _useState14[1];
+  var _useState15 = useState(function () {
+      return getPriorityList();
+    }),
+    _useState16 = _slicedToArray(_useState15, 2),
+    priority = _useState16[0],
+    setPriority = _useState16[1];
+  function togglePriority(id) {
+    setPriority(function (prev) {
+      var next = prev.includes(id) ? prev.filter(function (x) {
+        return x !== id;
+      }) : [].concat(_toConsumableArray(prev), [id]);
+      savePriorityList(next);
+      return next;
+    });
+  }
   var cuisines = useMemo(function () {
     return _toConsumableArray(new Set(restaurants.map(function (r) {
       return r.cuisine;
@@ -2195,8 +2270,21 @@ var Feed = function Feed(_ref8) {
   var visitedList = show.filter(function (r) {
     return r.status === 'visited';
   });
-  var activeList = section === 'want' ? wantList : visitedList;
-  var emptyMsg = section === 'want' ? cuisine === 'All' ? 'Nothing saved yet — tap + Add to start' : "No ".concat(cuisine, " spots to visit") : cuisine === 'All' ? 'None yet — mark a spot as visited' : "No ".concat(cuisine, " spots visited");
+  var prioritySet = new Set(priority);
+  var wantPriority = priority.filter(function (id) {
+    return wantList.some(function (r) {
+      return r.id === id;
+    });
+  }).map(function (id) {
+    return wantList.find(function (r) {
+      return r.id === id;
+    });
+  }).filter(Boolean);
+  var wantOther = wantList.filter(function (r) {
+    return !prioritySet.has(r.id);
+  });
+  var emptyWant = cuisine === 'All' ? 'Nothing saved yet — tap + Add to start' : "No ".concat(cuisine, " spots to visit");
+  var emptyVisited = cuisine === 'All' ? 'None yet — mark a spot as visited' : "No ".concat(cuisine, " spots visited");
   var toggleBtn = function toggleBtn(key, label, count, accent, accentBg, accentBd) {
     return /*#__PURE__*/React.createElement("button", {
       onClick: function onClick() {
@@ -2271,24 +2359,97 @@ var Feed = function Feed(_ref8) {
     }
   }, toggleBtn('want', 'To Visit', wantList.length, C.amber, C.amberBg, C.amberBd), toggleBtn('visited', 'Visited', visitedList.length, C.sage, C.sageBg, C.sageBd)), /*#__PURE__*/React.createElement("div", {
     style: {
-      padding: '0 16px 80px',
-      display: 'flex',
-      flexDirection: 'column'
+      paddingBottom: 80
     }
-  }, activeList.length === 0 ? /*#__PURE__*/React.createElement("p", {
+  }, section === 'want' ? wantList.length === 0 ? /*#__PURE__*/React.createElement("p", {
     style: {
       fontFamily: C.ui,
       fontSize: 13,
       color: C.dim,
-      padding: '24px 0'
+      padding: '24px 16px'
     }
-  }, emptyMsg) : /*#__PURE__*/React.createElement("div", {
+  }, emptyWant) : /*#__PURE__*/React.createElement(React.Fragment, null, wantPriority.length > 0 && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      padding: '0 16px 10px'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: '0.07em',
+      textTransform: 'uppercase',
+      color: C.amber
+    }
+  }, "Visit First"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      height: 1,
+      background: C.amberBd
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '0 16px',
       display: 'flex',
       flexDirection: 'column',
       gap: 10
     }
-  }, activeList.map(function (r) {
+  }, wantPriority.map(function (r, i) {
+    return /*#__PURE__*/React.createElement(Card, {
+      key: r.id,
+      r: r,
+      onClick: function onClick() {
+        return onCardClick(r);
+      },
+      isPriority: true,
+      priorityNum: i + 1,
+      onTogglePriority: function onTogglePriority() {
+        return togglePriority(r.id);
+      }
+    });
+  })), wantOther.length > 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      margin: '16px 16px 14px',
+      height: 1,
+      background: C.bd
+    }
+  })), wantOther.length > 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '0 16px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 10
+    }
+  }, wantOther.map(function (r) {
+    return /*#__PURE__*/React.createElement(Card, {
+      key: r.id,
+      r: r,
+      onClick: function onClick() {
+        return onCardClick(r);
+      },
+      isPriority: false,
+      onTogglePriority: function onTogglePriority() {
+        return togglePriority(r.id);
+      }
+    });
+  }))) : visitedList.length === 0 ? /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 13,
+      color: C.dim,
+      padding: '24px 16px'
+    }
+  }, emptyVisited) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '0 16px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 10
+    }
+  }, visitedList.map(function (r) {
     return /*#__PURE__*/React.createElement(Card, {
       key: r.id,
       r: r,
@@ -2302,18 +2463,18 @@ var Feed = function Feed(_ref8) {
 // ── Sign-in screen ───────────────────────────────────────────
 var ADMIN_EMAIL = 'mehdiiaabbassii@gmail.com';
 var SignIn = function SignIn() {
-  var _useState15 = useState(''),
-    _useState16 = _slicedToArray(_useState15, 2),
-    password = _useState16[0],
-    setPassword = _useState16[1];
   var _useState17 = useState(''),
     _useState18 = _slicedToArray(_useState17, 2),
-    err = _useState18[0],
-    setErr = _useState18[1];
-  var _useState19 = useState(false),
+    password = _useState18[0],
+    setPassword = _useState18[1];
+  var _useState19 = useState(''),
     _useState20 = _slicedToArray(_useState19, 2),
-    busy = _useState20[0],
-    setBusy = _useState20[1];
+    err = _useState20[0],
+    setErr = _useState20[1];
+  var _useState21 = useState(false),
+    _useState22 = _slicedToArray(_useState21, 2),
+    busy = _useState22[0],
+    setBusy = _useState22[1];
   var inp = {
     width: '100%',
     padding: '11px 14px',
@@ -2702,54 +2863,54 @@ var PENDING_SPOTS = [{
 
 // ── App ──────────────────────────────────────────────────────
 function App() {
-  var _useState21 = useState([]),
-    _useState22 = _slicedToArray(_useState21, 2),
-    restaurants = _useState22[0],
-    setRestaurants = _useState22[1];
-  var _useState23 = useState(true),
+  var _useState23 = useState([]),
     _useState24 = _slicedToArray(_useState23, 2),
-    loading = _useState24[0],
-    setLoading = _useState24[1];
-  var _useState25 = useState('home'),
+    restaurants = _useState24[0],
+    setRestaurants = _useState24[1];
+  var _useState25 = useState(true),
     _useState26 = _slicedToArray(_useState25, 2),
-    tab = _useState26[0],
-    setTab = _useState26[1];
-  var _useState27 = useState(false),
+    loading = _useState26[0],
+    setLoading = _useState26[1];
+  var _useState27 = useState('home'),
     _useState28 = _slicedToArray(_useState27, 2),
-    showEdit = _useState28[0],
-    setShowEdit = _useState28[1];
+    tab = _useState28[0],
+    setTab = _useState28[1];
   var _useState29 = useState(false),
     _useState30 = _slicedToArray(_useState29, 2),
-    showImport = _useState30[0],
-    setShowImport = _useState30[1];
+    showEdit = _useState30[0],
+    setShowEdit = _useState30[1];
   var _useState31 = useState(false),
     _useState32 = _slicedToArray(_useState31, 2),
-    showAddMenu = _useState32[0],
-    setShowAddMenu = _useState32[1];
-  var _useState33 = useState(null),
+    showImport = _useState32[0],
+    setShowImport = _useState32[1];
+  var _useState33 = useState(false),
     _useState34 = _slicedToArray(_useState33, 2),
-    editTarget = _useState34[0],
-    setEditTarget = _useState34[1];
+    showAddMenu = _useState34[0],
+    setShowAddMenu = _useState34[1];
   var _useState35 = useState(null),
     _useState36 = _slicedToArray(_useState35, 2),
-    detail = _useState36[0],
-    setDetail = _useState36[1];
-  var _useState37 = useState(''),
+    editTarget = _useState36[0],
+    setEditTarget = _useState36[1];
+  var _useState37 = useState(null),
     _useState38 = _slicedToArray(_useState37, 2),
-    search = _useState38[0],
-    setSearch = _useState38[1];
-  var _useState39 = useState(null),
+    detail = _useState38[0],
+    setDetail = _useState38[1];
+  var _useState39 = useState(''),
     _useState40 = _slicedToArray(_useState39, 2),
-    toast = _useState40[0],
-    setToast = _useState40[1];
+    search = _useState40[0],
+    setSearch = _useState40[1];
   var _useState41 = useState(null),
     _useState42 = _slicedToArray(_useState41, 2),
-    session = _useState42[0],
-    setSession = _useState42[1];
-  var _useState43 = useState(false),
+    toast = _useState42[0],
+    setToast = _useState42[1];
+  var _useState43 = useState(null),
     _useState44 = _slicedToArray(_useState43, 2),
-    authChecked = _useState44[0],
-    setAuthChecked = _useState44[1];
+    session = _useState44[0],
+    setSession = _useState44[1];
+  var _useState45 = useState(false),
+    _useState46 = _slicedToArray(_useState45, 2),
+    authChecked = _useState46[0],
+    setAuthChecked = _useState46[1];
   function showToast(msg) {
     setToast(msg);
     setTimeout(function () {

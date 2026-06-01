@@ -603,7 +603,14 @@ const EditModal = ({ onClose, onSave, editData }) => {
 };
 
 // ── Card ─────────────────────────────────────────────────────
-const Card = ({ r, onClick }) => {
+function getPriorityList() {
+  try { return JSON.parse(localStorage.getItem('pinplate_priority')||'[]'); } catch(e) { return []; }
+}
+function savePriorityList(list) {
+  localStorage.setItem('pinplate_priority', JSON.stringify(list));
+}
+
+const Card = ({ r, onClick, isPriority, priorityNum, onTogglePriority }) => {
   const isVisited = r.status === 'visited';
   const accent    = isVisited ? C.sage  : C.amber;
   const accentBg  = isVisited ? C.sageBg : C.amberBg;
@@ -620,13 +627,27 @@ const Card = ({ r, onClick }) => {
 
   return (
     <div onClick={onClick}
-      style={{background:C.hi,borderRadius:14,padding:'17px 18px',cursor:'pointer',borderLeft:`3px solid ${accent}`,boxShadow:'0 1px 3px rgba(0,0,0,0.05),0 3px 10px rgba(0,0,0,0.04)',transition:'transform 0.16s,box-shadow 0.16s'}}
-      onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-1px)';e.currentTarget.style.boxShadow='0 4px 16px rgba(0,0,0,0.09)';}}
-      onMouseLeave={e=>{e.currentTarget.style.transform='';e.currentTarget.style.boxShadow='0 1px 3px rgba(0,0,0,0.05),0 3px 10px rgba(0,0,0,0.04)';}}>
+      style={{background:C.hi,borderRadius:14,padding:'17px 18px',cursor:'pointer',borderLeft:`3px solid ${isPriority?C.amber:accent}`,boxShadow: isPriority?'0 2px 12px rgba(192,112,48,0.13)':'0 1px 3px rgba(0,0,0,0.05),0 3px 10px rgba(0,0,0,0.04)',transition:'transform 0.16s,box-shadow 0.16s'}}
+      onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-1px)';e.currentTarget.style.boxShadow=isPriority?'0 6px 20px rgba(192,112,48,0.18)':'0 4px 16px rgba(0,0,0,0.09)';}}
+      onMouseLeave={e=>{e.currentTarget.style.transform='';e.currentTarget.style.boxShadow=isPriority?'0 2px 12px rgba(192,112,48,0.13)':'0 1px 3px rgba(0,0,0,0.05),0 3px 10px rgba(0,0,0,0.04)';}}>
 
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
-        <h3 style={{fontFamily:C.display,fontSize:17,color:C.text,margin:0,lineHeight:1.25,flex:1,paddingRight:8}}>{r.name}</h3>
-        {isVisited&&r.rating&&<StarRating value={r.rating} readonly size={11}/>}
+        <div style={{flex:1,paddingRight:8,display:'flex',alignItems:'flex-start',gap:7}}>
+          {isPriority&&priorityNum&&(
+            <span style={{flexShrink:0,marginTop:2,minWidth:18,height:18,borderRadius:9,background:C.amber,color:'#fff',fontFamily:C.ui,fontSize:10,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',padding:'0 5px'}}>{priorityNum}</span>
+          )}
+          <h3 style={{fontFamily:C.display,fontSize:17,color:C.text,margin:0,lineHeight:1.25}}>{r.name}</h3>
+        </div>
+        {isVisited&&r.rating
+          ?<StarRating value={r.rating} readonly size={11}/>
+          :!isVisited&&(
+            <button onClick={e=>{e.stopPropagation();onTogglePriority&&onTogglePriority();}} style={{background:'none',border:'none',padding:'1px 0 0',cursor:'pointer',flexShrink:0,lineHeight:1}}>
+              <svg width={17} height={17} viewBox="0 0 24 24" fill={isPriority?C.amber:'none'} stroke={isPriority?C.amber:'rgba(168,144,122,0.35)'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="12,2 15.1,8.3 22,9.3 17,14.1 18.2,21 12,17.8 5.8,21 7,14.1 2,9.3 8.9,8.3"/>
+              </svg>
+            </button>
+          )
+        }
       </div>
 
       <div style={{display:'flex',gap:7,alignItems:'center',flexWrap:'wrap',marginBottom:r.note?8:10}}>
@@ -651,18 +672,29 @@ const Card = ({ r, onClick }) => {
 
 // ── Feed ─────────────────────────────────────────────────────
 const Feed = ({ restaurants, onCardClick }) => {
-  const [cuisine, setCuisine] = useState('All');
-  const [section, setSection] = useState('want');
+  const [cuisine, setCuisine]   = useState('All');
+  const [section, setSection]   = useState('want');
+  const [priority, setPriority] = useState(()=>getPriorityList());
 
-  const cuisines    = useMemo(()=>[...new Set(restaurants.map(r=>r.cuisine).filter(Boolean))].sort(),[restaurants]);
-  const show        = cuisine==='All' ? restaurants : restaurants.filter(r=>r.cuisine===cuisine);
-  const wantList    = show.filter(r=>r.status==='want');
-  const visitedList = show.filter(r=>r.status==='visited');
-  const activeList  = section==='want' ? wantList : visitedList;
+  function togglePriority(id) {
+    setPriority(prev => {
+      const next = prev.includes(id) ? prev.filter(x=>x!==id) : [...prev, id];
+      savePriorityList(next);
+      return next;
+    });
+  }
 
-  const emptyMsg = section==='want'
-    ? (cuisine==='All' ? 'Nothing saved yet — tap + Add to start' : `No ${cuisine} spots to visit`)
-    : (cuisine==='All' ? 'None yet — mark a spot as visited' : `No ${cuisine} spots visited`);
+  const cuisines     = useMemo(()=>[...new Set(restaurants.map(r=>r.cuisine).filter(Boolean))].sort(),[restaurants]);
+  const show         = cuisine==='All' ? restaurants : restaurants.filter(r=>r.cuisine===cuisine);
+  const wantList     = show.filter(r=>r.status==='want');
+  const visitedList  = show.filter(r=>r.status==='visited');
+
+  const prioritySet  = new Set(priority);
+  const wantPriority = priority.filter(id=>wantList.some(r=>r.id===id)).map(id=>wantList.find(r=>r.id===id)).filter(Boolean);
+  const wantOther    = wantList.filter(r=>!prioritySet.has(r.id));
+
+  const emptyWant    = cuisine==='All' ? 'Nothing saved yet — tap + Add to start' : `No ${cuisine} spots to visit`;
+  const emptyVisited = cuisine==='All' ? 'None yet — mark a spot as visited' : `No ${cuisine} spots visited`;
 
   const toggleBtn = (key, label, count, accent, accentBg, accentBd) => (
     <button onClick={()=>setSection(key)} style={{flex:1,padding:'14px 10px',borderRadius:14,border:`2px solid ${section===key ? accent : C.bd}`,background:section===key ? accentBg : 'transparent',cursor:'pointer',transition:'all 0.18s',textAlign:'center'}}>
@@ -687,11 +719,36 @@ const Feed = ({ restaurants, onCardClick }) => {
       </div>
 
       {/* Card list */}
-      <div style={{padding:'0 16px 80px',display:'flex',flexDirection:'column'}}>
-        {activeList.length===0
-          ?<p style={{fontFamily:C.ui,fontSize:13,color:C.dim,padding:'24px 0'}}>{emptyMsg}</p>
-          :<div style={{display:'flex',flexDirection:'column',gap:10}}>{activeList.map(r=><Card key={r.id} r={r} onClick={()=>onCardClick(r)}/>)}</div>
-        }
+      <div style={{paddingBottom:80}}>
+        {section==='want' ? (
+          wantList.length===0
+            ? <p style={{fontFamily:C.ui,fontSize:13,color:C.dim,padding:'24px 16px'}}>{emptyWant}</p>
+            : <>
+                {wantPriority.length>0&&(
+                  <>
+                    <div style={{display:'flex',alignItems:'center',gap:8,padding:'0 16px 10px'}}>
+                      <span style={{fontFamily:C.ui,fontSize:11,fontWeight:700,letterSpacing:'0.07em',textTransform:'uppercase',color:C.amber}}>Visit First</span>
+                      <div style={{flex:1,height:1,background:C.amberBd}}/>
+                    </div>
+                    <div style={{padding:'0 16px',display:'flex',flexDirection:'column',gap:10}}>
+                      {wantPriority.map((r,i)=><Card key={r.id} r={r} onClick={()=>onCardClick(r)} isPriority={true} priorityNum={i+1} onTogglePriority={()=>togglePriority(r.id)}/>)}
+                    </div>
+                    {wantOther.length>0&&<div style={{margin:'16px 16px 14px',height:1,background:C.bd}}/>}
+                  </>
+                )}
+                {wantOther.length>0&&(
+                  <div style={{padding:'0 16px',display:'flex',flexDirection:'column',gap:10}}>
+                    {wantOther.map(r=><Card key={r.id} r={r} onClick={()=>onCardClick(r)} isPriority={false} onTogglePriority={()=>togglePriority(r.id)}/>)}
+                  </div>
+                )}
+              </>
+        ) : (
+          visitedList.length===0
+            ? <p style={{fontFamily:C.ui,fontSize:13,color:C.dim,padding:'24px 16px'}}>{emptyVisited}</p>
+            : <div style={{padding:'0 16px',display:'flex',flexDirection:'column',gap:10}}>
+                {visitedList.map(r=><Card key={r.id} r={r} onClick={()=>onCardClick(r)}/>)}
+              </div>
+        )}
       </div>
     </div>
   );
