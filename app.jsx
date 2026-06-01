@@ -571,13 +571,19 @@ function App() {
 
   async function insertPending() {
     if (!PENDING_SPOTS.length) return;
-    await sb.from('spots').upsert(PENDING_SPOTS, { onConflict:'id', ignoreDuplicates:true });
+    const ids = PENDING_SPOTS.map(s=>s.id);
+    const { data: existing } = await sb.from('spots').select('id').in('id', ids);
+    const existingIds = new Set((existing||[]).map(r=>r.id));
+    const toInsert = PENDING_SPOTS.filter(s=>!existingIds.has(s.id));
+    if (!toInsert.length) return;
+    const { error } = await sb.from('spots').insert(toInsert);
+    if (error) showToast('Seed error: '+error.message);
   }
 
   async function loadSpots() {
     await insertPending();
     const {data,error} = await sb.from('spots').select('*').order('created_at',{ascending:false});
-    if (error) { showToast('Failed to load'); return; }
+    if (error) { showToast('Load error: '+error.message); return; }
     setRestaurants((data||[]).map(dbToApp));
     setLoading(false);
   }

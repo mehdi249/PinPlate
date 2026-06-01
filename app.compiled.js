@@ -1878,6 +1878,7 @@ function App() {
   }
   function _insertPending() {
     _insertPending = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+      var ids, _yield$sb$from$select, existing, existingIds, toInsert, _yield$sb$from$insert, error;
       return _regenerator().w(function (_context2) {
         while (1) switch (_context2.n) {
           case 0:
@@ -1887,12 +1888,33 @@ function App() {
             }
             return _context2.a(2);
           case 1:
-            _context2.n = 2;
-            return sb.from('spots').upsert(PENDING_SPOTS, {
-              onConflict: 'id',
-              ignoreDuplicates: true
+            ids = PENDING_SPOTS.map(function (s) {
+              return s.id;
             });
+            _context2.n = 2;
+            return sb.from('spots').select('id').in('id', ids);
           case 2:
+            _yield$sb$from$select = _context2.v;
+            existing = _yield$sb$from$select.data;
+            existingIds = new Set((existing || []).map(function (r) {
+              return r.id;
+            }));
+            toInsert = PENDING_SPOTS.filter(function (s) {
+              return !existingIds.has(s.id);
+            });
+            if (toInsert.length) {
+              _context2.n = 3;
+              break;
+            }
+            return _context2.a(2);
+          case 3:
+            _context2.n = 4;
+            return sb.from('spots').insert(toInsert);
+          case 4:
+            _yield$sb$from$insert = _context2.v;
+            error = _yield$sb$from$insert.error;
+            if (error) showToast('Seed error: ' + error.message);
+          case 5:
             return _context2.a(2);
         }
       }, _callee2);
@@ -1904,7 +1926,7 @@ function App() {
   }
   function _loadSpots() {
     _loadSpots = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
-      var _yield$sb$from$select, data, error;
+      var _yield$sb$from$select2, data, error;
       return _regenerator().w(function (_context3) {
         while (1) switch (_context3.n) {
           case 0:
@@ -1916,14 +1938,14 @@ function App() {
               ascending: false
             });
           case 2:
-            _yield$sb$from$select = _context3.v;
-            data = _yield$sb$from$select.data;
-            error = _yield$sb$from$select.error;
+            _yield$sb$from$select2 = _context3.v;
+            data = _yield$sb$from$select2.data;
+            error = _yield$sb$from$select2.error;
             if (!error) {
               _context3.n = 3;
               break;
             }
-            showToast('Failed to load');
+            showToast('Load error: ' + error.message);
             return _context3.a(2);
           case 3:
             setRestaurants((data || []).map(dbToApp));
@@ -1955,7 +1977,7 @@ function App() {
   }
   function _handleSave() {
     _handleSave = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4(form) {
-      var payload, error, _yield$sb$from$update, _yield$sb$from$insert;
+      var payload, error, _yield$sb$from$update, _yield$sb$from$insert2;
       return _regenerator().w(function (_context4) {
         while (1) switch (_context4.n) {
           case 0:
@@ -1975,8 +1997,8 @@ function App() {
             _context4.n = 3;
             return sb.from('spots').insert(payload);
           case 3:
-            _yield$sb$from$insert = _context4.v;
-            error = _yield$sb$from$insert.error;
+            _yield$sb$from$insert2 = _context4.v;
+            error = _yield$sb$from$insert2.error;
           case 4:
             if (!error) {
               _context4.n = 5;
