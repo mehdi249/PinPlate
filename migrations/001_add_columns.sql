@@ -1,0 +1,11 @@
+alter table spots add column if not exists phone text;
+alter table spots add column if not exists website text;
+alter table spots add column if not exists price_range text;
+alter table spots add column if not exists hours jsonb;
+alter table spots add column if not exists photos jsonb;
+alter table spots add column if not exists reviews jsonb;
+alter table spots add column if not exists lat float8;
+alter table spots add column if not exists lng float8;
+alter table spots add column if not exists google_maps_url text;
+alter table spots add column if not exists menu_url text;
+alter table spots disable row level security;
