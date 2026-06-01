@@ -134,6 +134,7 @@ const Ic = ({n, size=18}) => {
     trash:  <><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></>,
     close:  <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>,
     aim:    <><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></>,
+    refresh:<><polyline points="23,4 23,10 17,10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></>,
   };
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">{p[n]}</svg>;
 };
@@ -802,7 +803,8 @@ function App() {
   const [tab,setTab]                 = useState('home');
   const [showEdit,setShowEdit]       = useState(false);
   const [showImport,setShowImport]   = useState(false);
-  const [showAddMenu,setShowAddMenu] = useState(false);
+  const [showAddMenu,setShowAddMenu]     = useState(false);
+  const [refreshPending,setRefreshPending] = useState(false);
   const [editTarget,setEditTarget]   = useState(null);
   const [detail,setDetail]           = useState(null);
   const [search,setSearch]           = useState('');
@@ -854,6 +856,16 @@ function App() {
     setShowEdit(false); setShowImport(false); setEditTarget(null); setDetail(null);
     showToast(editTarget?'Updated':'Pinned');
     await loadSpots();
+  }
+
+  function handleRefresh() {
+    if (!refreshPending) {
+      setRefreshPending(true);
+      setTimeout(()=>setRefreshPending(false), 3000);
+    } else {
+      setRefreshPending(false);
+      loadSpots().then(()=>showToast('List refreshed'));
+    }
   }
 
   async function loadSpots() {
@@ -940,7 +952,10 @@ function App() {
               <h1 style={{fontFamily:C.display,fontSize:26,color:C.text,margin:0,letterSpacing:'-0.01em',lineHeight:1}}>PinPlate</h1>
               <p style={{fontFamily:C.ui,fontSize:11,color:C.dim,marginTop:3,fontWeight:400,display:'flex',alignItems:'center',gap:8}}>{wantCount} to visit · {visitedCount} visited<button onClick={()=>sb.auth.signOut()} style={{background:'none',border:'none',fontFamily:C.ui,fontSize:11,color:C.dim,cursor:'pointer',padding:0,textDecoration:'underline',textDecorationColor:'rgba(168,144,122,0.4)'}}>Sign out</button></p>
             </div>
-            <div style={{position:'relative'}}>
+            <div style={{display:'flex',gap:8,alignItems:'center',position:'relative'}}>
+              <button onClick={handleRefresh} title={refreshPending?'Tap again to confirm':'Refresh list'} style={{background:refreshPending?C.amberBg:'transparent',border:`1px solid ${refreshPending?C.amberBd:C.bd}`,borderRadius:10,padding:'8px 10px',color:refreshPending?C.amber:C.mid,cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontFamily:C.ui,fontSize:12,fontWeight:500,transition:'all 0.2s'}}>
+                <Ic n="refresh" size={14}/>{refreshPending&&'Confirm?'}
+              </button>
               <button onClick={()=>setShowAddMenu(v=>!v)} style={{background:C.espr,color:'#fdf8f3',border:'none',borderRadius:10,padding:'9px 16px',fontFamily:C.ui,fontSize:13,fontWeight:600,cursor:'pointer',letterSpacing:'0.01em'}}>+ Add</button>
               {showAddMenu&&(
                 <div style={{position:'absolute',top:'calc(100% + 8px)',right:0,background:C.hi,borderRadius:14,border:`1px solid ${C.bd}`,boxShadow:'0 8px 28px rgba(0,0,0,0.12)',padding:6,zIndex:100,minWidth:190,animation:'slideUp 0.15s ease'}} onClick={e=>e.stopPropagation()}>

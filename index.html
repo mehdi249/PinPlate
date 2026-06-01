@@ -358,6 +358,11 @@ var Ic = function Ic(_ref) {
       y1: "12",
       x2: "22",
       y2: "12"
+    })),
+    refresh: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("polyline", {
+      points: "23,4 23,10 17,10"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: "M20.49 15a9 9 0 1 1-2.12-9.36L23 10"
     }))
   };
   return /*#__PURE__*/React.createElement("svg", {
@@ -2585,30 +2590,34 @@ function App() {
     _useState30 = _slicedToArray(_useState29, 2),
     showAddMenu = _useState30[0],
     setShowAddMenu = _useState30[1];
-  var _useState31 = useState(null),
+  var _useState31 = useState(false),
     _useState32 = _slicedToArray(_useState31, 2),
-    editTarget = _useState32[0],
-    setEditTarget = _useState32[1];
+    refreshPending = _useState32[0],
+    setRefreshPending = _useState32[1];
   var _useState33 = useState(null),
     _useState34 = _slicedToArray(_useState33, 2),
-    detail = _useState34[0],
-    setDetail = _useState34[1];
-  var _useState35 = useState(''),
+    editTarget = _useState34[0],
+    setEditTarget = _useState34[1];
+  var _useState35 = useState(null),
     _useState36 = _slicedToArray(_useState35, 2),
-    search = _useState36[0],
-    setSearch = _useState36[1];
-  var _useState37 = useState(null),
+    detail = _useState36[0],
+    setDetail = _useState36[1];
+  var _useState37 = useState(''),
     _useState38 = _slicedToArray(_useState37, 2),
-    toast = _useState38[0],
-    setToast = _useState38[1];
+    search = _useState38[0],
+    setSearch = _useState38[1];
   var _useState39 = useState(null),
     _useState40 = _slicedToArray(_useState39, 2),
-    session = _useState40[0],
-    setSession = _useState40[1];
-  var _useState41 = useState(false),
+    toast = _useState40[0],
+    setToast = _useState40[1];
+  var _useState41 = useState(null),
     _useState42 = _slicedToArray(_useState41, 2),
-    authChecked = _useState42[0],
-    setAuthChecked = _useState42[1];
+    session = _useState42[0],
+    setSession = _useState42[1];
+  var _useState43 = useState(false),
+    _useState44 = _slicedToArray(_useState43, 2),
+    authChecked = _useState44[0],
+    setAuthChecked = _useState44[1];
   function showToast(msg) {
     setToast(msg);
     setTimeout(function () {
@@ -2790,6 +2799,19 @@ function App() {
       }, _callee4);
     }));
     return _handleSave.apply(this, arguments);
+  }
+  function handleRefresh() {
+    if (!refreshPending) {
+      setRefreshPending(true);
+      setTimeout(function () {
+        return setRefreshPending(false);
+      }, 3000);
+    } else {
+      setRefreshPending(false);
+      loadSpots().then(function () {
+        return showToast('List refreshed');
+      });
+    }
   }
   function loadSpots() {
     return _loadSpots.apply(this, arguments);
@@ -3057,9 +3079,33 @@ function App() {
     }
   }, "Sign out"))), /*#__PURE__*/React.createElement("div", {
     style: {
+      display: 'flex',
+      gap: 8,
+      alignItems: 'center',
       position: 'relative'
     }
   }, /*#__PURE__*/React.createElement("button", {
+    onClick: handleRefresh,
+    title: refreshPending ? 'Tap again to confirm' : 'Refresh list',
+    style: {
+      background: refreshPending ? C.amberBg : 'transparent',
+      border: "1px solid ".concat(refreshPending ? C.amberBd : C.bd),
+      borderRadius: 10,
+      padding: '8px 10px',
+      color: refreshPending ? C.amber : C.mid,
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 6,
+      fontFamily: C.ui,
+      fontSize: 12,
+      fontWeight: 500,
+      transition: 'all 0.2s'
+    }
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "refresh",
+    size: 14
+  }), refreshPending && 'Confirm?'), /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
       return setShowAddMenu(function (v) {
         return !v;
@@ -3276,7 +3322,7 @@ function App() {
 }
 
 
-const BUILD_TIME = 1780352073;
+const BUILD_TIME = 1780352254;
 (function(){
   var checking=false;
   async function checkUpdate(){
