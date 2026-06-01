@@ -14,11 +14,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#e8d9c8;-webkit-text-size-adjust:100%;}
+body{background:#f4ece0;-webkit-text-size-adjust:100%;}
 </style>
 </head>
 <body>
-<div id="root"><div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(160deg,#e8d5be,#ddc9b0);"><p style="font-family:Georgia,serif;font-size:28px;color:rgba(30,14,4,0.55);letter-spacing:-0.01em;margin-bottom:8px;">PinPlate</p><p style="font-family:Georgia,serif;font-size:14px;color:rgba(100,70,40,0.4);">Loading…</p></div></div>
+<div id="root"><div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#f4ece0;"><p style="font-family:Georgia,serif;font-size:28px;color:rgba(26,13,2,0.5);letter-spacing:-0.02em;margin-bottom:6px;">PinPlate</p><p style="font-family:system-ui,sans-serif;font-size:13px;color:rgba(168,144,122,0.8);">Loading…</p></div></div>
 <script>
 window.onerror=function(m,s,l){document.getElementById('root').innerHTML='<div style="padding:20px;font-family:monospace;color:red">Error: '+m+' ('+s+':'+l+')</div>';};
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
@@ -46,6 +46,30 @@ var SUPABASE_URL = 'https://biafijftxhealzmmwsmk.supabase.co';
 var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYWZpamZ0eGhlYWx6bW13c21rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTQ3NjYsImV4cCI6MjA5NTgzMDc2Nn0.el4_ujwNYvbYdFtvzAEooKd1SvZlJd5YGVdlGlSo6Q8';
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 var CUISINES = ["Italian", "Japanese", "Mexican", "Thai", "Indian", "French", "Chinese", "Mediterranean", "American", "Korean", "Vietnamese", "Middle Eastern", "Other"];
+
+// Design tokens
+var C = {
+  bg: '#f4ece0',
+  surface: '#fdfaf6',
+  hi: '#ffffff',
+  bd: 'rgba(20,10,0,0.07)',
+  bdMid: 'rgba(20,10,0,0.13)',
+  text: '#1a0d02',
+  mid: '#7a6050',
+  dim: '#a8907a',
+  amber: '#c07030',
+  amberBg: 'rgba(192,112,48,0.09)',
+  amberBd: 'rgba(192,112,48,0.18)',
+  sage: '#4a7a5a',
+  sageBg: 'rgba(74,122,90,0.09)',
+  sageBd: 'rgba(74,122,90,0.18)',
+  espr: '#2c1a0e',
+  red: '#8a3838',
+  redBg: 'rgba(138,56,56,0.07)',
+  redBd: 'rgba(138,56,56,0.18)',
+  ui: "'Inter',system-ui,sans-serif",
+  display: "'DM Serif Display',serif"
+};
 function dbToApp(r) {
   return {
     id: r.id,
@@ -136,12 +160,8 @@ function parseGoogleMapsHtml(html) {
     lng: lngM ? parseFloat(lngM[1]) : null
   };
 }
-
-// Extract full Google Maps URL embedded in Firebase Dynamic Link debug (?d=1) pages
 function extractMapsUrlFromFdl(html) {
-  var patterns = [/href="(https:\/\/(?:www\.)?google\.com\/maps\/place\/[^"]+)"/, /content="(https:\/\/(?:www\.)?google\.com\/maps\/place\/[^"]+)"/, /content="(https:\/\/maps\.(?:app\.)?goo\.gl\/[^"]+)"/, /"(https:\/\/(?:www\.)?google\.com\/maps\/place\/[^"]{20,})"/, /href="(https:\/\/maps\.google\.com\/maps\/place\/[^"]+)"/,
-  // FDL pages embed the destination in data- attributes or JS variables
-  /destinationUrl["'\s]*:["'\s]*(https:\/\/[^"'\s,]+google\.com\/maps\/place\/[^"'\s,]+)/];
+  var patterns = [/href="(https:\/\/(?:www\.)?google\.com\/maps\/place\/[^"]+)"/, /content="(https:\/\/(?:www\.)?google\.com\/maps\/place\/[^"]+)"/, /content="(https:\/\/maps\.(?:app\.)?goo\.gl\/[^"]+)"/, /"(https:\/\/(?:www\.)?google\.com\/maps\/place\/[^"]{20,})"/, /href="(https:\/\/maps\.google\.com\/maps\/place\/[^"]+)"/, /destinationUrl["'\s]*:["'\s]*(https:\/\/[^"'\s,]+google\.com\/maps\/place\/[^"'\s,]+)/];
   for (var _i = 0, _patterns = patterns; _i < _patterns.length; _i++) {
     var p = _patterns[_i];
     var m = html.match(p);
@@ -151,7 +171,7 @@ function extractMapsUrlFromFdl(html) {
 }
 function nominatimReverse(_x, _x2) {
   return _nominatimReverse.apply(this, arguments);
-} // ── SVG icon helper ─────────────────────────────────────────
+} // ── SVG icons ────────────────────────────────────────────────
 function _nominatimReverse() {
   _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8(lat, lng) {
     var r, d, a, _t9;
@@ -358,7 +378,7 @@ var StarRating = function StarRating(_ref2) {
   return /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
-      gap: '2px'
+      gap: '1px'
     }
   }, [1, 2, 3, 4, 5].map(function (n) {
     return /*#__PURE__*/React.createElement("span", {
@@ -369,7 +389,7 @@ var StarRating = function StarRating(_ref2) {
       style: {
         fontSize: "".concat(size, "px"),
         cursor: readonly ? 'default' : 'pointer',
-        color: n <= (value || 0) ? '#c8773a' : 'rgba(180,140,110,0.25)',
+        color: n <= (value || 0) ? C.amber : 'rgba(168,144,122,0.3)',
         transition: 'color 0.15s',
         userSelect: 'none'
       }
@@ -411,16 +431,16 @@ var MapView = function MapView(_ref3) {
     spots.forEach(function (r) {
       if (!r.lat || !r.lng) return;
       var visited = r.status === 'visited';
-      var bg = visited ? '#5a9a6a' : '#c8773a';
+      var bg = visited ? C.sage : C.amber;
       var icon = L.divIcon({
-        html: "<div style=\"width:30px;height:30px;background:".concat(bg, ";border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.28);display:flex;align-items:center;justify-content:center\"><span style=\"transform:rotate(45deg);color:#fff;font-size:12px;font-weight:700;line-height:25px;display:block;text-align:center\">").concat(visited ? '✓' : '+', "</span></div>"),
-        iconSize: [30, 42],
-        iconAnchor: [15, 42],
+        html: "<div style=\"width:28px;height:28px;background:".concat(bg, ";border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,0.22);display:flex;align-items:center;justify-content:center\"><span style=\"transform:rotate(45deg);color:#fff;font-size:11px;font-weight:700;line-height:24px;display:block;text-align:center\">").concat(visited ? '✓' : '+', "</span></div>"),
+        iconSize: [28, 40],
+        iconAnchor: [14, 40],
         className: ''
       });
       var mk = L.marker([r.lat, r.lng], {
         icon: icon
-      }).addTo(map.current).bindPopup("<div style=\"font-family:serif;min-width:140px\"><strong style=\"font-size:14px\">".concat(r.name, "</strong><br/><span style=\"font-size:11px;color:").concat(bg, "\">").concat(r.cuisine, "</span>").concat(r.location ? "<br/><span style=\"font-size:11px;color:#666\">".concat(r.location, "</span>") : '', "</div>"));
+      }).addTo(map.current).bindPopup("<div style=\"font-family:sans-serif;min-width:140px;padding:2px\"><strong style=\"font-size:13px;color:#1a0d02\">".concat(r.name, "</strong><br/><span style=\"font-size:11px;color:").concat(bg, "\">").concat(r.cuisine, "</span>").concat(r.location ? "<br/><span style=\"font-size:11px;color:#999\">".concat(r.location, "</span>") : '', "</div>"));
       mk.on('click', function () {
         mk.openPopup();
         onMarkerClick(r);
@@ -433,9 +453,6 @@ var MapView = function MapView(_ref3) {
       maxZoom: 14
     });
   }, [spots]);
-  var mappable = spots.filter(function (r) {
-    return r.lat && r.lng;
-  });
   var unmapped = spots.filter(function (r) {
     return !r.lat || !r.lng;
   });
@@ -448,7 +465,7 @@ var MapView = function MapView(_ref3) {
     ref: el,
     style: {
       width: '100%',
-      height: 'calc(100vh - 120px)'
+      height: 'calc(100vh - 110px)'
     }
   }), /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
@@ -463,10 +480,10 @@ var MapView = function MapView(_ref3) {
         map.current.setView([lat, lng], 15);
         if (locateMarker.current) locateMarker.current.remove();
         locateMarker.current = L.circleMarker([lat, lng], {
-          radius: 8,
+          radius: 7,
           fillColor: '#4a90d9',
           color: '#fff',
-          weight: 2.5,
+          weight: 2,
           opacity: 1,
           fillOpacity: 1
         }).addTo(map.current).bindPopup('You are here');
@@ -476,89 +493,106 @@ var MapView = function MapView(_ref3) {
     },
     style: {
       position: 'absolute',
-      bottom: 24,
+      bottom: 20,
       left: 12,
       zIndex: 1000,
-      background: 'rgba(255,248,240,0.95)',
+      background: 'rgba(253,250,246,0.96)',
       backdropFilter: 'blur(12px)',
       WebkitBackdropFilter: 'blur(12px)',
-      border: '1px solid rgba(180,140,110,0.3)',
+      border: "1px solid ".concat(C.bd),
       borderRadius: 10,
-      padding: '9px 14px',
-      fontFamily: "'Lora',serif",
+      padding: '8px 14px',
+      fontFamily: C.ui,
       fontSize: 13,
-      color: '#1e0e04',
+      fontWeight: 500,
+      color: C.text,
       cursor: 'pointer',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
+      boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
       display: 'flex',
       alignItems: 'center',
-      gap: 6
+      gap: 7
     }
   }, /*#__PURE__*/React.createElement(Ic, {
     n: "aim",
-    size: 15
+    size: 14
   }), "Locate Me"), /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
       top: 12,
       right: 12,
-      background: 'rgba(255,248,240,0.92)',
-      backdropFilter: 'blur(12px)',
-      borderRadius: 12,
-      padding: '10px 14px',
-      border: '1px solid rgba(180,140,110,0.2)',
       zIndex: 1000,
-      boxShadow: '0 2px 12px rgba(0,0,0,0.1)'
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 6
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       alignItems: 'center',
-      gap: 8,
-      marginBottom: 6
+      gap: 7,
+      background: 'rgba(253,250,246,0.96)',
+      backdropFilter: 'blur(10px)',
+      WebkitBackdropFilter: 'blur(10px)',
+      borderRadius: 20,
+      padding: '5px 11px',
+      border: "1px solid ".concat(C.bd),
+      boxShadow: '0 1px 6px rgba(0,0,0,0.08)'
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      width: 12,
-      height: 12,
-      background: '#c8773a',
+      width: 8,
+      height: 8,
+      background: C.amber,
       borderRadius: '50%'
     }
   }), /*#__PURE__*/React.createElement("span", {
     style: {
-      fontFamily: "'Lora',serif",
-      fontSize: 12,
-      color: '#1e0e04'
+      fontFamily: C.ui,
+      fontSize: 11,
+      fontWeight: 500,
+      color: C.mid
     }
-  }, "Want to try")), /*#__PURE__*/React.createElement("div", {
+  }, "To visit")), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       alignItems: 'center',
-      gap: 8
+      gap: 7,
+      background: 'rgba(253,250,246,0.96)',
+      backdropFilter: 'blur(10px)',
+      WebkitBackdropFilter: 'blur(10px)',
+      borderRadius: 20,
+      padding: '5px 11px',
+      border: "1px solid ".concat(C.bd),
+      boxShadow: '0 1px 6px rgba(0,0,0,0.08)'
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      width: 12,
-      height: 12,
-      background: '#5a9a6a',
+      width: 8,
+      height: 8,
+      background: C.sage,
       borderRadius: '50%'
     }
   }), /*#__PURE__*/React.createElement("span", {
     style: {
-      fontFamily: "'Lora',serif",
-      fontSize: 12,
-      color: '#1e0e04'
+      fontFamily: C.ui,
+      fontSize: 11,
+      fontWeight: 500,
+      color: C.mid
     }
-  }, "Visited")), unmapped.length > 0 && /*#__PURE__*/React.createElement("p", {
+  }, "Visited")), unmapped.length > 0 && /*#__PURE__*/React.createElement("div", {
     style: {
-      fontFamily: "'Lora',serif",
+      background: 'rgba(253,250,246,0.96)',
+      borderRadius: 20,
+      padding: '5px 11px',
+      border: "1px solid ".concat(C.bd)
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: C.ui,
       fontSize: 10,
-      color: 'rgba(100,70,40,0.4)',
-      marginTop: 8,
-      borderTop: '1px solid rgba(180,140,110,0.2)',
-      paddingTop: 6
+      color: C.dim
     }
-  }, unmapped.length, " spot", unmapped.length > 1 ? 's' : '', " without location")));
+  }, unmapped.length, " without pin"))));
 };
 
 // ── Import modal ─────────────────────────────────────────────
@@ -623,13 +657,12 @@ var ImportModal = function ImportModal(_ref4) {
                   return rej(new Error('timeout'));
                 }, 8000);
               })]);
-            }; // Try Firebase Dynamic Link debug endpoint (?d=1) for both maps.app.goo.gl AND share.google
-            // Appending ?d=1 returns a plain HTML page with the full destination Maps URL embedded
+            };
             if (htmlData.name) {
               _context.n = 13;
               break;
             }
-            debugUrl = rawUrl.split('?')[0] + '?d=1'; // Direct browser fetch first — user's phone IP is not blocked by Google
+            debugUrl = rawUrl.split('?')[0] + '?d=1';
             _context.p = 2;
             _context.n = 3;
             return race(fetch(debugUrl));
@@ -798,22 +831,23 @@ var ImportModal = function ImportModal(_ref4) {
   }
   var inp = {
     width: '100%',
-    padding: '10px 13px',
-    background: 'rgba(200,160,120,0.12)',
-    border: '1px solid rgba(180,140,110,0.28)',
+    padding: '10px 14px',
+    background: C.hi,
+    border: "1px solid ".concat(C.bdMid),
     borderRadius: 10,
-    fontFamily: "'Lora',serif",
+    fontFamily: C.ui,
     fontSize: 14,
-    color: '#1e0e04',
+    color: C.text,
     outline: 'none',
     boxSizing: 'border-box'
   };
   var lbl = {
     display: 'block',
-    fontFamily: "'DM Serif Display',serif",
+    fontFamily: C.ui,
     fontSize: 11,
-    letterSpacing: '0.08em',
-    color: 'rgba(100,70,40,0.55)',
+    fontWeight: 600,
+    letterSpacing: '0.05em',
+    color: C.dim,
     marginBottom: 5,
     textTransform: 'uppercase'
   };
@@ -823,9 +857,9 @@ var ImportModal = function ImportModal(_ref4) {
       position: 'fixed',
       inset: 0,
       zIndex: 300,
-      background: 'rgba(20,12,6,0.5)',
-      backdropFilter: 'blur(8px)',
-      WebkitBackdropFilter: 'blur(8px)',
+      background: 'rgba(10,5,0,0.45)',
+      backdropFilter: 'blur(6px)',
+      WebkitBackdropFilter: 'blur(6px)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -836,15 +870,12 @@ var ImportModal = function ImportModal(_ref4) {
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       width: '100%',
-      maxWidth: 440,
+      maxWidth: 420,
       maxHeight: '88vh',
       overflowY: 'auto',
-      borderRadius: 22,
-      background: 'rgba(255,248,240,0.92)',
-      backdropFilter: 'blur(32px)',
-      WebkitBackdropFilter: 'blur(32px)',
-      border: '1px solid rgba(255,255,255,0.7)',
-      boxShadow: '0 24px 64px rgba(30,14,4,0.2)',
+      borderRadius: 20,
+      background: C.hi,
+      boxShadow: '0 24px 60px rgba(0,0,0,0.18)',
       padding: 28,
       animation: 'slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)'
     },
@@ -856,21 +887,21 @@ var ImportModal = function ImportModal(_ref4) {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 20
+      marginBottom: 22
     }
   }, /*#__PURE__*/React.createElement("h2", {
     style: {
-      fontFamily: "'DM Serif Display',serif",
-      fontSize: 20,
-      color: '#1e0e04',
+      fontFamily: C.display,
+      fontSize: 21,
+      color: C.text,
       margin: 0
     }
-  }, step === 'paste' ? 'Import from Google Maps' : 'Confirm Details'), /*#__PURE__*/React.createElement("button", {
+  }, step === 'paste' ? 'Import from Maps' : 'Confirm Details'), /*#__PURE__*/React.createElement("button", {
     onClick: onClose,
     style: {
-      background: 'rgba(180,140,110,0.15)',
-      border: '1px solid rgba(180,140,110,0.25)',
-      color: 'rgba(100,70,40,0.5)',
+      background: 'transparent',
+      border: "1px solid ".concat(C.bd),
+      color: C.dim,
       borderRadius: '50%',
       width: 30,
       height: 30,
@@ -884,31 +915,41 @@ var ImportModal = function ImportModal(_ref4) {
     size: 13
   }))), step === 'paste' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
     style: {
-      fontFamily: "'Lora',serif",
+      fontFamily: C.ui,
       fontSize: 13,
-      color: 'rgba(100,70,40,0.6)',
-      marginBottom: 10,
+      color: C.mid,
+      marginBottom: 14,
       lineHeight: 1.6
     }
   }, "Paste any Google Maps link below and tap Import."), /*#__PURE__*/React.createElement("div", {
     style: {
-      background: 'rgba(200,119,58,0.08)',
-      border: '1px solid rgba(200,119,58,0.2)',
+      background: C.amberBg,
+      border: "1px solid ".concat(C.amberBd),
       borderRadius: 10,
-      padding: '10px 13px',
-      marginBottom: 14
+      padding: '10px 14px',
+      marginBottom: 16
     }
   }, /*#__PURE__*/React.createElement("p", {
     style: {
-      fontFamily: "'Lora',serif",
+      fontFamily: C.ui,
       fontSize: 12,
-      color: 'rgba(100,70,40,0.7)',
+      color: C.mid,
       lineHeight: 1.7,
       margin: 0
     }
-  }, /*#__PURE__*/React.createElement("strong", null, "Auto-fills name + location:"), " In Google Maps, open the restaurant \u2192 tap ", /*#__PURE__*/React.createElement("strong", null, "Share"), " \u2192 ", /*#__PURE__*/React.createElement("strong", null, "Open in Safari"), " \u2192 copy the URL from the address bar.", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("strong", null, "Saves link only:"), " The short ", /*#__PURE__*/React.createElement("em", null, "share.google/\u2026"), " link \u2014 Google blocks reading it, so you'll add the name manually. The Maps link is still saved.")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("strong", {
     style: {
-      marginBottom: 16
+      fontWeight: 600,
+      color: C.text
+    }
+  }, "Auto-fills name + location:"), " In Google Maps open the restaurant \u2192 Share \u2192 Open in Safari \u2192 copy the URL.", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("strong", {
+    style: {
+      fontWeight: 600,
+      color: C.text
+    }
+  }, "Saves link only:"), " Short ", /*#__PURE__*/React.createElement("em", null, "share.google/\u2026"), " links \u2014 Google blocks reading them, so you'll add the name manually.")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 18
     }
   }, /*#__PURE__*/React.createElement("label", {
     style: lbl
@@ -931,10 +972,10 @@ var ImportModal = function ImportModal(_ref4) {
       flex: 1,
       padding: 11,
       borderRadius: 10,
-      background: 'rgba(180,140,110,0.1)',
-      border: '1px solid rgba(180,140,110,0.2)',
-      color: 'rgba(100,70,40,0.5)',
-      fontFamily: "'DM Serif Display',serif",
+      background: 'transparent',
+      border: "1px solid ".concat(C.bdMid),
+      color: C.mid,
+      fontFamily: C.ui,
       fontSize: 14,
       cursor: 'pointer'
     }
@@ -945,41 +986,42 @@ var ImportModal = function ImportModal(_ref4) {
       flex: 2,
       padding: 11,
       borderRadius: 10,
-      background: url && !busy ? '#2c1f14' : 'rgba(180,140,110,0.12)',
+      background: url && !busy ? C.espr : 'rgba(20,10,0,0.08)',
       border: 'none',
-      color: url && !busy ? '#fdf8f3' : 'rgba(100,70,40,0.3)',
-      fontFamily: "'DM Serif Display',serif",
+      color: url && !busy ? '#fdf8f3' : C.dim,
+      fontFamily: C.ui,
       fontSize: 14,
+      fontWeight: 500,
       cursor: url && !busy ? 'pointer' : 'default'
     }
   }, busy ? 'Importing…' : 'Import →'))), step === 'preview' && form && /*#__PURE__*/React.createElement(React.Fragment, null, busy && /*#__PURE__*/React.createElement("p", {
     style: {
-      fontFamily: "'Lora',serif",
+      fontFamily: C.ui,
       fontSize: 12,
-      color: '#c8773a',
+      color: C.amber,
       marginBottom: 12
     }
   }, "Getting address\u2026"), !form.name && /*#__PURE__*/React.createElement("div", {
     style: {
-      background: 'rgba(200,119,58,0.1)',
-      border: '1px solid rgba(200,119,58,0.25)',
+      background: C.amberBg,
+      border: "1px solid ".concat(C.amberBd),
       borderRadius: 10,
-      padding: '9px 12px',
-      marginBottom: 4
+      padding: '9px 13px',
+      marginBottom: 12
     }
   }, /*#__PURE__*/React.createElement("p", {
     style: {
-      fontFamily: "'Lora',serif",
+      fontFamily: C.ui,
       fontSize: 12,
-      color: 'rgba(140,80,20,0.85)',
+      color: C.mid,
       margin: 0,
       lineHeight: 1.5
     }
-  }, "Couldn't auto-fill the name. Type it below to pin.")), /*#__PURE__*/React.createElement("div", {
+  }, "Couldn't auto-fill the name \u2014 type it below.")), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 13
+      gap: 14
     }
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     style: lbl
@@ -1050,17 +1092,18 @@ var ImportModal = function ImportModal(_ref4) {
     placeholder: "What to order, tips\u2026"
   })), form.lat && form.lng && /*#__PURE__*/React.createElement("div", {
     style: {
-      background: 'rgba(90,154,106,0.1)',
-      border: '1px solid rgba(90,154,106,0.25)',
+      background: C.sageBg,
+      border: "1px solid ".concat(C.sageBd),
       borderRadius: 10,
-      padding: '9px 12px'
+      padding: '9px 13px'
     }
   }, /*#__PURE__*/React.createElement("p", {
     style: {
-      fontFamily: "'Lora',serif",
+      fontFamily: C.ui,
       fontSize: 12,
-      color: '#3d7a4f',
-      margin: 0
+      color: C.sage,
+      margin: 0,
+      fontWeight: 500
     }
   }, "Coordinates found \u2014 will appear on map"))), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -1076,10 +1119,10 @@ var ImportModal = function ImportModal(_ref4) {
       flex: 1,
       padding: 11,
       borderRadius: 10,
-      background: 'rgba(180,140,110,0.1)',
-      border: '1px solid rgba(180,140,110,0.2)',
-      color: 'rgba(100,70,40,0.5)',
-      fontFamily: "'DM Serif Display',serif",
+      background: 'transparent',
+      border: "1px solid ".concat(C.bdMid),
+      color: C.mid,
+      fontFamily: C.ui,
       fontSize: 14,
       cursor: 'pointer'
     }
@@ -1091,11 +1134,12 @@ var ImportModal = function ImportModal(_ref4) {
       flex: 2,
       padding: 11,
       borderRadius: 10,
-      background: canSave ? '#2c1f14' : 'rgba(180,140,110,0.12)',
+      background: canSave ? C.espr : 'rgba(20,10,0,0.08)',
       border: 'none',
-      color: canSave ? '#fdf8f3' : 'rgba(100,70,40,0.3)',
-      fontFamily: "'DM Serif Display',serif",
+      color: canSave ? '#fdf8f3' : C.dim,
+      fontFamily: C.ui,
       fontSize: 14,
+      fontWeight: 500,
       cursor: canSave ? 'pointer' : 'default',
       transition: 'all 0.2s'
     }
@@ -1140,6 +1184,9 @@ var DetailPanel = function DetailPanel(_ref5) {
   function openInMaps() {
     openUrl(r.googleMapsUrl || "https://www.google.com/maps/search/".concat(encodeURIComponent([r.name, r.location].filter(Boolean).join(' '))));
   }
+  var isVisited = r.status === 'visited';
+  var accent = isVisited ? C.sage : C.amber;
+  var accentBg = isVisited ? C.sageBg : C.amberBg;
   var photos = (r.photos || []).filter(function (p) {
     return typeof p === 'string' && p.startsWith('http');
   });
@@ -1147,21 +1194,21 @@ var DetailPanel = function DetailPanel(_ref5) {
     label: 'Call',
     icon: /*#__PURE__*/React.createElement(Ic, {
       n: "phone",
-      size: 22
+      size: 20
     }),
     fn: call
   }, {
     label: 'Directions',
     icon: /*#__PURE__*/React.createElement(Ic, {
       n: "nav",
-      size: 22
+      size: 20
     }),
     fn: directions
   }, r.website && {
     label: 'Website',
     icon: /*#__PURE__*/React.createElement(Ic, {
       n: "globe",
-      size: 22
+      size: 20
     }),
     fn: function fn() {
       return openUrl(r.website);
@@ -1170,17 +1217,24 @@ var DetailPanel = function DetailPanel(_ref5) {
     label: 'Menu',
     icon: /*#__PURE__*/React.createElement(Ic, {
       n: "list",
-      size: 22
+      size: 20
     }),
     fn: menu
   }, {
     label: 'Share',
     icon: /*#__PURE__*/React.createElement(Ic, {
       n: "share",
-      size: 22
+      size: 20
     }),
     fn: share
   }].filter(Boolean);
+  var divider = /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: 1,
+      background: C.bd,
+      margin: '0 18px'
+    }
+  });
   var row = function row(icon, content, onTap) {
     return /*#__PURE__*/React.createElement("button", {
       onClick: onTap || undefined,
@@ -1189,20 +1243,19 @@ var DetailPanel = function DetailPanel(_ref5) {
         display: 'flex',
         alignItems: 'center',
         gap: 16,
-        padding: '15px 18px',
+        padding: '14px 18px',
         background: 'none',
         border: 'none',
         cursor: onTap ? 'pointer' : 'default',
-        textAlign: 'left',
-        borderBottom: '1px solid rgba(180,140,110,0.12)'
+        textAlign: 'left'
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
         flexShrink: 0,
-        width: 24,
+        width: 22,
         display: 'flex',
         justifyContent: 'center',
-        color: 'rgba(60,35,14,0.45)'
+        color: C.dim
       }
     }, icon), /*#__PURE__*/React.createElement("div", {
       style: {
@@ -1211,7 +1264,7 @@ var DetailPanel = function DetailPanel(_ref5) {
       }
     }, content), onTap && /*#__PURE__*/React.createElement("span", {
       style: {
-        color: 'rgba(100,70,40,0.3)',
+        color: C.dim,
         fontSize: 16,
         flexShrink: 0
       }
@@ -1222,7 +1275,7 @@ var DetailPanel = function DetailPanel(_ref5) {
       position: 'fixed',
       inset: 0,
       zIndex: 200,
-      background: 'rgba(20,12,6,0.45)',
+      background: 'rgba(10,5,0,0.35)',
       backdropFilter: 'blur(4px)',
       WebkitBackdropFilter: 'blur(4px)',
       animation: 'fadeIn 0.2s ease'
@@ -1236,11 +1289,10 @@ var DetailPanel = function DetailPanel(_ref5) {
       right: 0,
       maxHeight: '92vh',
       borderRadius: '22px 22px 0 0',
-      background: 'rgba(255,250,244,0.98)',
-      backdropFilter: 'blur(40px)',
-      WebkitBackdropFilter: 'blur(40px)',
-      boxShadow: '0 -8px 48px rgba(30,14,4,0.18)',
-      overflowY: 'auto',
+      background: C.hi,
+      boxShadow: '0 -4px 40px rgba(0,0,0,0.14)',
+      display: 'flex',
+      flexDirection: 'column',
       animation: 'slideUp 0.3s cubic-bezier(0.34,1.1,0.64,1)'
     },
     onClick: function onClick(e) {
@@ -1248,12 +1300,16 @@ var DetailPanel = function DetailPanel(_ref5) {
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
+      flex: 1,
+      overflowY: 'auto',
+      minHeight: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
       position: 'sticky',
       top: 0,
       zIndex: 10,
-      background: 'rgba(255,250,244,0.95)',
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
+      background: C.hi,
       padding: '12px 18px 0',
       display: 'flex',
       alignItems: 'center',
@@ -1265,10 +1321,10 @@ var DetailPanel = function DetailPanel(_ref5) {
     }
   }), /*#__PURE__*/React.createElement("div", {
     style: {
-      width: 36,
-      height: 4,
+      width: 32,
+      height: 3.5,
       borderRadius: 2,
-      background: 'rgba(180,140,110,0.35)'
+      background: C.bdMid
     }
   }), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -1279,24 +1335,26 @@ var DetailPanel = function DetailPanel(_ref5) {
   }, /*#__PURE__*/React.createElement("button", {
     onClick: onClose,
     style: {
-      background: 'rgba(180,140,110,0.15)',
-      border: 'none',
-      color: 'rgba(100,70,40,0.6)',
+      background: 'transparent',
+      border: "1px solid ".concat(C.bd),
+      color: C.dim,
       borderRadius: '50%',
       width: 30,
       height: 30,
       cursor: 'pointer',
-      fontSize: 13,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center'
     }
-  }, "\u2715"))), photos.length > 0 ? /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "close",
+    size: 13
+  })))), photos.length > 0 ? /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'grid',
       gridTemplateColumns: 'repeat(3,1fr)',
       gap: 2,
-      margin: '10px 0 0'
+      margin: '12px 0 0'
     }
   }, photos.slice(0, 6).map(function (p, i) {
     return /*#__PURE__*/React.createElement("img", {
@@ -1311,91 +1369,87 @@ var DetailPanel = function DetailPanel(_ref5) {
     });
   })) : /*#__PURE__*/React.createElement("div", {
     style: {
-      margin: '10px 18px 0',
-      height: 130,
-      background: 'linear-gradient(135deg,rgba(200,160,120,0.18),rgba(200,160,120,0.08))',
+      margin: '12px 18px 0',
+      height: 110,
+      background: C.surface,
       borderRadius: 14,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      border: '1px solid rgba(180,140,110,0.15)'
+      border: "1px solid ".concat(C.bd)
     }
-  }, /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("span", {
     style: {
       opacity: 0.2,
-      color: '#8b6040'
+      color: C.mid
     }
   }, /*#__PURE__*/React.createElement(Ic, {
     n: "pin",
-    size: 42
+    size: 38
   }))), /*#__PURE__*/React.createElement("div", {
     style: {
-      padding: '18px 18px 14px',
-      borderBottom: '1px solid rgba(180,140,110,0.13)'
+      padding: '18px 18px 14px'
     }
   }, /*#__PURE__*/React.createElement("h2", {
     style: {
-      fontFamily: "'DM Serif Display',serif",
-      fontSize: 26,
-      color: '#1e0e04',
-      margin: '0 0 8px',
+      fontFamily: C.display,
+      fontSize: 27,
+      color: C.text,
+      margin: '0 0 10px',
       lineHeight: 1.1
     }
   }, r.name), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       alignItems: 'center',
-      gap: 7,
+      gap: 8,
       flexWrap: 'wrap'
     }
-  }, r.rating && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     style: {
-      fontFamily: "'Lora',serif",
-      fontWeight: 600,
-      fontSize: 14,
-      color: '#c8773a'
+      fontFamily: C.ui,
+      fontSize: 12,
+      fontWeight: 500,
+      color: accent,
+      background: accentBg,
+      borderRadius: 20,
+      padding: '3px 10px'
     }
-  }, r.rating, ".0"), /*#__PURE__*/React.createElement(StarRating, {
-    value: r.rating,
-    readonly: true,
-    size: 13
-  }), /*#__PURE__*/React.createElement("span", {
+  }, isVisited ? 'Visited' : 'To Visit'), /*#__PURE__*/React.createElement("span", {
     style: {
-      color: 'rgba(120,80,40,0.35)'
-    }
-  }, "\xB7")), r.priceRange && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontFamily: "'Lora',serif",
-      fontSize: 13,
-      color: 'rgba(100,70,40,0.65)'
-    }
-  }, r.priceRange), /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: 'rgba(120,80,40,0.35)'
-    }
-  }, "\xB7")), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontFamily: "'Lora',serif",
-      fontSize: 13,
-      color: '#c8773a'
-    }
-  }, r.cuisine), /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: 'rgba(120,80,40,0.35)'
+      color: C.bd
     }
   }, "\xB7"), /*#__PURE__*/React.createElement("span", {
     style: {
-      fontFamily: "'Lora',serif",
-      fontSize: 13,
-      color: r.status === 'visited' ? '#5a9a6a' : '#b8873a'
+      fontFamily: C.ui,
+      fontSize: 12,
+      fontWeight: 500,
+      color: C.mid
     }
-  }, r.status === 'visited' ? 'Visited' : 'To Visit'))), /*#__PURE__*/React.createElement("div", {
+  }, r.cuisine), r.priceRange && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: C.bd
+    }
+  }, "\xB7"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 12,
+      color: C.mid
+    }
+  }, r.priceRange)), r.rating && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: C.bd
+    }
+  }, "\xB7"), /*#__PURE__*/React.createElement(StarRating, {
+    value: r.rating,
+    readonly: true,
+    size: 12
+  })))), divider, /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
-      gap: 10,
+      gap: 8,
       padding: '14px 18px',
       overflowX: 'auto',
-      borderBottom: '1px solid rgba(180,140,110,0.13)',
       WebkitOverflowScrolling: 'touch'
     }
   }, actionBtns.map(function (b) {
@@ -1407,49 +1461,46 @@ var DetailPanel = function DetailPanel(_ref5) {
         flexDirection: 'column',
         alignItems: 'center',
         gap: 7,
-        background: 'rgba(200,160,120,0.13)',
-        border: '1px solid rgba(180,140,110,0.22)',
-        borderRadius: 16,
-        padding: '13px 18px',
+        background: C.surface,
+        border: "1px solid ".concat(C.bd),
+        borderRadius: 14,
+        padding: '12px 16px',
         cursor: 'pointer',
         flexShrink: 0,
-        minWidth: 68,
-        transition: 'background 0.15s',
-        color: 'rgba(50,28,8,0.7)'
+        minWidth: 64,
+        color: C.mid,
+        transition: 'background 0.15s'
       }
     }, b.icon, /*#__PURE__*/React.createElement("span", {
       style: {
-        fontFamily: "'Lora',serif",
+        fontFamily: C.ui,
         fontSize: 11,
-        color: 'rgba(50,28,8,0.75)',
+        fontWeight: 500,
         whiteSpace: 'nowrap'
       }
     }, b.label));
-  })), /*#__PURE__*/React.createElement("div", {
+  })), divider, /*#__PURE__*/React.createElement("div", {
     style: {
-      paddingBottom: 8
+      paddingBottom: 12
     }
   }, r.location && row(/*#__PURE__*/React.createElement(Ic, {
     n: "pin",
-    size: 17
+    size: 16
   }), /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
     style: {
-      fontFamily: "'Lora',serif",
+      fontFamily: C.ui,
       fontSize: 14,
-      color: '#1e0e04'
+      color: C.text,
+      fontWeight: 500
     }
   }, r.location), /*#__PURE__*/React.createElement("p", {
     style: {
-      fontFamily: "'Lora',serif",
+      fontFamily: C.ui,
       fontSize: 12,
-      color: 'rgba(100,70,40,0.45)',
+      color: C.dim,
       marginTop: 1
     }
-  }, "Open in Google Maps")), openInMaps), ((_r$hours = r.hours) === null || _r$hours === void 0 ? void 0 : _r$hours.length) > 0 && /*#__PURE__*/React.createElement("div", {
-    style: {
-      borderBottom: '1px solid rgba(180,140,110,0.12)'
-    }
-  }, /*#__PURE__*/React.createElement("button", {
+  }, "Open in Google Maps")), openInMaps), r.location && divider, ((_r$hours = r.hours) === null || _r$hours === void 0 ? void 0 : _r$hours.length) > 0 && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
       return setHoursOpen(function (v) {
         return !v;
@@ -1460,7 +1511,7 @@ var DetailPanel = function DetailPanel(_ref5) {
       display: 'flex',
       alignItems: 'center',
       gap: 16,
-      padding: '15px 18px',
+      padding: '14px 18px',
       background: 'none',
       border: 'none',
       cursor: 'pointer',
@@ -1468,33 +1519,34 @@ var DetailPanel = function DetailPanel(_ref5) {
     }
   }, /*#__PURE__*/React.createElement("span", {
     style: {
-      width: 24,
+      flexShrink: 0,
+      width: 22,
       display: 'flex',
       justifyContent: 'center',
-      flexShrink: 0,
-      color: 'rgba(60,35,14,0.5)'
+      color: C.dim
     }
   }, /*#__PURE__*/React.createElement(Ic, {
     n: "clock",
-    size: 17
+    size: 16
   })), /*#__PURE__*/React.createElement("span", {
     style: {
-      fontFamily: "'Lora',serif",
+      fontFamily: C.ui,
       fontSize: 14,
-      color: '#1e0e04',
+      color: C.text,
+      fontWeight: 500,
       flex: 1
     }
   }, "Hours"), /*#__PURE__*/React.createElement("span", {
     style: {
-      color: 'rgba(100,70,40,0.4)',
-      fontSize: 14,
+      color: C.dim,
+      fontSize: 13,
       transition: 'transform 0.2s',
       display: 'inline-block',
       transform: hoursOpen ? 'rotate(90deg)' : 'none'
     }
   }, "\u203A")), hoursOpen && /*#__PURE__*/React.createElement("div", {
     style: {
-      padding: '0 18px 14px 58px'
+      padding: '0 18px 14px 56px'
     }
   }, r.hours.map(function (h, i) {
     return /*#__PURE__*/React.createElement("div", {
@@ -1503,39 +1555,41 @@ var DetailPanel = function DetailPanel(_ref5) {
         display: 'flex',
         justifyContent: 'space-between',
         padding: '4px 0',
-        borderBottom: i < r.hours.length - 1 ? '1px solid rgba(180,140,110,0.08)' : 'none'
+        borderBottom: i < r.hours.length - 1 ? "1px solid ".concat(C.bd) : 'none'
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
-        fontFamily: "'Lora',serif",
+        fontFamily: C.ui,
         fontSize: 13,
-        color: 'rgba(60,35,14,0.55)'
+        color: C.dim
       }
     }, h.day), /*#__PURE__*/React.createElement("span", {
       style: {
-        fontFamily: "'Lora',serif",
+        fontFamily: C.ui,
         fontSize: 13,
-        color: h.time === 'Closed' ? '#b05050' : '#3d7a4f',
+        color: h.time === 'Closed' ? C.red : C.sage,
         fontWeight: 500
       }
     }, h.time));
-  }))), r.phone && row(/*#__PURE__*/React.createElement(Ic, {
+  })), divider), r.phone && /*#__PURE__*/React.createElement(React.Fragment, null, row(/*#__PURE__*/React.createElement(Ic, {
     n: "phone",
-    size: 17
+    size: 16
   }), /*#__PURE__*/React.createElement("span", {
     style: {
-      fontFamily: "'Lora',serif",
+      fontFamily: C.ui,
       fontSize: 14,
-      color: '#c8773a'
+      color: C.amber,
+      fontWeight: 500
     }
-  }, r.phone), call), r.website && row(/*#__PURE__*/React.createElement(Ic, {
+  }, r.phone), call), divider), r.website && /*#__PURE__*/React.createElement(React.Fragment, null, row(/*#__PURE__*/React.createElement(Ic, {
     n: "globe",
-    size: 17
+    size: 16
   }), /*#__PURE__*/React.createElement("span", {
     style: {
-      fontFamily: "'Lora',serif",
+      fontFamily: C.ui,
       fontSize: 14,
-      color: '#c8773a',
+      color: C.amber,
+      fontWeight: 500,
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
@@ -1543,91 +1597,104 @@ var DetailPanel = function DetailPanel(_ref5) {
     }
   }, r.website.replace(/^https?:\/\//, '')), function () {
     return openUrl(r.website);
-  }), r.note && row(/*#__PURE__*/React.createElement(Ic, {
+  }), divider), r.note && /*#__PURE__*/React.createElement(React.Fragment, null, row(/*#__PURE__*/React.createElement(Ic, {
     n: "chat",
-    size: 17
+    size: 16
   }), /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
     style: {
-      fontFamily: "'Lora',serif",
-      fontSize: 12,
-      color: 'rgba(100,70,40,0.45)',
-      marginBottom: 3
+      fontFamily: C.ui,
+      fontSize: 11,
+      fontWeight: 600,
+      letterSpacing: '0.04em',
+      textTransform: 'uppercase',
+      color: C.dim,
+      marginBottom: 4
     }
-  }, "Note", r.recommender ? ' from ' + r.recommender : ''), /*#__PURE__*/React.createElement("p", {
+  }, r.recommender ? 'Note from ' + r.recommender : 'Note'), /*#__PURE__*/React.createElement("p", {
     style: {
-      fontFamily: "'Lora',serif",
-      fontSize: 14,
-      color: 'rgba(30,14,4,0.8)',
+      fontFamily: C.display,
+      fontSize: 15,
+      color: C.text,
       fontStyle: 'italic',
-      lineHeight: 1.5
+      lineHeight: 1.6
     }
-  }, "\"", r.note, "\""))), r.recommender && row(/*#__PURE__*/React.createElement(Ic, {
+  }, "\"", r.note, "\""))), divider), r.recommender && /*#__PURE__*/React.createElement(React.Fragment, null, row(/*#__PURE__*/React.createElement(Ic, {
     n: "person",
-    size: 17
+    size: 16
   }), /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
     style: {
-      fontFamily: "'Lora',serif",
-      fontSize: 12,
-      color: 'rgba(100,70,40,0.45)',
+      fontFamily: C.ui,
+      fontSize: 11,
+      fontWeight: 600,
+      letterSpacing: '0.04em',
+      textTransform: 'uppercase',
+      color: C.dim,
       marginBottom: 2
     }
   }, "Recommended by"), /*#__PURE__*/React.createElement("p", {
     style: {
-      fontFamily: "'Lora',serif",
+      fontFamily: C.ui,
       fontSize: 14,
-      color: '#1e0e04'
+      color: C.text,
+      fontWeight: 500
     }
-  }, r.recommender))), /*#__PURE__*/React.createElement("div", {
+  }, r.recommender))), divider), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       alignItems: 'center',
       gap: 16,
-      padding: '15px 18px',
-      borderBottom: '1px solid rgba(180,140,110,0.12)'
+      padding: '14px 18px'
     }
   }, /*#__PURE__*/React.createElement("span", {
     style: {
-      width: 24,
+      flexShrink: 0,
+      width: 22,
       display: 'flex',
       justifyContent: 'center',
-      flexShrink: 0,
-      color: 'rgba(60,35,14,0.5)'
+      color: C.dim
     }
   }, /*#__PURE__*/React.createElement(Ic, {
     n: "star",
-    size: 17
+    size: 16
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     style: {
-      fontFamily: "'Lora',serif",
-      fontSize: 12,
-      color: 'rgba(100,70,40,0.45)',
-      marginBottom: 6
+      fontFamily: C.ui,
+      fontSize: 11,
+      fontWeight: 600,
+      letterSpacing: '0.04em',
+      textTransform: 'uppercase',
+      color: C.dim,
+      marginBottom: 7
     }
   }, "Your rating"), /*#__PURE__*/React.createElement(StarRating, {
     value: r.rating,
     onChange: function onChange(v) {
       return onRate(r.id, v);
     },
-    size: 28
-  })))), /*#__PURE__*/React.createElement("div", {
+    size: 26
+  }))))), /*#__PURE__*/React.createElement("div", {
     style: {
+      flexShrink: 0,
+      padding: '12px 18px 36px',
+      borderTop: "1px solid ".concat(C.bd),
       display: 'flex',
       gap: 10,
-      padding: '12px 18px 36px'
+      background: C.hi
     }
-  }, r.status === 'want' && /*#__PURE__*/React.createElement("button", {
+  }, !isVisited && /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
       return onMarkVisited(r.id);
     },
     style: {
       flex: 2,
-      padding: 14,
-      borderRadius: 14,
-      background: 'rgba(90,154,106,0.15)',
-      border: '1.5px solid rgba(90,154,106,0.3)',
-      color: '#3d7a4f',
-      fontFamily: "'DM Serif Display',serif",
-      fontSize: 15,
+      padding: 13,
+      borderRadius: 12,
+      background: C.sageBg,
+      border: "1.5px solid ".concat(C.sageBd),
+      color: C.sage,
+      fontFamily: C.ui,
+      fontSize: 14,
+      fontWeight: 600,
       cursor: 'pointer',
       display: 'flex',
       alignItems: 'center',
@@ -1640,13 +1707,14 @@ var DetailPanel = function DetailPanel(_ref5) {
     },
     style: {
       flex: 1,
-      padding: 14,
-      borderRadius: 14,
-      background: 'rgba(180,140,110,0.12)',
-      border: '1px solid rgba(180,140,110,0.25)',
-      color: 'rgba(60,35,14,0.7)',
-      fontFamily: "'DM Serif Display',serif",
-      fontSize: 15,
+      padding: 13,
+      borderRadius: 12,
+      background: C.surface,
+      border: "1px solid ".concat(C.bdMid),
+      color: C.mid,
+      fontFamily: C.ui,
+      fontSize: 14,
+      fontWeight: 500,
       cursor: 'pointer',
       display: 'flex',
       alignItems: 'center',
@@ -1655,19 +1723,18 @@ var DetailPanel = function DetailPanel(_ref5) {
     }
   }, /*#__PURE__*/React.createElement(Ic, {
     n: "edit",
-    size: 15
+    size: 14
   }), "Edit"), /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
       if (window.confirm('Remove "' + r.name + '"? This cannot be undone.')) onDelete(r.id);
     },
     style: {
-      padding: 14,
-      borderRadius: 14,
-      background: 'rgba(180,60,60,0.08)',
-      border: '1px solid rgba(180,60,60,0.2)',
-      color: 'rgba(160,50,50,0.7)',
+      padding: 13,
+      borderRadius: 12,
+      background: C.redBg,
+      border: "1px solid ".concat(C.redBd),
+      color: C.red,
       cursor: 'pointer',
-      minWidth: 52,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center'
@@ -1712,22 +1779,23 @@ var EditModal = function EditModal(_ref6) {
   };
   var inp = {
     width: '100%',
-    padding: '10px 13px',
-    background: 'rgba(200,160,120,0.12)',
-    border: '1px solid rgba(180,140,110,0.28)',
+    padding: '10px 14px',
+    background: C.hi,
+    border: "1px solid ".concat(C.bdMid),
     borderRadius: 10,
-    fontFamily: "'Lora',serif",
+    fontFamily: C.ui,
     fontSize: 14,
-    color: '#1e0e04',
+    color: C.text,
     outline: 'none',
     boxSizing: 'border-box'
   };
   var lbl = {
     display: 'block',
-    fontFamily: "'DM Serif Display',serif",
+    fontFamily: C.ui,
     fontSize: 11,
-    letterSpacing: '0.08em',
-    color: 'rgba(100,70,40,0.55)',
+    fontWeight: 600,
+    letterSpacing: '0.05em',
+    color: C.dim,
     marginBottom: 5,
     textTransform: 'uppercase'
   };
@@ -1737,9 +1805,9 @@ var EditModal = function EditModal(_ref6) {
       position: 'fixed',
       inset: 0,
       zIndex: 300,
-      background: 'rgba(20,12,6,0.5)',
-      backdropFilter: 'blur(8px)',
-      WebkitBackdropFilter: 'blur(8px)',
+      background: 'rgba(10,5,0,0.45)',
+      backdropFilter: 'blur(6px)',
+      WebkitBackdropFilter: 'blur(6px)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -1750,15 +1818,12 @@ var EditModal = function EditModal(_ref6) {
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       width: '100%',
-      maxWidth: 440,
+      maxWidth: 420,
       maxHeight: '88vh',
       overflowY: 'auto',
-      borderRadius: 22,
-      background: 'rgba(255,248,240,0.92)',
-      backdropFilter: 'blur(32px)',
-      WebkitBackdropFilter: 'blur(32px)',
-      border: '1px solid rgba(255,255,255,0.7)',
-      boxShadow: '0 24px 64px rgba(30,14,4,0.2)',
+      borderRadius: 20,
+      background: C.hi,
+      boxShadow: '0 24px 60px rgba(0,0,0,0.18)',
       padding: 28,
       animation: 'slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)'
     },
@@ -1774,17 +1839,17 @@ var EditModal = function EditModal(_ref6) {
     }
   }, /*#__PURE__*/React.createElement("h2", {
     style: {
-      fontFamily: "'DM Serif Display',serif",
-      fontSize: 20,
-      color: '#1e0e04',
+      fontFamily: C.display,
+      fontSize: 21,
+      color: C.text,
       margin: 0
     }
   }, editData ? 'Edit Restaurant' : 'Add Manually'), /*#__PURE__*/React.createElement("button", {
     onClick: onClose,
     style: {
-      background: 'rgba(180,140,110,0.15)',
-      border: '1px solid rgba(180,140,110,0.25)',
-      color: 'rgba(100,70,40,0.5)',
+      background: 'transparent',
+      border: "1px solid ".concat(C.bd),
+      color: C.dim,
       borderRadius: '50%',
       width: 30,
       height: 30,
@@ -1800,7 +1865,7 @@ var EditModal = function EditModal(_ref6) {
     style: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 13
+      gap: 14
     }
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     style: lbl
@@ -1899,7 +1964,7 @@ var EditModal = function EditModal(_ref6) {
   }, "Status"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
-      gap: 10
+      gap: 8
     }
   }, ['want', 'visited'].map(function (s) {
     return /*#__PURE__*/React.createElement("button", {
@@ -1911,11 +1976,12 @@ var EditModal = function EditModal(_ref6) {
         flex: 1,
         padding: 10,
         borderRadius: 10,
-        border: "1.5px solid ".concat(form.status === s ? '#c8773a' : 'rgba(180,140,110,0.25)'),
-        background: form.status === s ? 'rgba(200,119,58,0.1)' : 'transparent',
-        color: form.status === s ? '#c8773a' : 'rgba(100,70,40,0.45)',
-        fontFamily: "'DM Serif Display',serif",
+        border: "1.5px solid ".concat(form.status === s ? C.amber : C.bd),
+        background: form.status === s ? C.amberBg : 'transparent',
+        color: form.status === s ? C.amber : C.dim,
+        fontFamily: C.ui,
         fontSize: 13,
+        fontWeight: 500,
         cursor: 'pointer',
         transition: 'all 0.15s'
       }
@@ -1940,10 +2006,10 @@ var EditModal = function EditModal(_ref6) {
       flex: 1,
       padding: 11,
       borderRadius: 10,
-      background: 'rgba(180,140,110,0.1)',
-      border: '1px solid rgba(180,140,110,0.2)',
-      color: 'rgba(100,70,40,0.5)',
-      fontFamily: "'DM Serif Display',serif",
+      background: 'transparent',
+      border: "1px solid ".concat(C.bdMid),
+      color: C.mid,
+      fontFamily: C.ui,
       fontSize: 14,
       cursor: 'pointer'
     }
@@ -1955,11 +2021,12 @@ var EditModal = function EditModal(_ref6) {
       flex: 2,
       padding: 11,
       borderRadius: 10,
-      background: ok ? '#2c1f14' : 'rgba(180,140,110,0.12)',
+      background: ok ? C.espr : 'rgba(20,10,0,0.08)',
       border: 'none',
-      color: ok ? '#fdf8f3' : 'rgba(100,70,40,0.3)',
-      fontFamily: "'DM Serif Display',serif",
+      color: ok ? '#fdf8f3' : C.dim,
+      fontFamily: C.ui,
       fontSize: 14,
+      fontWeight: 500,
       cursor: ok ? 'pointer' : 'default',
       transition: 'all 0.2s'
     }
@@ -1970,6 +2037,9 @@ var EditModal = function EditModal(_ref6) {
 var Card = function Card(_ref7) {
   var r = _ref7.r,
     onClick = _ref7.onClick;
+  var isVisited = r.status === 'visited';
+  var accent = isVisited ? C.sage : C.amber;
+  var accentBg = isVisited ? C.sageBg : C.amberBg;
   function nav(e) {
     e.stopPropagation();
     var q = r.lat && r.lng ? "".concat(r.lat, ",").concat(r.lng) : encodeURIComponent([r.name, r.location].filter(Boolean).join(' '));
@@ -1977,95 +2047,84 @@ var Card = function Card(_ref7) {
   }
   function site(e) {
     e.stopPropagation();
-    var url = r.website.startsWith('http') ? r.website : 'https://' + r.website;
-    window.open(url, '_blank');
+    window.open(r.website.startsWith('http') ? r.website : 'https://' + r.website, '_blank');
   }
   return /*#__PURE__*/React.createElement("div", {
     onClick: onClick,
     style: {
-      background: 'rgba(255,248,240,0.6)',
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
-      border: '1px solid rgba(255,255,255,0.5)',
+      background: C.hi,
       borderRadius: 14,
-      padding: '14px 15px',
+      padding: '17px 18px',
       cursor: 'pointer',
-      boxShadow: '0 2px 12px rgba(30,14,4,0.07), inset 0 1px 0 rgba(255,255,255,0.7)',
-      transition: 'transform 0.18s, box-shadow 0.18s'
+      borderLeft: "3px solid ".concat(accent),
+      boxShadow: '0 1px 3px rgba(0,0,0,0.05),0 3px 10px rgba(0,0,0,0.04)',
+      transition: 'transform 0.16s,box-shadow 0.16s'
     },
     onMouseEnter: function onMouseEnter(e) {
-      e.currentTarget.style.transform = 'translateY(-2px)';
-      e.currentTarget.style.boxShadow = '0 6px 24px rgba(30,14,4,0.11), inset 0 1px 0 rgba(255,255,255,0.8)';
+      e.currentTarget.style.transform = 'translateY(-1px)';
+      e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.09)';
     },
     onMouseLeave: function onMouseLeave(e) {
       e.currentTarget.style.transform = '';
-      e.currentTarget.style.boxShadow = '0 2px 12px rgba(30,14,4,0.07), inset 0 1px 0 rgba(255,255,255,0.7)';
+      e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05),0 3px 10px rgba(0,0,0,0.04)';
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'flex-start',
-      marginBottom: 5
+      marginBottom: 8
     }
   }, /*#__PURE__*/React.createElement("h3", {
     style: {
-      fontFamily: "'DM Serif Display',serif",
-      fontSize: 15,
-      color: '#1e0e04',
+      fontFamily: C.display,
+      fontSize: 17,
+      color: C.text,
       margin: 0,
-      lineHeight: 1.2,
+      lineHeight: 1.25,
       flex: 1,
-      minWidth: 0,
       paddingRight: 8
     }
-  }, r.name), r.status === 'visited' && r.rating && /*#__PURE__*/React.createElement(StarRating, {
+  }, r.name), isVisited && r.rating && /*#__PURE__*/React.createElement(StarRating, {
     value: r.rating,
     readonly: true,
     size: 11
   })), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
-      gap: 4,
+      gap: 7,
       alignItems: 'center',
       flexWrap: 'wrap',
-      marginBottom: 6
+      marginBottom: r.note ? 8 : 10
     }
   }, /*#__PURE__*/React.createElement("span", {
     style: {
-      fontSize: 10,
-      color: '#c8773a',
-      fontFamily: "'Lora',serif",
-      letterSpacing: '0.05em'
-    }
-  }, r.cuisine), r.location && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: 'rgba(120,80,40,0.3)',
-      fontSize: 9
-    }
-  }, "\xB7"), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 10,
-      color: 'rgba(100,70,40,0.45)',
-      fontFamily: "'Lora',serif",
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap',
-      maxWidth: 110,
-      display: 'inline-block'
-    }
-  }, r.location))), r.note && /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontFamily: "'Lora',serif",
+      fontFamily: C.ui,
       fontSize: 11,
-      color: 'rgba(60,35,14,0.5)',
-      margin: '0 0 8px',
-      fontStyle: 'italic',
-      lineHeight: 1.4,
+      fontWeight: 500,
+      color: accent,
+      background: accentBg,
+      borderRadius: 20,
+      padding: '2px 9px'
+    }
+  }, r.cuisine), r.location && /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 11,
+      color: C.dim
+    }
+  }, r.location)), r.note && /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 12,
+      color: '#8a7060',
+      margin: '0 0 10px',
+      lineHeight: 1.5,
       overflow: 'hidden',
       display: '-webkit-box',
       WebkitLineClamp: 2,
-      WebkitBoxOrient: 'vertical'
+      WebkitBoxOrient: 'vertical',
+      fontStyle: 'italic'
     }
   }, "\"", r.note, "\""), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -2075,13 +2134,14 @@ var Card = function Card(_ref7) {
     }
   }, r.recommender ? /*#__PURE__*/React.createElement("span", {
     style: {
-      fontSize: 10,
-      color: 'rgba(100,70,40,0.4)',
-      fontFamily: "'Lora',serif"
+      fontFamily: C.ui,
+      fontSize: 11,
+      color: C.dim
     }
   }, "via ", /*#__PURE__*/React.createElement("span", {
     style: {
-      color: '#c8773a'
+      color: C.amber,
+      fontWeight: 500
     }
   }, r.recommender)) : /*#__PURE__*/React.createElement("span", null), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -2093,10 +2153,10 @@ var Card = function Card(_ref7) {
     title: "Directions",
     style: {
       padding: '5px 7px',
-      borderRadius: 6,
-      background: 'rgba(200,119,58,0.12)',
-      border: '1px solid rgba(200,119,58,0.2)',
-      color: '#c8773a',
+      borderRadius: 7,
+      background: C.amberBg,
+      border: "1px solid ".concat(C.amberBd),
+      color: C.amber,
       cursor: 'pointer',
       display: 'flex',
       alignItems: 'center'
@@ -2109,10 +2169,10 @@ var Card = function Card(_ref7) {
     title: "Website",
     style: {
       padding: '5px 7px',
-      borderRadius: 6,
-      background: 'rgba(180,140,110,0.1)',
-      border: '1px solid rgba(180,140,110,0.2)',
-      color: 'rgba(60,35,14,0.6)',
+      borderRadius: 7,
+      background: C.surface,
+      border: "1px solid ".concat(C.bd),
+      color: C.mid,
       cursor: 'pointer',
       display: 'flex',
       alignItems: 'center'
@@ -2123,62 +2183,68 @@ var Card = function Card(_ref7) {
   })))));
 };
 
-// ── Column ───────────────────────────────────────────────────
-var Column = function Column(_ref8) {
+// ── Feed (single-column sections) ────────────────────────────
+var SectionHead = function SectionHead(_ref8) {
   var title = _ref8.title,
-    icon = _ref8.icon,
-    items = _ref8.items,
-    onCardClick = _ref8.onCardClick;
+    count = _ref8.count;
   return /*#__PURE__*/React.createElement("div", {
     style: {
-      flex: 1,
-      minWidth: 0
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
       display: 'flex',
-      alignItems: 'center',
-      gap: 8,
-      marginBottom: 12
+      alignItems: 'baseline',
+      gap: 10,
+      marginBottom: 14,
+      paddingBottom: 10,
+      borderBottom: "1px solid ".concat(C.bd)
     }
   }, /*#__PURE__*/React.createElement("h2", {
     style: {
-      fontFamily: "'DM Serif Display',serif",
-      fontSize: 15,
-      color: '#1e0e04',
-      margin: 0,
-      flex: 1
+      fontFamily: C.display,
+      fontSize: 20,
+      color: C.text,
+      margin: 0
     }
   }, title), /*#__PURE__*/React.createElement("span", {
     style: {
-      fontSize: 11,
-      fontFamily: "'Lora',serif",
-      color: 'rgba(100,70,40,0.4)',
-      background: 'rgba(180,140,110,0.15)',
-      borderRadius: 20,
-      padding: '2px 8px'
+      fontFamily: C.ui,
+      fontSize: 12,
+      fontWeight: 500,
+      color: C.dim
     }
-  }, items.length)), /*#__PURE__*/React.createElement("div", {
+  }, count));
+};
+var Feed = function Feed(_ref9) {
+  var wantList = _ref9.wantList,
+    visitedList = _ref9.visitedList,
+    onCardClick = _ref9.onCardClick;
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      maxWidth: 560,
+      margin: '0 auto',
+      width: '100%',
+      padding: '20px 16px 80px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 32
+    }
+  }, /*#__PURE__*/React.createElement(SectionHead, {
+    title: "To Visit",
+    count: wantList.length
+  }), wantList.length === 0 ? /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 13,
+      color: C.dim,
+      textAlign: 'center',
+      padding: '28px 0'
+    }
+  }, "Nothing saved yet \u2014 tap + Add to start") : /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 8
+      gap: 10
     }
-  }, items.length === 0 ? /*#__PURE__*/React.createElement("div", {
-    style: {
-      textAlign: 'center',
-      padding: '28px 12px',
-      background: 'rgba(255,248,240,0.3)',
-      borderRadius: 12,
-      border: '1px dashed rgba(180,140,110,0.3)'
-    }
-  }, /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontFamily: "'Lora',serif",
-      fontSize: 12,
-      color: 'rgba(100,70,40,0.35)'
-    }
-  }, "Nothing yet")) : items.map(function (r) {
+  }, wantList.map(function (r) {
     return /*#__PURE__*/React.createElement(Card, {
       key: r.id,
       r: r,
@@ -2186,7 +2252,24 @@ var Column = function Column(_ref8) {
         return onCardClick(r);
       }
     });
-  })));
+  }))), visitedList.length > 0 && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
+    title: "Visited",
+    count: visitedList.length
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 10
+    }
+  }, visitedList.map(function (r) {
+    return /*#__PURE__*/React.createElement(Card, {
+      key: r.id,
+      r: r,
+      onClick: function onClick() {
+        return onCardClick(r);
+      }
+    });
+  }))));
 };
 var PENDING_SPOTS = [{
   id: '550e8400-e29b-41d4-a716-446655440001',
@@ -2306,15 +2389,15 @@ function App() {
               _context2.n = 6;
               break;
             }
-            safe = toInsert.map(function (_ref9) {
-              var id = _ref9.id,
-                name = _ref9.name,
-                cuisine = _ref9.cuisine,
-                location = _ref9.location,
-                recommended_by = _ref9.recommended_by,
-                notes = _ref9.notes,
-                visited = _ref9.visited,
-                rating = _ref9.rating;
+            safe = toInsert.map(function (_ref0) {
+              var id = _ref0.id,
+                name = _ref0.name,
+                cuisine = _ref0.cuisine,
+                location = _ref0.location,
+                recommended_by = _ref0.recommended_by,
+                notes = _ref0.notes,
+                visited = _ref0.visited,
+                rating = _ref0.rating;
               return {
                 id: id,
                 name: name || '',
@@ -2596,45 +2679,62 @@ function App() {
     }));
     return _handleDelete.apply(this, arguments);
   }
-  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("style", null, "\n      @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');\n      *{box-sizing:border-box;margin:0;padding:0;}\n      body{background:#e8d9c8;}\n      ::placeholder{color:rgba(100,70,40,0.35)!important;}\n      ::-webkit-scrollbar{width:4px;}\n      ::-webkit-scrollbar-track{background:transparent;}\n      ::-webkit-scrollbar-thumb{background:rgba(180,140,110,0.3);border-radius:4px;}\n      select option{background:#f5ede0;}\n      .leaflet-container{font-family:'Lora',serif!important;}\n      @keyframes fadeIn{from{opacity:0}to{opacity:1}}\n      @keyframes slideUp{from{opacity:0;transform:translateY(20px) scale(0.98)}to{opacity:1;transform:none}}\n    "), /*#__PURE__*/React.createElement("div", {
+  var wantCount = restaurants.filter(function (r) {
+    return r.status === 'want';
+  }).length;
+  var visitedCount = restaurants.filter(function (r) {
+    return r.status === 'visited';
+  }).length;
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("style", null, "\n      @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap');\n      *{box-sizing:border-box;margin:0;padding:0;}\n      body{background:".concat(C.bg, ";-webkit-text-size-adjust:100%;}\n      ::placeholder{color:").concat(C.dim, "!important;opacity:0.7;}\n      ::-webkit-scrollbar{width:4px;}\n      ::-webkit-scrollbar-track{background:transparent;}\n      ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:4px;}\n      select option{background:").concat(C.hi, ";}\n      .leaflet-container{font-family:'Inter',system-ui,sans-serif!important;}\n      @keyframes fadeIn{from{opacity:0}to{opacity:1}}\n      @keyframes slideUp{from{opacity:0;transform:translateY(20px) scale(0.98)}to{opacity:1;transform:none}}\n    ")), /*#__PURE__*/React.createElement("div", {
     style: {
       minHeight: '100vh',
       display: 'flex',
       flexDirection: 'column',
-      background: 'linear-gradient(160deg,#e8d5be 0%,#ddc9b0 40%,#e0cfc0 100%)',
-      fontFamily: "'Lora',serif"
+      background: C.bg
     }
   }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: 'fixed',
-      inset: 0,
-      pointerEvents: 'none',
-      background: 'radial-gradient(ellipse at 20% 20%,rgba(255,245,230,0.4) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(200,160,110,0.15) 0%,transparent 60%)'
-    }
-  }), /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'sticky',
       top: 0,
       zIndex: 50,
-      background: 'rgba(240,226,208,0.75)',
-      backdropFilter: 'blur(24px)',
-      WebkitBackdropFilter: 'blur(24px)',
-      borderBottom: '1px solid rgba(255,255,255,0.5)',
-      boxShadow: '0 1px 0 rgba(180,140,110,0.15)',
-      padding: '12px 16px 11px'
+      background: 'rgba(244,236,224,0.9)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      borderBottom: "1px solid ".concat(C.bd)
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      maxWidth: 780,
+      maxWidth: 560,
       margin: '0 auto',
-      position: 'relative'
+      padding: '12px 16px 0'
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      position: 'absolute',
-      top: 0,
-      right: 0,
-      zIndex: 10
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", {
+    style: {
+      fontFamily: C.display,
+      fontSize: 26,
+      color: C.text,
+      margin: 0,
+      letterSpacing: '-0.01em',
+      lineHeight: 1
+    }
+  }, "PinPlate"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 11,
+      color: C.dim,
+      marginTop: 3,
+      fontWeight: 400
+    }
+  }, wantCount, " to visit \xB7 ", visitedCount, " visited")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'relative'
     }
   }, /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
@@ -2643,27 +2743,26 @@ function App() {
       });
     },
     style: {
-      background: '#2c1f14',
+      background: C.espr,
       color: '#fdf8f3',
       border: 'none',
       borderRadius: 10,
-      padding: '8px 15px',
-      fontFamily: "'DM Serif Display',serif",
+      padding: '9px 16px',
+      fontFamily: C.ui,
       fontSize: 13,
+      fontWeight: 600,
       cursor: 'pointer',
-      letterSpacing: '0.03em',
-      boxShadow: '0 3px 10px rgba(30,14,4,0.22)'
+      letterSpacing: '0.01em'
     }
   }, "+ Add"), showAddMenu && /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
       top: 'calc(100% + 8px)',
       right: 0,
-      background: 'rgba(255,248,240,0.96)',
-      backdropFilter: 'blur(20px)',
-      borderRadius: 12,
-      border: '1px solid rgba(180,140,110,0.25)',
-      boxShadow: '0 8px 32px rgba(30,14,4,0.15)',
+      background: C.hi,
+      borderRadius: 14,
+      border: "1px solid ".concat(C.bd),
+      boxShadow: '0 8px 28px rgba(0,0,0,0.12)',
       padding: 6,
       zIndex: 100,
       minWidth: 190,
@@ -2684,9 +2783,10 @@ function App() {
       border: 'none',
       background: 'none',
       textAlign: 'left',
-      fontFamily: "'Lora',serif",
+      fontFamily: C.ui,
       fontSize: 13,
-      color: '#1e0e04',
+      fontWeight: 500,
+      color: C.text,
       cursor: 'pointer',
       borderRadius: 8,
       display: 'flex',
@@ -2707,9 +2807,10 @@ function App() {
       border: 'none',
       background: 'none',
       textAlign: 'left',
-      fontFamily: "'Lora',serif",
+      fontFamily: C.ui,
       fontSize: 13,
-      color: '#1e0e04',
+      fontWeight: 500,
+      color: C.text,
       cursor: 'pointer',
       borderRadius: 8,
       display: 'flex',
@@ -2719,42 +2820,11 @@ function App() {
   }, /*#__PURE__*/React.createElement(Ic, {
     n: "pin",
     size: 15
-  }), "Import from Maps"))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      textAlign: 'center',
-      paddingBottom: 8
-    }
-  }, /*#__PURE__*/React.createElement("h1", {
-    style: {
-      fontFamily: "'DM Serif Display',serif",
-      fontSize: 24,
-      color: '#1e0e04',
-      letterSpacing: '-0.01em'
-    }
-  }, "PinPlate"), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 11,
-      color: 'rgba(100,70,40,0.5)',
-      marginTop: 2,
-      fontFamily: "'Lora',serif"
-    }
-  }, restaurants.filter(function (r) {
-    return r.status === 'want';
-  }).length, " to try \xB7 ", restaurants.filter(function (r) {
-    return r.status === 'visited';
-  }).length, " visited")), /*#__PURE__*/React.createElement("div", {
+  }), "Import from Maps")))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
-      justifyContent: 'center',
-      marginBottom: tab === 'home' ? 10 : 0
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      background: 'rgba(180,140,110,0.15)',
-      borderRadius: 10,
-      padding: 3,
-      border: '1px solid rgba(180,140,110,0.2)'
+      gap: 0,
+      borderBottom: "1px solid transparent"
     }
   }, [{
     k: 'home',
@@ -2769,71 +2839,60 @@ function App() {
         return setTab(t.k);
       },
       style: {
-        padding: '6px 16px',
-        borderRadius: 8,
+        padding: '8px 20px 10px',
         border: 'none',
+        background: 'none',
         cursor: 'pointer',
-        fontFamily: "'Lora',serif",
+        fontFamily: C.ui,
         fontSize: 13,
+        fontWeight: tab === t.k ? 600 : 400,
+        color: tab === t.k ? C.text : C.dim,
+        borderBottom: "2px solid ".concat(tab === t.k ? C.amber : 'transparent'),
         transition: 'all 0.15s',
-        background: tab === t.k ? 'rgba(255,248,240,0.9)' : 'transparent',
-        color: tab === t.k ? '#1e0e04' : 'rgba(100,70,40,0.5)',
-        boxShadow: tab === t.k ? '0 1px 4px rgba(30,14,4,0.1)' : 'none'
+        marginBottom: -1
       }
     }, t.l);
-  }))), tab === 'home' && /*#__PURE__*/React.createElement("input", {
+  }))), tab === 'home' && /*#__PURE__*/React.createElement("div", {
+    style: {
+      maxWidth: 560,
+      margin: '0 auto',
+      padding: '10px 16px 12px'
+    }
+  }, /*#__PURE__*/React.createElement("input", {
     value: search,
     onChange: function onChange(e) {
       return setSearch(e.target.value);
     },
-    placeholder: "Search restaurants, cuisine, city, friend\u2026",
+    placeholder: "Search restaurants, cuisine, city\u2026",
     style: {
       width: '100%',
       padding: '9px 14px',
-      background: 'rgba(255,248,240,0.55)',
-      backdropFilter: 'blur(16px)',
-      WebkitBackdropFilter: 'blur(16px)',
-      border: '1px solid rgba(255,255,255,0.55)',
+      background: C.hi,
+      border: "1px solid ".concat(C.bd),
       borderRadius: 10,
-      color: '#1e0e04',
-      fontFamily: "'Lora',serif",
+      color: C.text,
+      fontFamily: C.ui,
       fontSize: 13,
       outline: 'none',
-      boxShadow: 'inset 0 1px 3px rgba(30,14,4,0.05)'
+      boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
     }
-  }))), tab === 'home' && /*#__PURE__*/React.createElement("div", {
-    style: {
-      maxWidth: 780,
-      margin: '0 auto',
-      width: '100%',
-      padding: '18px 16px 80px'
-    }
-  }, loading ? /*#__PURE__*/React.createElement("div", {
+  }))), tab === 'home' && (loading ? /*#__PURE__*/React.createElement("div", {
     style: {
       textAlign: 'center',
-      padding: '60px 0'
+      padding: '70px 0'
     }
   }, /*#__PURE__*/React.createElement("p", {
     style: {
-      fontFamily: "'Lora',serif",
-      fontSize: 15,
-      color: 'rgba(60,35,14,0.4)'
+      fontFamily: C.ui,
+      fontSize: 14,
+      color: C.dim,
+      fontWeight: 400
     }
-  }, "Loading\u2026")) : /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      gap: 14,
-      alignItems: 'flex-start'
-    }
-  }, /*#__PURE__*/React.createElement(Column, {
-    title: "To Visit",
-    items: wantList,
+  }, "Loading\u2026")) : /*#__PURE__*/React.createElement(Feed, {
+    wantList: wantList,
+    visitedList: visitedList,
     onCardClick: setDetail
-  }), /*#__PURE__*/React.createElement(Column, {
-    title: "Visited",
-    items: visitedList,
-    onCardClick: setDetail
-  }))), tab === 'map' && !loading && /*#__PURE__*/React.createElement(MapView, {
+  })), tab === 'map' && !loading && /*#__PURE__*/React.createElement(MapView, {
     spots: restaurants,
     onMarkerClick: function onMarkerClick(r) {
       return setDetail(r);
@@ -2878,23 +2937,23 @@ function App() {
       bottom: 24,
       left: '50%',
       transform: 'translateX(-50%)',
-      background: '#2c1f14',
+      background: C.espr,
       color: '#fdf8f3',
       padding: '10px 20px',
       borderRadius: 50,
-      fontFamily: "'Lora',serif",
-      fontSize: 14,
+      fontFamily: C.ui,
+      fontSize: 13,
+      fontWeight: 500,
       zIndex: 500,
-      boxShadow: '0 4px 20px rgba(30,14,4,0.25)',
+      boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
       animation: 'slideUp 0.2s ease',
       whiteSpace: 'nowrap'
     }
   }, toast));
 }
-ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
 
 
-const BUILD_TIME = 1780296296;
+const BUILD_TIME = 1780336821;
 (function(){
   var checking=false;
   async function checkUpdate(){
