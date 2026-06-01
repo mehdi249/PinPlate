@@ -282,122 +282,152 @@ const ImportModal = ({ onClose, onImport }) => {
 
 // ── Detail panel ─────────────────────────────────────────────
 const DetailPanel = ({ r, onClose, onEdit, onMarkVisited, onRate }) => {
-  const [tab, setTab] = useState('info');
+  const [hoursOpen, setHoursOpen] = useState(false);
 
+  const openUrl = url => window.open(url.startsWith('http')?url:'https://'+url,'_blank');
   function directions() {
-    const q = r.lat&&r.lng ? `${r.lat},${r.lng}` : encodeURIComponent([r.name,r.location].filter(Boolean).join(' '));
+    const q = r.lat&&r.lng?`${r.lat},${r.lng}`:encodeURIComponent([r.name,r.location].filter(Boolean).join(' '));
     window.open(`https://maps.google.com/maps?daddr=${q}`,'_blank');
   }
-  function openSite(url) { window.open(url.startsWith('http')?url:'https://'+url,'_blank'); }
+  function call() { if(r.phone) window.location='tel:'+r.phone.replace(/[^\d+]/g,''); }
   function menu() {
-    if (r.menuUrl) return openSite(r.menuUrl);
+    if(r.menuUrl) return openUrl(r.menuUrl);
     window.open(`https://www.google.com/search?q=${encodeURIComponent(r.name+' '+(r.location||'')+' menu')}`,'_blank');
   }
+  function share() {
+    const url = r.googleMapsUrl||`https://www.google.com/maps/search/${encodeURIComponent(r.name)}`;
+    if(navigator.share) navigator.share({title:r.name,url});
+    else navigator.clipboard?.writeText(url);
+  }
+  function openInMaps() {
+    openUrl(r.googleMapsUrl||`https://www.google.com/maps/search/${encodeURIComponent([r.name,r.location].filter(Boolean).join(' '))}`);
+  }
+
+  const photos = (r.photos||[]).filter(p=>typeof p==='string'&&p.startsWith('http'));
+  const actionBtns = [
+    r.phone&&{label:'Call',icon:'📞',fn:call},
+    {label:'Directions',icon:'🧭',fn:directions},
+    r.website&&{label:'Website',icon:'🌐',fn:()=>openUrl(r.website)},
+    {label:'Menu',icon:'📋',fn:menu},
+    {label:'Share',icon:'📤',fn:share},
+  ].filter(Boolean);
+
+  const row = (icon,content,onTap) => (
+    <button onClick={onTap||undefined} style={{width:'100%',display:'flex',alignItems:'center',gap:16,padding:'15px 18px',background:'none',border:'none',cursor:onTap?'pointer':'default',textAlign:'left',borderBottom:'1px solid rgba(180,140,110,0.12)'}}>
+      <span style={{fontSize:19,flexShrink:0,width:24,textAlign:'center'}}>{icon}</span>
+      <div style={{flex:1,minWidth:0}}>{content}</div>
+      {onTap&&<span style={{color:'rgba(100,70,40,0.3)',fontSize:16,flexShrink:0}}>›</span>}
+    </button>
+  );
 
   return (
-    <div style={{position:'fixed',inset:0,zIndex:200,background:'rgba(20,12,6,0.55)',backdropFilter:'blur(6px)',WebkitBackdropFilter:'blur(6px)',display:'flex',alignItems:'center',justifyContent:'center',padding:16,animation:'fadeIn 0.2s ease'}} onClick={onClose}>
-      <div style={{width:'100%',maxWidth:500,maxHeight:'88vh',borderRadius:24,overflow:'hidden',background:'rgba(255,248,240,0.75)',backdropFilter:'blur(32px)',WebkitBackdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.55)',boxShadow:'0 24px 64px rgba(30,14,4,0.22), inset 0 1px 0 rgba(255,255,255,0.7)',display:'flex',flexDirection:'column',animation:'slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)'}} onClick={e=>e.stopPropagation()}>
+    <div style={{position:'fixed',inset:0,zIndex:200,background:'rgba(20,12,6,0.45)',backdropFilter:'blur(4px)',WebkitBackdropFilter:'blur(4px)',animation:'fadeIn 0.2s ease'}} onClick={onClose}>
+      <div style={{position:'fixed',bottom:0,left:0,right:0,maxHeight:'92vh',borderRadius:'22px 22px 0 0',background:'rgba(255,250,244,0.98)',backdropFilter:'blur(40px)',WebkitBackdropFilter:'blur(40px)',boxShadow:'0 -8px 48px rgba(30,14,4,0.18)',overflowY:'auto',animation:'slideUp 0.3s cubic-bezier(0.34,1.1,0.64,1)'}} onClick={e=>e.stopPropagation()}>
 
-        {/* Hero */}
-        <div style={{padding:'22px 22px 16px',borderBottom:'1px solid rgba(180,140,110,0.18)'}}>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
-            <div style={{flex:1,minWidth:0}}>
-              <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:5,flexWrap:'wrap'}}>
-                <span style={{fontSize:11,letterSpacing:'0.1em',textTransform:'uppercase',color:'#c8773a',fontFamily:"'Lora',serif",fontWeight:500}}>{r.cuisine}</span>
-                {r.priceRange&&<><span style={{color:'rgba(120,80,40,0.3)'}}>·</span><span style={{fontSize:11,color:'rgba(100,70,40,0.6)',fontFamily:"'Lora',serif"}}>{r.priceRange}</span></>}
-                <span style={{color:'rgba(120,80,40,0.3)'}}>·</span>
-                <span style={{fontSize:11,fontFamily:"'Lora',serif",color:r.status==='visited'?'#5a9a6a':'#b8873a'}}>{r.status==='visited'?'✓ Visited':'◎ Want to Try'}</span>
-              </div>
-              <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:24,color:'#1e0e04',margin:0,lineHeight:1.1}}>{r.name}</h2>
-            </div>
-            <button onClick={onClose} style={{background:'rgba(180,140,110,0.15)',border:'1px solid rgba(180,140,110,0.25)',color:'rgba(100,70,40,0.6)',borderRadius:'50%',width:32,height:32,cursor:'pointer',fontSize:14,flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',marginLeft:12}}>✕</button>
-          </div>
-          {r.location&&<p style={{fontSize:13,color:'rgba(100,70,40,0.55)',fontFamily:"'Lora',serif",margin:'0 0 10px'}}>📍 {r.location}</p>}
-          {r.status==='visited'&&r.rating&&<StarRating value={r.rating} readonly size={15}/>}
-
-          {/* Action buttons */}
-          <div style={{display:'flex',gap:8,marginTop:14}}>
-            <button onClick={directions} style={{flex:1,padding:'9px 6px',borderRadius:10,background:'rgba(200,119,58,0.12)',border:'1px solid rgba(200,119,58,0.25)',color:'#c8773a',fontFamily:"'Lora',serif",fontSize:12,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:4}}>🧭 Directions</button>
-            {r.website&&<button onClick={()=>openSite(r.website)} style={{flex:1,padding:'9px 6px',borderRadius:10,background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.22)',color:'rgba(60,35,14,0.65)',fontFamily:"'Lora',serif",fontSize:12,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:4}}>🌐 Website</button>}
-            <button onClick={menu} style={{flex:1,padding:'9px 6px',borderRadius:10,background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.22)',color:'rgba(60,35,14,0.65)',fontFamily:"'Lora',serif",fontSize:12,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:4}}>📋 Menu</button>
+        {/* Drag handle + close */}
+        <div style={{position:'sticky',top:0,zIndex:10,background:'rgba(255,250,244,0.95)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',padding:'12px 18px 0',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{flex:1}}/>
+          <div style={{width:36,height:4,borderRadius:2,background:'rgba(180,140,110,0.35)'}}/>
+          <div style={{flex:1,display:'flex',justifyContent:'flex-end'}}>
+            <button onClick={onClose} style={{background:'rgba(180,140,110,0.15)',border:'none',color:'rgba(100,70,40,0.6)',borderRadius:'50%',width:30,height:30,cursor:'pointer',fontSize:13,display:'flex',alignItems:'center',justifyContent:'center'}}>✕</button>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div style={{display:'flex',padding:'0 18px',borderBottom:'1px solid rgba(180,140,110,0.15)',background:'rgba(255,248,240,0.4)'}}>
-          {['info','hours','reviews','photos'].map(t=>(
-            <button key={t} onClick={()=>setTab(t)} style={{padding:'12px 12px 10px',background:'none',border:'none',cursor:'pointer',fontFamily:"'Lora',serif",fontSize:12,letterSpacing:'0.05em',textTransform:'capitalize',color:tab===t?'#1e0e04':'rgba(100,70,40,0.45)',borderBottom:`2px solid ${tab===t?'#c8773a':'transparent'}`,marginBottom:-1,transition:'all 0.15s'}}>{t}</button>
+        {/* Photos */}
+        {photos.length>0?(
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:2,margin:'10px 0 0'}}>
+            {photos.slice(0,6).map((p,i)=><img key={i} src={p} style={{width:'100%',aspectRatio:'1',objectFit:'cover'}} alt=""/>)}
+          </div>
+        ):(
+          <div style={{margin:'10px 18px 0',height:130,background:'linear-gradient(135deg,rgba(200,160,120,0.18),rgba(200,160,120,0.08))',borderRadius:14,display:'flex',alignItems:'center',justifyContent:'center',border:'1px solid rgba(180,140,110,0.15)'}}>
+            <span style={{fontSize:44,opacity:0.25}}>🍽</span>
+          </div>
+        )}
+
+        {/* Name + meta */}
+        <div style={{padding:'18px 18px 14px',borderBottom:'1px solid rgba(180,140,110,0.13)'}}>
+          <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:26,color:'#1e0e04',margin:'0 0 8px',lineHeight:1.1}}>{r.name}</h2>
+          <div style={{display:'flex',alignItems:'center',gap:7,flexWrap:'wrap'}}>
+            {r.rating&&<><span style={{fontFamily:"'Lora',serif",fontWeight:600,fontSize:14,color:'#c8773a'}}>{r.rating}.0</span><StarRating value={r.rating} readonly size={13}/><span style={{color:'rgba(120,80,40,0.35)'}}>·</span></>}
+            {r.priceRange&&<><span style={{fontFamily:"'Lora',serif",fontSize:13,color:'rgba(100,70,40,0.65)'}}>{r.priceRange}</span><span style={{color:'rgba(120,80,40,0.35)'}}>·</span></>}
+            <span style={{fontFamily:"'Lora',serif",fontSize:13,color:'#c8773a'}}>{r.cuisine}</span>
+            <span style={{color:'rgba(120,80,40,0.35)'}}>·</span>
+            <span style={{fontFamily:"'Lora',serif",fontSize:13,color:r.status==='visited'?'#5a9a6a':'#b8873a'}}>{r.status==='visited'?'✓ Visited':'◎ Want to Try'}</span>
+          </div>
+        </div>
+
+        {/* Action buttons */}
+        <div style={{display:'flex',gap:10,padding:'14px 18px',overflowX:'auto',borderBottom:'1px solid rgba(180,140,110,0.13)',WebkitOverflowScrolling:'touch'}}>
+          {actionBtns.map(b=>(
+            <button key={b.label} onClick={b.fn} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:7,background:'rgba(200,160,120,0.13)',border:'1px solid rgba(180,140,110,0.22)',borderRadius:16,padding:'13px 18px',cursor:'pointer',flexShrink:0,minWidth:68,transition:'background 0.15s'}}>
+              <span style={{fontSize:22}}>{b.icon}</span>
+              <span style={{fontFamily:"'Lora',serif",fontSize:11,color:'rgba(50,28,8,0.75)',whiteSpace:'nowrap'}}>{b.label}</span>
+            </button>
           ))}
         </div>
 
-        {/* Body */}
-        <div style={{flex:1,overflowY:'auto',padding:'20px 22px'}}>
-          {tab==='info'&&(
-            <div style={{display:'flex',flexDirection:'column',gap:12}}>
-              {r.note&&(
-                <div style={{background:'rgba(200,120,58,0.08)',border:'1px solid rgba(200,120,58,0.2)',borderLeft:'3px solid #c8773a',borderRadius:10,padding:'12px 14px'}}>
-                  <p style={{fontSize:11,color:'#c8773a',letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:"'Lora',serif",marginBottom:4}}>Note from {r.recommender}</p>
-                  <p style={{fontFamily:"'Lora',serif",fontSize:14,color:'rgba(30,14,4,0.8)',fontStyle:'italic',lineHeight:1.5,margin:0}}>"{r.note}"</p>
-                </div>
-              )}
-              {(r.phone||r.website)&&(
-                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
-                  {r.phone&&<div style={{background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.2)',borderRadius:10,padding:'10px 12px'}}><p style={{fontSize:10,color:'rgba(100,70,40,0.5)',letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:"'Lora',serif",marginBottom:3}}>Phone</p><p style={{fontSize:13,color:'#1e0e04',fontFamily:"'Lora',serif"}}>{r.phone}</p></div>}
-                  {r.website&&<div style={{background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.2)',borderRadius:10,padding:'10px 12px'}}><p style={{fontSize:10,color:'rgba(100,70,40,0.5)',letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:"'Lora',serif",marginBottom:3}}>Website</p><p style={{fontSize:13,color:'#c8773a',fontFamily:"'Lora',serif",overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{r.website}</p></div>}
-                </div>
-              )}
-              <div>
-                <p style={{fontSize:11,color:'rgba(100,70,40,0.5)',letterSpacing:'0.1em',textTransform:'uppercase',fontFamily:"'DM Serif Display',serif",marginBottom:8}}>Rating</p>
-                <StarRating value={r.rating} onChange={v=>onRate(r.id,v)} size={26}/>
-              </div>
-              <div style={{display:'flex',gap:8}}>
-                <button onClick={()=>onEdit(r)} style={{flex:1,padding:10,borderRadius:10,background:'rgba(180,140,110,0.12)',border:'1px solid rgba(180,140,110,0.22)',color:'rgba(60,35,14,0.7)',fontFamily:"'DM Serif Display',serif",fontSize:14,cursor:'pointer'}}>✏️ Edit</button>
-                {r.status==='want'&&<button onClick={()=>onMarkVisited(r.id)} style={{flex:2,padding:10,borderRadius:10,background:'rgba(90,154,106,0.15)',border:'1px solid rgba(90,154,106,0.3)',color:'#3d7a4f',fontFamily:"'DM Serif Display',serif",fontSize:14,cursor:'pointer'}}>✓ Mark as Visited</button>}
-              </div>
-            </div>
+        {/* Info rows */}
+        <div style={{paddingBottom:8}}>
+
+          {r.location&&row('📍',
+            <><p style={{fontFamily:"'Lora',serif",fontSize:14,color:'#1e0e04'}}>{r.location}</p><p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(100,70,40,0.45)',marginTop:1}}>Open in Google Maps</p></>,
+            openInMaps
           )}
-          {tab==='hours'&&(
-            <div style={{display:'flex',flexDirection:'column',gap:8}}>
-              {r.hours&&r.hours.length>0?r.hours.map((h,i)=>(
-                <div key={i} style={{display:'flex',justifyContent:'space-between',padding:'10px 13px',background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.18)',borderRadius:10}}>
-                  <span style={{fontFamily:"'Lora',serif",fontSize:13,color:'rgba(60,35,14,0.6)'}}>{h.day}</span>
-                  <span style={{fontFamily:"'Lora',serif",fontSize:13,color:h.time==='Closed'?'#b05050':'#3d7a4f',fontWeight:500}}>{h.time}</span>
-                </div>
-              )):<p style={{fontFamily:"'Lora',serif",fontSize:14,color:'rgba(100,70,40,0.4)',textAlign:'center',padding:'20px 0'}}>No hours added yet</p>}
-            </div>
-          )}
-          {tab==='reviews'&&(
-            <div style={{display:'flex',flexDirection:'column',gap:10}}>
-              {r.reviews&&r.reviews.length>0?r.reviews.map((rv,i)=>(
-                <div key={i} style={{background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.18)',borderRadius:12,padding:'12px 14px'}}>
-                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
-                    <span style={{fontFamily:"'DM Serif Display',serif",fontSize:15,color:'#1e0e04'}}>{rv.author}</span>
-                    <StarRating value={rv.stars} readonly size={12}/>
-                  </div>
-                  <p style={{fontFamily:"'Lora',serif",fontSize:13,color:'rgba(60,35,14,0.7)',fontStyle:'italic',lineHeight:1.5,margin:0}}>{rv.text}</p>
-                </div>
-              )):<p style={{fontFamily:"'Lora',serif",fontSize:14,color:'rgba(100,70,40,0.4)',textAlign:'center',padding:'20px 0'}}>No reviews yet</p>}
-            </div>
-          )}
-          {tab==='photos'&&(
-            <div>
-              {r.photos&&r.photos.length>0?(
-                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
-                  {r.photos.map((p,i)=>(
-                    typeof p==='string'&&p.startsWith('http')
-                      ?<img key={i} src={p} style={{width:'100%',aspectRatio:'1',objectFit:'cover',borderRadius:10,border:'1px solid rgba(180,140,110,0.2)'}} alt=""/>
-                      :<div key={i} style={{aspectRatio:'1',background:'rgba(200,160,120,0.15)',border:'1px solid rgba(200,160,120,0.25)',borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center',fontSize:32}}>{p}</div>
+
+          {r.hours?.length>0&&(
+            <div style={{borderBottom:'1px solid rgba(180,140,110,0.12)'}}>
+              <button onClick={()=>setHoursOpen(v=>!v)} style={{width:'100%',display:'flex',alignItems:'center',gap:16,padding:'15px 18px',background:'none',border:'none',cursor:'pointer',textAlign:'left'}}>
+                <span style={{fontSize:19,width:24,textAlign:'center',flexShrink:0}}>🕐</span>
+                <span style={{fontFamily:"'Lora',serif",fontSize:14,color:'#1e0e04',flex:1}}>Hours</span>
+                <span style={{color:'rgba(100,70,40,0.4)',fontSize:14,transition:'transform 0.2s',display:'inline-block',transform:hoursOpen?'rotate(90deg)':'none'}}>›</span>
+              </button>
+              {hoursOpen&&(
+                <div style={{padding:'0 18px 14px 58px'}}>
+                  {r.hours.map((h,i)=>(
+                    <div key={i} style={{display:'flex',justifyContent:'space-between',padding:'4px 0',borderBottom:i<r.hours.length-1?'1px solid rgba(180,140,110,0.08)':'none'}}>
+                      <span style={{fontFamily:"'Lora',serif",fontSize:13,color:'rgba(60,35,14,0.55)'}}>{h.day}</span>
+                      <span style={{fontFamily:"'Lora',serif",fontSize:13,color:h.time==='Closed'?'#b05050':'#3d7a4f',fontWeight:500}}>{h.time}</span>
+                    </div>
                   ))}
                 </div>
-              ):(
-                <div style={{textAlign:'center',padding:'40px 0'}}>
-                  <div style={{fontSize:32,marginBottom:10,opacity:0.3}}>📸</div>
-                  <p style={{fontFamily:"'Lora',serif",fontSize:14,color:'rgba(100,70,40,0.4)'}}>No photos yet</p>
-                  <p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(100,70,40,0.3)',marginTop:4}}>Edit the spot to add photo URLs</p>
-                </div>
               )}
             </div>
           )}
+
+          {r.phone&&row('📞',
+            <span style={{fontFamily:"'Lora',serif",fontSize:14,color:'#c8773a'}}>{r.phone}</span>,
+            call
+          )}
+
+          {r.website&&row('🌐',
+            <span style={{fontFamily:"'Lora',serif",fontSize:14,color:'#c8773a',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',display:'block'}}>{r.website.replace(/^https?:\/\//,'')}</span>,
+            ()=>openUrl(r.website)
+          )}
+
+          {r.note&&row('💬',
+            <><p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(100,70,40,0.45)',marginBottom:3}}>Note{r.recommender?' from '+r.recommender:''}</p><p style={{fontFamily:"'Lora',serif",fontSize:14,color:'rgba(30,14,4,0.8)',fontStyle:'italic',lineHeight:1.5}}>"{r.note}"</p></>
+          )}
+
+          {r.recommender&&row('👤',
+            <><p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(100,70,40,0.45)',marginBottom:2}}>Recommended by</p><p style={{fontFamily:"'Lora',serif",fontSize:14,color:'#1e0e04'}}>{r.recommender}</p></>
+          )}
+
+          {/* Your rating */}
+          <div style={{display:'flex',alignItems:'center',gap:16,padding:'15px 18px',borderBottom:'1px solid rgba(180,140,110,0.12)'}}>
+            <span style={{fontSize:19,width:24,textAlign:'center',flexShrink:0}}>⭐</span>
+            <div>
+              <p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(100,70,40,0.45)',marginBottom:6}}>Your rating</p>
+              <StarRating value={r.rating} onChange={v=>onRate(r.id,v)} size={28}/>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom actions */}
+        <div style={{display:'flex',gap:10,padding:'12px 18px 36px'}}>
+          {r.status==='want'&&(
+            <button onClick={()=>onMarkVisited(r.id)} style={{flex:2,padding:14,borderRadius:14,background:'rgba(90,154,106,0.15)',border:'1.5px solid rgba(90,154,106,0.3)',color:'#3d7a4f',fontFamily:"'DM Serif Display',serif",fontSize:15,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>✓ Mark as Visited</button>
+          )}
+          <button onClick={()=>onEdit(r)} style={{flex:1,padding:14,borderRadius:14,background:'rgba(180,140,110,0.12)',border:'1px solid rgba(180,140,110,0.25)',color:'rgba(60,35,14,0.7)',fontFamily:"'DM Serif Display',serif",fontSize:15,cursor:'pointer'}}>✏️ Edit</button>
         </div>
       </div>
     </div>

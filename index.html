@@ -820,400 +820,388 @@ var ImportModal = function ImportModal(_ref3) {
 
 // ── Detail panel ─────────────────────────────────────────────
 var DetailPanel = function DetailPanel(_ref4) {
+  var _r$hours;
   var r = _ref4.r,
     onClose = _ref4.onClose,
     onEdit = _ref4.onEdit,
     onMarkVisited = _ref4.onMarkVisited,
     onRate = _ref4.onRate;
-  var _useState9 = useState('info'),
+  var _useState9 = useState(false),
     _useState0 = _slicedToArray(_useState9, 2),
-    tab = _useState0[0],
-    setTab = _useState0[1];
+    hoursOpen = _useState0[0],
+    setHoursOpen = _useState0[1];
+  var openUrl = function openUrl(url) {
+    return window.open(url.startsWith('http') ? url : 'https://' + url, '_blank');
+  };
   function directions() {
     var q = r.lat && r.lng ? "".concat(r.lat, ",").concat(r.lng) : encodeURIComponent([r.name, r.location].filter(Boolean).join(' '));
     window.open("https://maps.google.com/maps?daddr=".concat(q), '_blank');
   }
-  function openSite(url) {
-    window.open(url.startsWith('http') ? url : 'https://' + url, '_blank');
+  function call() {
+    if (r.phone) window.location = 'tel:' + r.phone.replace(/[^\d+]/g, '');
   }
   function menu() {
-    if (r.menuUrl) return openSite(r.menuUrl);
+    if (r.menuUrl) return openUrl(r.menuUrl);
     window.open("https://www.google.com/search?q=".concat(encodeURIComponent(r.name + ' ' + (r.location || '') + ' menu')), '_blank');
   }
+  function share() {
+    var _navigator$clipboard;
+    var url = r.googleMapsUrl || "https://www.google.com/maps/search/".concat(encodeURIComponent(r.name));
+    if (navigator.share) navigator.share({
+      title: r.name,
+      url: url
+    });else (_navigator$clipboard = navigator.clipboard) === null || _navigator$clipboard === void 0 || _navigator$clipboard.writeText(url);
+  }
+  function openInMaps() {
+    openUrl(r.googleMapsUrl || "https://www.google.com/maps/search/".concat(encodeURIComponent([r.name, r.location].filter(Boolean).join(' '))));
+  }
+  var photos = (r.photos || []).filter(function (p) {
+    return typeof p === 'string' && p.startsWith('http');
+  });
+  var actionBtns = [r.phone && {
+    label: 'Call',
+    icon: '📞',
+    fn: call
+  }, {
+    label: 'Directions',
+    icon: '🧭',
+    fn: directions
+  }, r.website && {
+    label: 'Website',
+    icon: '🌐',
+    fn: function fn() {
+      return openUrl(r.website);
+    }
+  }, {
+    label: 'Menu',
+    icon: '📋',
+    fn: menu
+  }, {
+    label: 'Share',
+    icon: '📤',
+    fn: share
+  }].filter(Boolean);
+  var row = function row(icon, content, onTap) {
+    return /*#__PURE__*/React.createElement("button", {
+      onClick: onTap || undefined,
+      style: {
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 16,
+        padding: '15px 18px',
+        background: 'none',
+        border: 'none',
+        cursor: onTap ? 'pointer' : 'default',
+        textAlign: 'left',
+        borderBottom: '1px solid rgba(180,140,110,0.12)'
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 19,
+        flexShrink: 0,
+        width: 24,
+        textAlign: 'center'
+      }
+    }, icon), /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1,
+        minWidth: 0
+      }
+    }, content), onTap && /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: 'rgba(100,70,40,0.3)',
+        fontSize: 16,
+        flexShrink: 0
+      }
+    }, "\u203A"));
+  };
   return /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'fixed',
       inset: 0,
       zIndex: 200,
-      background: 'rgba(20,12,6,0.55)',
-      backdropFilter: 'blur(6px)',
-      WebkitBackdropFilter: 'blur(6px)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 16,
+      background: 'rgba(20,12,6,0.45)',
+      backdropFilter: 'blur(4px)',
+      WebkitBackdropFilter: 'blur(4px)',
       animation: 'fadeIn 0.2s ease'
     },
     onClick: onClose
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      width: '100%',
-      maxWidth: 500,
-      maxHeight: '88vh',
-      borderRadius: 24,
-      overflow: 'hidden',
-      background: 'rgba(255,248,240,0.75)',
-      backdropFilter: 'blur(32px)',
-      WebkitBackdropFilter: 'blur(32px)',
-      border: '1px solid rgba(255,255,255,0.55)',
-      boxShadow: '0 24px 64px rgba(30,14,4,0.22), inset 0 1px 0 rgba(255,255,255,0.7)',
-      display: 'flex',
-      flexDirection: 'column',
-      animation: 'slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)'
+      position: 'fixed',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      maxHeight: '92vh',
+      borderRadius: '22px 22px 0 0',
+      background: 'rgba(255,250,244,0.98)',
+      backdropFilter: 'blur(40px)',
+      WebkitBackdropFilter: 'blur(40px)',
+      boxShadow: '0 -8px 48px rgba(30,14,4,0.18)',
+      overflowY: 'auto',
+      animation: 'slideUp 0.3s cubic-bezier(0.34,1.1,0.64,1)'
     },
     onClick: function onClick(e) {
       return e.stopPropagation();
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      padding: '22px 22px 16px',
-      borderBottom: '1px solid rgba(180,140,110,0.18)'
+      position: 'sticky',
+      top: 0,
+      zIndex: 10,
+      background: 'rgba(255,250,244,0.95)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      padding: '12px 18px 0',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between'
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'flex-start',
-      marginBottom: 8
+      flex: 1
     }
-  }, /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 36,
+      height: 4,
+      borderRadius: 2,
+      background: 'rgba(180,140,110,0.35)'
+    }
+  }), /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1,
-      minWidth: 0
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
       display: 'flex',
-      gap: 8,
-      alignItems: 'center',
-      marginBottom: 5,
-      flexWrap: 'wrap'
+      justifyContent: 'flex-end'
     }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 11,
-      letterSpacing: '0.1em',
-      textTransform: 'uppercase',
-      color: '#c8773a',
-      fontFamily: "'Lora',serif",
-      fontWeight: 500
-    }
-  }, r.cuisine), r.priceRange && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: 'rgba(120,80,40,0.3)'
-    }
-  }, "\xB7"), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 11,
-      color: 'rgba(100,70,40,0.6)',
-      fontFamily: "'Lora',serif"
-    }
-  }, r.priceRange)), /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: 'rgba(120,80,40,0.3)'
-    }
-  }, "\xB7"), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 11,
-      fontFamily: "'Lora',serif",
-      color: r.status === 'visited' ? '#5a9a6a' : '#b8873a'
-    }
-  }, r.status === 'visited' ? '✓ Visited' : '◎ Want to Try')), /*#__PURE__*/React.createElement("h2", {
-    style: {
-      fontFamily: "'DM Serif Display',serif",
-      fontSize: 24,
-      color: '#1e0e04',
-      margin: 0,
-      lineHeight: 1.1
-    }
-  }, r.name)), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: onClose,
     style: {
       background: 'rgba(180,140,110,0.15)',
-      border: '1px solid rgba(180,140,110,0.25)',
+      border: 'none',
       color: 'rgba(100,70,40,0.6)',
       borderRadius: '50%',
-      width: 32,
-      height: 32,
+      width: 30,
+      height: 30,
       cursor: 'pointer',
-      fontSize: 14,
-      flexShrink: 0,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginLeft: 12
-    }
-  }, "\u2715")), r.location && /*#__PURE__*/React.createElement("p", {
-    style: {
       fontSize: 13,
-      color: 'rgba(100,70,40,0.55)',
-      fontFamily: "'Lora',serif",
-      margin: '0 0 10px'
-    }
-  }, "\uD83D\uDCCD ", r.location), r.status === 'visited' && r.rating && /*#__PURE__*/React.createElement(StarRating, {
-    value: r.rating,
-    readonly: true,
-    size: 15
-  }), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      gap: 8,
-      marginTop: 14
-    }
-  }, /*#__PURE__*/React.createElement("button", {
-    onClick: directions,
-    style: {
-      flex: 1,
-      padding: '9px 6px',
-      borderRadius: 10,
-      background: 'rgba(200,119,58,0.12)',
-      border: '1px solid rgba(200,119,58,0.25)',
-      color: '#c8773a',
-      fontFamily: "'Lora',serif",
-      fontSize: 12,
-      cursor: 'pointer',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
-      gap: 4
+      justifyContent: 'center'
     }
-  }, "\uD83E\uDDED Directions"), r.website && /*#__PURE__*/React.createElement("button", {
-    onClick: function onClick() {
-      return openSite(r.website);
-    },
-    style: {
-      flex: 1,
-      padding: '9px 6px',
-      borderRadius: 10,
-      background: 'rgba(180,140,110,0.1)',
-      border: '1px solid rgba(180,140,110,0.22)',
-      color: 'rgba(60,35,14,0.65)',
-      fontFamily: "'Lora',serif",
-      fontSize: 12,
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 4
-    }
-  }, "\uD83C\uDF10 Website"), /*#__PURE__*/React.createElement("button", {
-    onClick: menu,
-    style: {
-      flex: 1,
-      padding: '9px 6px',
-      borderRadius: 10,
-      background: 'rgba(180,140,110,0.1)',
-      border: '1px solid rgba(180,140,110,0.22)',
-      color: 'rgba(60,35,14,0.65)',
-      fontFamily: "'Lora',serif",
-      fontSize: 12,
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 4
-    }
-  }, "\uD83D\uDCCB Menu"))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      padding: '0 18px',
-      borderBottom: '1px solid rgba(180,140,110,0.15)',
-      background: 'rgba(255,248,240,0.4)'
-    }
-  }, ['info', 'hours', 'reviews', 'photos'].map(function (t) {
-    return /*#__PURE__*/React.createElement("button", {
-      key: t,
-      onClick: function onClick() {
-        return setTab(t);
-      },
-      style: {
-        padding: '12px 12px 10px',
-        background: 'none',
-        border: 'none',
-        cursor: 'pointer',
-        fontFamily: "'Lora',serif",
-        fontSize: 12,
-        letterSpacing: '0.05em',
-        textTransform: 'capitalize',
-        color: tab === t ? '#1e0e04' : 'rgba(100,70,40,0.45)',
-        borderBottom: "2px solid ".concat(tab === t ? '#c8773a' : 'transparent'),
-        marginBottom: -1,
-        transition: 'all 0.15s'
-      }
-    }, t);
-  })), /*#__PURE__*/React.createElement("div", {
-    style: {
-      flex: 1,
-      overflowY: 'auto',
-      padding: '20px 22px'
-    }
-  }, tab === 'info' && /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 12
-    }
-  }, r.note && /*#__PURE__*/React.createElement("div", {
-    style: {
-      background: 'rgba(200,120,58,0.08)',
-      border: '1px solid rgba(200,120,58,0.2)',
-      borderLeft: '3px solid #c8773a',
-      borderRadius: 10,
-      padding: '12px 14px'
-    }
-  }, /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 11,
-      color: '#c8773a',
-      letterSpacing: '0.1em',
-      textTransform: 'uppercase',
-      fontFamily: "'Lora',serif",
-      marginBottom: 4
-    }
-  }, "Note from ", r.recommender), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontFamily: "'Lora',serif",
-      fontSize: 14,
-      color: 'rgba(30,14,4,0.8)',
-      fontStyle: 'italic',
-      lineHeight: 1.5,
-      margin: 0
-    }
-  }, "\"", r.note, "\"")), (r.phone || r.website) && /*#__PURE__*/React.createElement("div", {
+  }, "\u2715"))), photos.length > 0 ? /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      gap: 8
+      gridTemplateColumns: 'repeat(3,1fr)',
+      gap: 2,
+      margin: '10px 0 0'
     }
-  }, r.phone && /*#__PURE__*/React.createElement("div", {
+  }, photos.slice(0, 6).map(function (p, i) {
+    return /*#__PURE__*/React.createElement("img", {
+      key: i,
+      src: p,
+      style: {
+        width: '100%',
+        aspectRatio: '1',
+        objectFit: 'cover'
+      },
+      alt: ""
+    });
+  })) : /*#__PURE__*/React.createElement("div", {
     style: {
-      background: 'rgba(180,140,110,0.1)',
-      border: '1px solid rgba(180,140,110,0.2)',
-      borderRadius: 10,
-      padding: '10px 12px'
+      margin: '10px 18px 0',
+      height: 130,
+      background: 'linear-gradient(135deg,rgba(200,160,120,0.18),rgba(200,160,120,0.08))',
+      borderRadius: 14,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: '1px solid rgba(180,140,110,0.15)'
     }
-  }, /*#__PURE__*/React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("span", {
     style: {
-      fontSize: 10,
-      color: 'rgba(100,70,40,0.5)',
-      letterSpacing: '0.1em',
-      textTransform: 'uppercase',
-      fontFamily: "'Lora',serif",
-      marginBottom: 3
+      fontSize: 44,
+      opacity: 0.25
     }
-  }, "Phone"), /*#__PURE__*/React.createElement("p", {
+  }, "\uD83C\uDF7D")), /*#__PURE__*/React.createElement("div", {
     style: {
-      fontSize: 13,
-      color: '#1e0e04',
-      fontFamily: "'Lora',serif"
+      padding: '18px 18px 14px',
+      borderBottom: '1px solid rgba(180,140,110,0.13)'
     }
-  }, r.phone)), r.website && /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("h2", {
     style: {
-      background: 'rgba(180,140,110,0.1)',
-      border: '1px solid rgba(180,140,110,0.2)',
-      borderRadius: 10,
-      padding: '10px 12px'
-    }
-  }, /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 10,
-      color: 'rgba(100,70,40,0.5)',
-      letterSpacing: '0.1em',
-      textTransform: 'uppercase',
-      fontFamily: "'Lora',serif",
-      marginBottom: 3
-    }
-  }, "Website"), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 13,
-      color: '#c8773a',
-      fontFamily: "'Lora',serif",
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap'
-    }
-  }, r.website))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: 11,
-      color: 'rgba(100,70,40,0.5)',
-      letterSpacing: '0.1em',
-      textTransform: 'uppercase',
       fontFamily: "'DM Serif Display',serif",
-      marginBottom: 8
+      fontSize: 26,
+      color: '#1e0e04',
+      margin: '0 0 8px',
+      lineHeight: 1.1
     }
-  }, "Rating"), /*#__PURE__*/React.createElement(StarRating, {
-    value: r.rating,
-    onChange: function onChange(v) {
-      return onRate(r.id, v);
-    },
-    size: 26
-  })), /*#__PURE__*/React.createElement("div", {
+  }, r.name), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
-      gap: 8
+      alignItems: 'center',
+      gap: 7,
+      flexWrap: 'wrap'
+    }
+  }, r.rating && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontWeight: 600,
+      fontSize: 14,
+      color: '#c8773a'
+    }
+  }, r.rating, ".0"), /*#__PURE__*/React.createElement(StarRating, {
+    value: r.rating,
+    readonly: true,
+    size: 13
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'rgba(120,80,40,0.35)'
+    }
+  }, "\xB7")), r.priceRange && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 13,
+      color: 'rgba(100,70,40,0.65)'
+    }
+  }, r.priceRange), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'rgba(120,80,40,0.35)'
+    }
+  }, "\xB7")), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 13,
+      color: '#c8773a'
+    }
+  }, r.cuisine), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'rgba(120,80,40,0.35)'
+    }
+  }, "\xB7"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 13,
+      color: r.status === 'visited' ? '#5a9a6a' : '#b8873a'
+    }
+  }, r.status === 'visited' ? '✓ Visited' : '◎ Want to Try'))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 10,
+      padding: '14px 18px',
+      overflowX: 'auto',
+      borderBottom: '1px solid rgba(180,140,110,0.13)',
+      WebkitOverflowScrolling: 'touch'
+    }
+  }, actionBtns.map(function (b) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: b.label,
+      onClick: b.fn,
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 7,
+        background: 'rgba(200,160,120,0.13)',
+        border: '1px solid rgba(180,140,110,0.22)',
+        borderRadius: 16,
+        padding: '13px 18px',
+        cursor: 'pointer',
+        flexShrink: 0,
+        minWidth: 68,
+        transition: 'background 0.15s'
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 22
+      }
+    }, b.icon), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontFamily: "'Lora',serif",
+        fontSize: 11,
+        color: 'rgba(50,28,8,0.75)',
+        whiteSpace: 'nowrap'
+      }
+    }, b.label));
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      paddingBottom: 8
+    }
+  }, r.location && row('📍', /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 14,
+      color: '#1e0e04'
+    }
+  }, r.location), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 12,
+      color: 'rgba(100,70,40,0.45)',
+      marginTop: 1
+    }
+  }, "Open in Google Maps")), openInMaps), ((_r$hours = r.hours) === null || _r$hours === void 0 ? void 0 : _r$hours.length) > 0 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      borderBottom: '1px solid rgba(180,140,110,0.12)'
     }
   }, /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
-      return onEdit(r);
+      return setHoursOpen(function (v) {
+        return !v;
+      });
     },
     style: {
-      flex: 1,
-      padding: 10,
-      borderRadius: 10,
-      background: 'rgba(180,140,110,0.12)',
-      border: '1px solid rgba(180,140,110,0.22)',
-      color: 'rgba(60,35,14,0.7)',
-      fontFamily: "'DM Serif Display',serif",
-      fontSize: 14,
-      cursor: 'pointer'
-    }
-  }, "\u270F\uFE0F Edit"), r.status === 'want' && /*#__PURE__*/React.createElement("button", {
-    onClick: function onClick() {
-      return onMarkVisited(r.id);
-    },
-    style: {
-      flex: 2,
-      padding: 10,
-      borderRadius: 10,
-      background: 'rgba(90,154,106,0.15)',
-      border: '1px solid rgba(90,154,106,0.3)',
-      color: '#3d7a4f',
-      fontFamily: "'DM Serif Display',serif",
-      fontSize: 14,
-      cursor: 'pointer'
-    }
-  }, "\u2713 Mark as Visited"))), tab === 'hours' && /*#__PURE__*/React.createElement("div", {
-    style: {
+      width: '100%',
       display: 'flex',
-      flexDirection: 'column',
-      gap: 8
+      alignItems: 'center',
+      gap: 16,
+      padding: '15px 18px',
+      background: 'none',
+      border: 'none',
+      cursor: 'pointer',
+      textAlign: 'left'
     }
-  }, r.hours && r.hours.length > 0 ? r.hours.map(function (h, i) {
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 19,
+      width: 24,
+      textAlign: 'center',
+      flexShrink: 0
+    }
+  }, "\uD83D\uDD50"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 14,
+      color: '#1e0e04',
+      flex: 1
+    }
+  }, "Hours"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'rgba(100,70,40,0.4)',
+      fontSize: 14,
+      transition: 'transform 0.2s',
+      display: 'inline-block',
+      transform: hoursOpen ? 'rotate(90deg)' : 'none'
+    }
+  }, "\u203A")), hoursOpen && /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '0 18px 14px 58px'
+    }
+  }, r.hours.map(function (h, i) {
     return /*#__PURE__*/React.createElement("div", {
       key: i,
       style: {
         display: 'flex',
         justifyContent: 'space-between',
-        padding: '10px 13px',
-        background: 'rgba(180,140,110,0.1)',
-        border: '1px solid rgba(180,140,110,0.18)',
-        borderRadius: 10
+        padding: '4px 0',
+        borderBottom: i < r.hours.length - 1 ? '1px solid rgba(180,140,110,0.08)' : 'none'
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
         fontFamily: "'Lora',serif",
         fontSize: 13,
-        color: 'rgba(60,35,14,0.6)'
+        color: 'rgba(60,35,14,0.55)'
       }
     }, h.day), /*#__PURE__*/React.createElement("span", {
       style: {
@@ -1223,120 +1211,121 @@ var DetailPanel = function DetailPanel(_ref4) {
         fontWeight: 500
       }
     }, h.time));
-  }) : /*#__PURE__*/React.createElement("p", {
+  }))), r.phone && row('📞', /*#__PURE__*/React.createElement("span", {
     style: {
       fontFamily: "'Lora',serif",
       fontSize: 14,
-      color: 'rgba(100,70,40,0.4)',
-      textAlign: 'center',
-      padding: '20px 0'
+      color: '#c8773a'
     }
-  }, "No hours added yet")), tab === 'reviews' && /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 10
-    }
-  }, r.reviews && r.reviews.length > 0 ? r.reviews.map(function (rv, i) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: i,
-      style: {
-        background: 'rgba(180,140,110,0.1)',
-        border: '1px solid rgba(180,140,110,0.18)',
-        borderRadius: 12,
-        padding: '12px 14px'
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 6
-      }
-    }, /*#__PURE__*/React.createElement("span", {
-      style: {
-        fontFamily: "'DM Serif Display',serif",
-        fontSize: 15,
-        color: '#1e0e04'
-      }
-    }, rv.author), /*#__PURE__*/React.createElement(StarRating, {
-      value: rv.stars,
-      readonly: true,
-      size: 12
-    })), /*#__PURE__*/React.createElement("p", {
-      style: {
-        fontFamily: "'Lora',serif",
-        fontSize: 13,
-        color: 'rgba(60,35,14,0.7)',
-        fontStyle: 'italic',
-        lineHeight: 1.5,
-        margin: 0
-      }
-    }, rv.text));
-  }) : /*#__PURE__*/React.createElement("p", {
+  }, r.phone), call), r.website && row('🌐', /*#__PURE__*/React.createElement("span", {
     style: {
       fontFamily: "'Lora',serif",
       fontSize: 14,
-      color: 'rgba(100,70,40,0.4)',
-      textAlign: 'center',
-      padding: '20px 0'
+      color: '#c8773a',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      display: 'block'
     }
-  }, "No reviews yet")), tab === 'photos' && /*#__PURE__*/React.createElement("div", null, r.photos && r.photos.length > 0 ? /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      gap: 8
-    }
-  }, r.photos.map(function (p, i) {
-    return typeof p === 'string' && p.startsWith('http') ? /*#__PURE__*/React.createElement("img", {
-      key: i,
-      src: p,
-      style: {
-        width: '100%',
-        aspectRatio: '1',
-        objectFit: 'cover',
-        borderRadius: 10,
-        border: '1px solid rgba(180,140,110,0.2)'
-      },
-      alt: ""
-    }) : /*#__PURE__*/React.createElement("div", {
-      key: i,
-      style: {
-        aspectRatio: '1',
-        background: 'rgba(200,160,120,0.15)',
-        border: '1px solid rgba(200,160,120,0.25)',
-        borderRadius: 10,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 32
-      }
-    }, p);
-  })) : /*#__PURE__*/React.createElement("div", {
-    style: {
-      textAlign: 'center',
-      padding: '40px 0'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 32,
-      marginBottom: 10,
-      opacity: 0.3
-    }
-  }, "\uD83D\uDCF8"), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontFamily: "'Lora',serif",
-      fontSize: 14,
-      color: 'rgba(100,70,40,0.4)'
-    }
-  }, "No photos yet"), /*#__PURE__*/React.createElement("p", {
+  }, r.website.replace(/^https?:\/\//, '')), function () {
+    return openUrl(r.website);
+  }), r.note && row('💬', /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
     style: {
       fontFamily: "'Lora',serif",
       fontSize: 12,
-      color: 'rgba(100,70,40,0.3)',
-      marginTop: 4
+      color: 'rgba(100,70,40,0.45)',
+      marginBottom: 3
     }
-  }, "Edit the spot to add photo URLs"))))));
+  }, "Note", r.recommender ? ' from ' + r.recommender : ''), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 14,
+      color: 'rgba(30,14,4,0.8)',
+      fontStyle: 'italic',
+      lineHeight: 1.5
+    }
+  }, "\"", r.note, "\""))), r.recommender && row('👤', /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 12,
+      color: 'rgba(100,70,40,0.45)',
+      marginBottom: 2
+    }
+  }, "Recommended by"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 14,
+      color: '#1e0e04'
+    }
+  }, r.recommender))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 16,
+      padding: '15px 18px',
+      borderBottom: '1px solid rgba(180,140,110,0.12)'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 19,
+      width: 24,
+      textAlign: 'center',
+      flexShrink: 0
+    }
+  }, "\u2B50"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 12,
+      color: 'rgba(100,70,40,0.45)',
+      marginBottom: 6
+    }
+  }, "Your rating"), /*#__PURE__*/React.createElement(StarRating, {
+    value: r.rating,
+    onChange: function onChange(v) {
+      return onRate(r.id, v);
+    },
+    size: 28
+  })))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 10,
+      padding: '12px 18px 36px'
+    }
+  }, r.status === 'want' && /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return onMarkVisited(r.id);
+    },
+    style: {
+      flex: 2,
+      padding: 14,
+      borderRadius: 14,
+      background: 'rgba(90,154,106,0.15)',
+      border: '1.5px solid rgba(90,154,106,0.3)',
+      color: '#3d7a4f',
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 15,
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 6
+    }
+  }, "\u2713 Mark as Visited"), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return onEdit(r);
+    },
+    style: {
+      flex: 1,
+      padding: 14,
+      borderRadius: 14,
+      background: 'rgba(180,140,110,0.12)',
+      border: '1px solid rgba(180,140,110,0.25)',
+      color: 'rgba(60,35,14,0.7)',
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 15,
+      cursor: 'pointer'
+    }
+  }, "\u270F\uFE0F Edit"))));
 };
 
 // ── Add / Edit modal ─────────────────────────────────────────
