@@ -130,32 +130,32 @@ function nominatimReverse(_x, _x2) {
   return _nominatimReverse.apply(this, arguments);
 } // ── StarRating ───────────────────────────────────────────────
 function _nominatimReverse() {
-  _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7(lat, lng) {
+  _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8(lat, lng) {
     var r, d, a, _t9;
-    return _regenerator().w(function (_context7) {
-      while (1) switch (_context7.p = _context7.n) {
+    return _regenerator().w(function (_context8) {
+      while (1) switch (_context8.p = _context8.n) {
         case 0:
-          _context7.p = 0;
-          _context7.n = 1;
+          _context8.p = 0;
+          _context8.n = 1;
           return fetch("https://nominatim.openstreetmap.org/reverse?lat=".concat(lat, "&lon=").concat(lng, "&format=json"), {
             headers: {
               'Accept-Language': 'en'
             }
           });
         case 1:
-          r = _context7.v;
-          _context7.n = 2;
+          r = _context8.v;
+          _context8.n = 2;
           return r.json();
         case 2:
-          d = _context7.v;
+          d = _context8.v;
           a = d.address || {};
-          return _context7.a(2, [a.road, a.neighbourhood || a.suburb, a.city || a.town || a.village, a.country].filter(Boolean).slice(0, 3).join(', '));
+          return _context8.a(2, [a.road, a.neighbourhood || a.suburb, a.city || a.town || a.village, a.country].filter(Boolean).slice(0, 3).join(', '));
         case 3:
-          _context7.p = 3;
-          _t9 = _context7.v;
-          return _context7.a(2, '');
+          _context8.p = 3;
+          _t9 = _context8.v;
+          return _context8.a(2, '');
       }
-    }, _callee7, null, [[0, 3]]);
+    }, _callee8, null, [[0, 3]]);
   }));
   return _nominatimReverse.apply(this, arguments);
 }
@@ -446,26 +446,14 @@ var ImportModal = function ImportModal(_ref3) {
             return resp.text();
           case 4:
             html = _context.v;
-            console.log('[PinPlate FDL] html snippet:', html.slice(0, 2000));
-            localStorage.setItem('fdl_debug', JSON.stringify({
-              url: debugUrl,
-              snippet: html.slice(0, 1500)
-            }));
             mapsUrl = extractMapsUrlFromFdl(html);
-            console.log('[PinPlate FDL] extracted mapsUrl:', mapsUrl);
             if (mapsUrl) resolved = mapsUrl;
             htmlData = parseGoogleMapsHtml(html);
-            console.log('[PinPlate FDL] htmlData:', htmlData);
             _context.n = 6;
             break;
           case 5:
             _context.p = 5;
             _t = _context.v;
-            console.log('[PinPlate FDL] fetch error:', _t.message);
-            localStorage.setItem('fdl_debug', JSON.stringify({
-              error: _t.message,
-              url: debugUrl
-            }));
           case 6:
             if (htmlData.name) {
               _context.n = 13;
@@ -792,25 +780,7 @@ var ImportModal = function ImportModal(_ref3) {
       margin: 0,
       lineHeight: 1.5
     }
-  }, "Couldn't auto-fill the name. Type it below to pin."), /*#__PURE__*/React.createElement("button", {
-    onClick: function onClick() {
-      var d = localStorage.getItem('fdl_debug');
-      if (d) navigator.clipboard.writeText(d).then(function () {
-        return alert('Debug info copied — paste it to Claude');
-      });else alert('No debug info yet');
-    },
-    style: {
-      marginTop: 6,
-      fontSize: 11,
-      padding: '3px 8px',
-      borderRadius: 6,
-      border: '1px solid rgba(140,80,20,0.3)',
-      background: 'transparent',
-      color: 'rgba(140,80,20,0.7)',
-      cursor: 'pointer',
-      fontFamily: "'Lora',serif"
-    }
-  }, "Copy debug info")), /*#__PURE__*/React.createElement("div", {
+  }, "Couldn't auto-fill the name. Type it below to pin.")), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: 'column',
@@ -944,7 +914,8 @@ var DetailPanel = function DetailPanel(_ref4) {
     onClose = _ref4.onClose,
     onEdit = _ref4.onEdit,
     onMarkVisited = _ref4.onMarkVisited,
-    onRate = _ref4.onRate;
+    onRate = _ref4.onRate,
+    onDelete = _ref4.onDelete;
   var _useState9 = useState(false),
     _useState0 = _slicedToArray(_useState9, 2),
     hoursOpen = _useState0[0],
@@ -1444,7 +1415,25 @@ var DetailPanel = function DetailPanel(_ref4) {
       fontSize: 15,
       cursor: 'pointer'
     }
-  }, "\u270F\uFE0F Edit"))));
+  }, "\u270F\uFE0F Edit"), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      if (window.confirm('Remove "' + r.name + '"? This cannot be undone.')) onDelete(r.id);
+    },
+    style: {
+      padding: 14,
+      borderRadius: 14,
+      background: 'rgba(180,60,60,0.08)',
+      border: '1px solid rgba(180,60,60,0.2)',
+      color: 'rgba(160,50,50,0.75)',
+      fontFamily: "'DM Serif Display',serif",
+      fontSize: 15,
+      cursor: 'pointer',
+      minWidth: 52,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
+  }, "\uD83D\uDDD1"))));
 };
 
 // ── Add / Edit modal ─────────────────────────────────────────
@@ -2312,6 +2301,41 @@ function App() {
     }));
     return _handleRate.apply(this, arguments);
   }
+  function handleDelete(_x7) {
+    return _handleDelete.apply(this, arguments);
+  }
+  function _handleDelete() {
+    _handleDelete = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7(id) {
+      var _yield$sb$from$delete, error;
+      return _regenerator().w(function (_context7) {
+        while (1) switch (_context7.n) {
+          case 0:
+            _context7.n = 1;
+            return sb.from('spots').delete().eq('id', id);
+          case 1:
+            _yield$sb$from$delete = _context7.v;
+            error = _yield$sb$from$delete.error;
+            if (!error) {
+              _context7.n = 2;
+              break;
+            }
+            showToast('Delete failed: ' + error.message);
+            return _context7.a(2);
+          case 2:
+            setRestaurants(function (rs) {
+              return rs.filter(function (r) {
+                return r.id !== id;
+              });
+            });
+            setDetail(null);
+            showToast('Removed.');
+          case 3:
+            return _context7.a(2);
+        }
+      }, _callee7);
+    }));
+    return _handleDelete.apply(this, arguments);
+  }
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("style", null, "\n      @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');\n      *{box-sizing:border-box;margin:0;padding:0;}\n      body{background:#e8d9c8;}\n      ::placeholder{color:rgba(100,70,40,0.35)!important;}\n      ::-webkit-scrollbar{width:4px;}\n      ::-webkit-scrollbar-track{background:transparent;}\n      ::-webkit-scrollbar-thumb{background:rgba(180,140,110,0.3);border-radius:4px;}\n      select option{background:#f5ede0;}\n      .leaflet-container{font-family:'Lora',serif!important;}\n      @keyframes fadeIn{from{opacity:0}to{opacity:1}}\n      @keyframes slideUp{from{opacity:0;transform:translateY(20px) scale(0.98)}to{opacity:1;transform:none}}\n    "), /*#__PURE__*/React.createElement("div", {
     style: {
       minHeight: '100vh',
@@ -2570,7 +2594,8 @@ function App() {
       setShowEdit(true);
     },
     onMarkVisited: handleMarkVisited,
-    onRate: handleRate
+    onRate: handleRate,
+    onDelete: handleDelete
   }), showEdit && /*#__PURE__*/React.createElement(EditModal, {
     onClose: function onClose() {
       setShowEdit(false);

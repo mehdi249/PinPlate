@@ -206,17 +206,10 @@ const ImportModal = ({ onClose, onImport }) => {
         try {
           const resp = await race(fetch(debugUrl));
           const html = await resp.text();
-          console.log('[PinPlate FDL] html snippet:', html.slice(0,2000));
-          localStorage.setItem('fdl_debug', JSON.stringify({ url: debugUrl, snippet: html.slice(0,1500) }));
           const mapsUrl = extractMapsUrlFromFdl(html);
-          console.log('[PinPlate FDL] extracted mapsUrl:', mapsUrl);
           if (mapsUrl) resolved = mapsUrl;
           htmlData = parseGoogleMapsHtml(html);
-          console.log('[PinPlate FDL] htmlData:', htmlData);
-        } catch(e0) {
-          console.log('[PinPlate FDL] fetch error:', e0.message);
-          localStorage.setItem('fdl_debug', JSON.stringify({ error: e0.message, url: debugUrl }));
-        }
+        } catch(e0) {}
         // Also try via proxy (works if proxy IP is allowed)
         if (!htmlData.name) {
           try {
@@ -324,7 +317,6 @@ const ImportModal = ({ onClose, onImport }) => {
           {busy&&<p style={{fontFamily:"'Lora',serif",fontSize:12,color:'#c8773a',marginBottom:12}}>📍 Getting address…</p>}
           {!form.name&&<div style={{background:'rgba(200,119,58,0.1)',border:'1px solid rgba(200,119,58,0.25)',borderRadius:10,padding:'9px 12px',marginBottom:4}}>
             <p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(140,80,20,0.85)',margin:0,lineHeight:1.5}}>Couldn't auto-fill the name. Type it below to pin.</p>
-            <button onClick={()=>{const d=localStorage.getItem('fdl_debug');if(d)navigator.clipboard.writeText(d).then(()=>alert('Debug info copied — paste it to Claude'));else alert('No debug info yet');}} style={{marginTop:6,fontSize:11,padding:'3px 8px',borderRadius:6,border:'1px solid rgba(140,80,20,0.3)',background:'transparent',color:'rgba(140,80,20,0.7)',cursor:'pointer',fontFamily:"'Lora',serif"}}>Copy debug info</button>
           </div>}
           <div style={{display:'flex',flexDirection:'column',gap:13}}>
             <div><label style={lbl}>Restaurant Name *</label><input style={inp} value={form.name} onChange={e=>set('name',e.target.value)} autoFocus={!form.name}/></div>
@@ -356,7 +348,7 @@ const ImportModal = ({ onClose, onImport }) => {
 };
 
 // ── Detail panel ─────────────────────────────────────────────
-const DetailPanel = ({ r, onClose, onEdit, onMarkVisited, onRate }) => {
+const DetailPanel = ({ r, onClose, onEdit, onMarkVisited, onRate, onDelete }) => {
   const [hoursOpen, setHoursOpen] = useState(false);
 
   const openUrl = url => window.open(url.startsWith('http')?url:'https://'+url,'_blank');
@@ -503,6 +495,7 @@ const DetailPanel = ({ r, onClose, onEdit, onMarkVisited, onRate }) => {
             <button onClick={()=>onMarkVisited(r.id)} style={{flex:2,padding:14,borderRadius:14,background:'rgba(90,154,106,0.15)',border:'1.5px solid rgba(90,154,106,0.3)',color:'#3d7a4f',fontFamily:"'DM Serif Display',serif",fontSize:15,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>✓ Mark as Visited</button>
           )}
           <button onClick={()=>onEdit(r)} style={{flex:1,padding:14,borderRadius:14,background:'rgba(180,140,110,0.12)',border:'1px solid rgba(180,140,110,0.25)',color:'rgba(60,35,14,0.7)',fontFamily:"'DM Serif Display',serif",fontSize:15,cursor:'pointer'}}>✏️ Edit</button>
+          <button onClick={()=>{ if(window.confirm('Remove "'+r.name+'"? This cannot be undone.')) onDelete(r.id); }} style={{padding:14,borderRadius:14,background:'rgba(180,60,60,0.08)',border:'1px solid rgba(180,60,60,0.2)',color:'rgba(160,50,50,0.75)',fontFamily:"'DM Serif Display',serif",fontSize:15,cursor:'pointer',minWidth:52,display:'flex',alignItems:'center',justifyContent:'center'}}>🗑</button>
         </div>
       </div>
     </div>
@@ -714,6 +707,14 @@ function App() {
     showToast('★'.repeat(rating)+' Saved!');
   }
 
+  async function handleDelete(id) {
+    const {error}=await sb.from('spots').delete().eq('id',id);
+    if (error) { showToast('Delete failed: '+error.message); return; }
+    setRestaurants(rs=>rs.filter(r=>r.id!==id));
+    setDetail(null);
+    showToast('Removed.');
+  }
+
   return (<>
     <style>{`
       @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
@@ -788,7 +789,7 @@ function App() {
 
     {showAddMenu&&<div style={{position:'fixed',inset:0,zIndex:40}} onClick={()=>setShowAddMenu(false)}/>}
 
-    {detail&&<DetailPanel r={detail} onClose={()=>setDetail(null)} onEdit={r=>{setEditTarget(r);setDetail(null);setShowEdit(true);}} onMarkVisited={handleMarkVisited} onRate={handleRate}/>}
+    {detail&&<DetailPanel r={detail} onClose={()=>setDetail(null)} onEdit={r=>{setEditTarget(r);setDetail(null);setShowEdit(true);}} onMarkVisited={handleMarkVisited} onRate={handleRate} onDelete={handleDelete}/>}
     {showEdit&&<EditModal onClose={()=>{setShowEdit(false);setEditTarget(null);}} onSave={handleSave} editData={editTarget}/>}
     {showImport&&<ImportModal onClose={()=>setShowImport(false)} onImport={handleSave}/>}
 
