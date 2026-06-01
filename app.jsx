@@ -4,7 +4,7 @@ const SUPABASE_URL = 'https://biafijftxhealzmmwsmk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYWZpamZ0eGhlYWx6bW13c21rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTQ3NjYsImV4cCI6MjA5NTgzMDc2Nn0.el4_ujwNYvbYdFtvzAEooKd1SvZlJd5YGVdlGlSo6Q8';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const CUISINES = ["Italian","Japanese","Mexican","Thai","Indian","French","Chinese","Mediterranean","American","Korean","Vietnamese","Middle Eastern","Other"];
+const CUISINES = ["American","Brazilian","Caribbean","Chinese","Ethiopian","Filipino","French","Greek","Hawaiian","Indian","Indonesian","Italian","Japanese","Korean","Lebanese","Malaysian","Mediterranean","Mexican","Middle Eastern","Moroccan","Peruvian","Spanish","Taiwanese","Thai","Turkish","Vietnamese","Other"];
 
 // Design tokens
 const C = {
@@ -803,7 +803,7 @@ const PENDING_SPOTS = [
   {
     id: '550e8400-e29b-41d4-a716-446655440006',
     name: 'Grandt Kitchen Surrey',
-    cuisine: 'Other',
+    cuisine: 'Filipino',
     location: '10257 King George Blvd, Surrey, BC',
     recommended_by: '',
     notes: 'Authentic Filipino cuisine · family-owned · dine-in, takeout & catering · Western and Filipino dishes',
@@ -831,7 +831,7 @@ const PENDING_SPOTS = [
   {
     id: '550e8400-e29b-41d4-a716-446655440008',
     name: 'Kulinarya Filipino Eatery',
-    cuisine: 'Other',
+    cuisine: 'Filipino',
     location: '1134 Commercial Dr, Vancouver, BC',
     recommended_by: '',
     notes: 'Authentic Filipino · Kamayan feast · party trays & catering · casual neighbourhood spot on Commercial Drive',
@@ -950,7 +950,7 @@ const PENDING_SPOTS = [
   {
     id: '550e8400-e29b-41d4-a716-446655440017',
     name: 'Gojo Cafe Ethiopia',
-    cuisine: 'Other',
+    cuisine: 'Ethiopian',
     location: '2838 Commercial Dr, Vancouver, BC',
     recommended_by: '',
     notes: 'Ethiopian · injera & slow-cooked stews · communal sharing plates · beloved Commercial Drive institution',
@@ -963,7 +963,7 @@ const PENDING_SPOTS = [
   {
     id: '550e8400-e29b-41d4-a716-446655440018',
     name: 'SUYO Modern Peruvian',
-    cuisine: 'Other',
+    cuisine: 'Peruvian',
     location: '3475 Main St, Vancouver, BC',
     recommended_by: '',
     notes: 'Modern Peruvian · ceviche, tiradito & creative mains · Main Street · intimate tasting-menu vibe',
