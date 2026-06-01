@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
@@ -2200,6 +2200,10 @@ var Feed = function Feed(_ref8) {
     _useState12 = _slicedToArray(_useState11, 2),
     cuisine = _useState12[0],
     setCuisine = _useState12[1];
+  var _useState13 = useState('want'),
+    _useState14 = _slicedToArray(_useState13, 2),
+    section = _useState14[0],
+    setSection = _useState14[1];
   var cuisines = useMemo(function () {
     return _toConsumableArray(new Set(restaurants.map(function (r) {
       return r.cuisine;
@@ -2214,24 +2218,38 @@ var Feed = function Feed(_ref8) {
   var visitedList = show.filter(function (r) {
     return r.status === 'visited';
   });
-  var stickyHead = function stickyHead(title) {
-    return /*#__PURE__*/React.createElement("div", {
+  var activeList = section === 'want' ? wantList : visitedList;
+  var emptyMsg = section === 'want' ? cuisine === 'All' ? 'Nothing saved yet — tap + Add to start' : "No ".concat(cuisine, " spots to visit") : cuisine === 'All' ? 'None yet — mark a spot as visited' : "No ".concat(cuisine, " spots visited");
+  var toggleBtn = function toggleBtn(key, label, count, accent, accentBg, accentBd) {
+    return /*#__PURE__*/React.createElement("button", {
+      onClick: function onClick() {
+        return setSection(key);
+      },
       style: {
-        position: 'sticky',
-        top: 0,
-        zIndex: 10,
-        background: C.bg,
-        padding: '10px 0 8px',
-        borderBottom: "1px solid ".concat(C.bd),
-        marginBottom: 10
+        flex: 1,
+        padding: '14px 10px',
+        borderRadius: 14,
+        border: "2px solid ".concat(section === key ? accent : C.bd),
+        background: section === key ? accentBg : 'transparent',
+        cursor: 'pointer',
+        transition: 'all 0.18s',
+        textAlign: 'center'
       }
-    }, /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("div", {
       style: {
         fontFamily: C.display,
         fontSize: 18,
-        color: C.text
+        color: section === key ? accent : C.dim,
+        marginBottom: 2
       }
-    }, title));
+    }, label), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: C.ui,
+        fontSize: 22,
+        fontWeight: 700,
+        color: section === key ? accent : C.dim
+      }
+    }, count));
   };
   return /*#__PURE__*/React.createElement("div", {
     style: {
@@ -2271,73 +2289,29 @@ var Feed = function Feed(_ref8) {
   })), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
-      gap: 8,
-      padding: '4px 16px 12px'
+      gap: 10,
+      padding: '6px 16px 14px'
     }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontFamily: C.ui,
-      fontSize: 12,
-      fontWeight: 500,
-      color: C.amber,
-      background: C.amberBg,
-      border: "1px solid ".concat(C.amberBd),
-      borderRadius: 20,
-      padding: '4px 12px'
-    }
-  }, "To Visit \xB7 ", wantList.length), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontFamily: C.ui,
-      fontSize: 12,
-      fontWeight: 500,
-      color: C.sage,
-      background: C.sageBg,
-      border: "1px solid ".concat(C.sageBd),
-      borderRadius: 20,
-      padding: '4px 12px'
-    }
-  }, "Visited \xB7 ", visitedList.length)), /*#__PURE__*/React.createElement("div", {
+  }, toggleBtn('want', 'To Visit', wantList.length, C.amber, C.amberBg, C.amberBd), toggleBtn('visited', 'Visited', visitedList.length, C.sage, C.sageBg, C.sageBd)), /*#__PURE__*/React.createElement("div", {
     style: {
       padding: '0 16px 80px',
       display: 'flex',
       flexDirection: 'column'
     }
-  }, stickyHead('To Visit'), wantList.length === 0 ? /*#__PURE__*/React.createElement("p", {
+  }, activeList.length === 0 ? /*#__PURE__*/React.createElement("p", {
     style: {
       fontFamily: C.ui,
       fontSize: 13,
       color: C.dim,
-      padding: '20px 0 32px'
+      padding: '24px 0'
     }
-  }, cuisine === 'All' ? 'Nothing saved yet — tap + Add to start' : "No ".concat(cuisine, " spots to visit")) : /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 10,
-      marginBottom: 32
-    }
-  }, wantList.map(function (r) {
-    return /*#__PURE__*/React.createElement(Card, {
-      key: r.id,
-      r: r,
-      onClick: function onClick() {
-        return onCardClick(r);
-      }
-    });
-  })), stickyHead('Visited'), visitedList.length === 0 ? /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontFamily: C.ui,
-      fontSize: 13,
-      color: C.dim,
-      padding: '20px 0'
-    }
-  }, cuisine === 'All' ? 'None yet — mark a spot as visited to see it here' : "No ".concat(cuisine, " spots visited")) : /*#__PURE__*/React.createElement("div", {
+  }, emptyMsg) : /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: 'column',
       gap: 10
     }
-  }, visitedList.map(function (r) {
+  }, activeList.map(function (r) {
     return /*#__PURE__*/React.createElement(Card, {
       key: r.id,
       r: r,
@@ -2351,18 +2325,18 @@ var Feed = function Feed(_ref8) {
 // ── Sign-in screen ───────────────────────────────────────────
 var ADMIN_EMAIL = 'mehdiiaabbassii@gmail.com';
 var SignIn = function SignIn() {
-  var _useState13 = useState(''),
-    _useState14 = _slicedToArray(_useState13, 2),
-    password = _useState14[0],
-    setPassword = _useState14[1];
   var _useState15 = useState(''),
     _useState16 = _slicedToArray(_useState15, 2),
-    err = _useState16[0],
-    setErr = _useState16[1];
-  var _useState17 = useState(false),
+    password = _useState16[0],
+    setPassword = _useState16[1];
+  var _useState17 = useState(''),
     _useState18 = _slicedToArray(_useState17, 2),
-    busy = _useState18[0],
-    setBusy = _useState18[1];
+    err = _useState18[0],
+    setErr = _useState18[1];
+  var _useState19 = useState(false),
+    _useState20 = _slicedToArray(_useState19, 2),
+    busy = _useState20[0],
+    setBusy = _useState20[1];
   var inp = {
     width: '100%',
     padding: '11px 14px',
@@ -2577,34 +2551,30 @@ var PENDING_SPOTS = [{
 
 // ── App ──────────────────────────────────────────────────────
 function App() {
-  var _useState19 = useState([]),
-    _useState20 = _slicedToArray(_useState19, 2),
-    restaurants = _useState20[0],
-    setRestaurants = _useState20[1];
-  var _useState21 = useState(true),
+  var _useState21 = useState([]),
     _useState22 = _slicedToArray(_useState21, 2),
-    loading = _useState22[0],
-    setLoading = _useState22[1];
-  var _useState23 = useState('home'),
+    restaurants = _useState22[0],
+    setRestaurants = _useState22[1];
+  var _useState23 = useState(true),
     _useState24 = _slicedToArray(_useState23, 2),
-    tab = _useState24[0],
-    setTab = _useState24[1];
-  var _useState25 = useState(false),
+    loading = _useState24[0],
+    setLoading = _useState24[1];
+  var _useState25 = useState('home'),
     _useState26 = _slicedToArray(_useState25, 2),
-    showEdit = _useState26[0],
-    setShowEdit = _useState26[1];
+    tab = _useState26[0],
+    setTab = _useState26[1];
   var _useState27 = useState(false),
     _useState28 = _slicedToArray(_useState27, 2),
-    showImport = _useState28[0],
-    setShowImport = _useState28[1];
+    showEdit = _useState28[0],
+    setShowEdit = _useState28[1];
   var _useState29 = useState(false),
     _useState30 = _slicedToArray(_useState29, 2),
-    showAddMenu = _useState30[0],
-    setShowAddMenu = _useState30[1];
+    showImport = _useState30[0],
+    setShowImport = _useState30[1];
   var _useState31 = useState(false),
     _useState32 = _slicedToArray(_useState31, 2),
-    refreshPending = _useState32[0],
-    setRefreshPending = _useState32[1];
+    showAddMenu = _useState32[0],
+    setShowAddMenu = _useState32[1];
   var _useState33 = useState(null),
     _useState34 = _slicedToArray(_useState33, 2),
     editTarget = _useState34[0],
@@ -2810,19 +2780,6 @@ function App() {
       }, _callee4);
     }));
     return _handleSave.apply(this, arguments);
-  }
-  function handleRefresh() {
-    if (!refreshPending) {
-      setRefreshPending(true);
-      setTimeout(function () {
-        return setRefreshPending(false);
-      }, 3000);
-    } else {
-      setRefreshPending(false);
-      loadSpots().then(function () {
-        return showToast('List refreshed');
-      });
-    }
   }
   function loadSpots() {
     return _loadSpots.apply(this, arguments);
@@ -3096,27 +3053,24 @@ function App() {
       position: 'relative'
     }
   }, /*#__PURE__*/React.createElement("button", {
-    onClick: handleRefresh,
-    title: refreshPending ? 'Tap again to confirm' : 'Refresh list',
+    onClick: function onClick() {
+      return location.reload();
+    },
+    title: "Refresh",
     style: {
-      background: refreshPending ? C.amberBg : 'transparent',
-      border: "1px solid ".concat(refreshPending ? C.amberBd : C.bd),
+      background: 'transparent',
+      border: "1px solid ".concat(C.bd),
       borderRadius: 10,
       padding: '8px 10px',
-      color: refreshPending ? C.amber : C.mid,
+      color: C.mid,
       cursor: 'pointer',
       display: 'flex',
-      alignItems: 'center',
-      gap: 6,
-      fontFamily: C.ui,
-      fontSize: 12,
-      fontWeight: 500,
-      transition: 'all 0.2s'
+      alignItems: 'center'
     }
   }, /*#__PURE__*/React.createElement(Ic, {
     n: "refresh",
     size: 14
-  }), refreshPending && 'Confirm?'), /*#__PURE__*/React.createElement("button", {
+  })), /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
       return setShowAddMenu(function (v) {
         return !v;
@@ -3333,7 +3287,7 @@ function App() {
 }
 
 
-const BUILD_TIME = 1780352311;
+const BUILD_TIME = 1780352724;
 (function(){
   var checking=false;
   async function checkUpdate(){

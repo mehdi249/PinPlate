@@ -652,16 +652,23 @@ const Card = ({ r, onClick }) => {
 // ── Feed ─────────────────────────────────────────────────────
 const Feed = ({ restaurants, onCardClick }) => {
   const [cuisine, setCuisine] = useState('All');
+  const [section, setSection] = useState('want');
 
   const cuisines    = useMemo(()=>[...new Set(restaurants.map(r=>r.cuisine).filter(Boolean))].sort(),[restaurants]);
   const show        = cuisine==='All' ? restaurants : restaurants.filter(r=>r.cuisine===cuisine);
   const wantList    = show.filter(r=>r.status==='want');
   const visitedList = show.filter(r=>r.status==='visited');
+  const activeList  = section==='want' ? wantList : visitedList;
 
-  const stickyHead = title => (
-    <div style={{position:'sticky',top:0,zIndex:10,background:C.bg,padding:'10px 0 8px',borderBottom:`1px solid ${C.bd}`,marginBottom:10}}>
-      <span style={{fontFamily:C.display,fontSize:18,color:C.text}}>{title}</span>
-    </div>
+  const emptyMsg = section==='want'
+    ? (cuisine==='All' ? 'Nothing saved yet — tap + Add to start' : `No ${cuisine} spots to visit`)
+    : (cuisine==='All' ? 'None yet — mark a spot as visited' : `No ${cuisine} spots visited`);
+
+  const toggleBtn = (key, label, count, accent, accentBg, accentBd) => (
+    <button onClick={()=>setSection(key)} style={{flex:1,padding:'14px 10px',borderRadius:14,border:`2px solid ${section===key ? accent : C.bd}`,background:section===key ? accentBg : 'transparent',cursor:'pointer',transition:'all 0.18s',textAlign:'center'}}>
+      <div style={{fontFamily:C.display,fontSize:18,color:section===key ? accent : C.dim,marginBottom:2}}>{label}</div>
+      <div style={{fontFamily:C.ui,fontSize:22,fontWeight:700,color:section===key ? accent : C.dim}}>{count}</div>
+    </button>
   );
 
   return (
@@ -673,23 +680,17 @@ const Feed = ({ restaurants, onCardClick }) => {
         ))}
       </div>
 
-      {/* Stat pills */}
-      <div style={{display:'flex',gap:8,padding:'4px 16px 12px'}}>
-        <span style={{fontFamily:C.ui,fontSize:12,fontWeight:500,color:C.amber,background:C.amberBg,border:`1px solid ${C.amberBd}`,borderRadius:20,padding:'4px 12px'}}>To Visit · {wantList.length}</span>
-        <span style={{fontFamily:C.ui,fontSize:12,fontWeight:500,color:C.sage,background:C.sageBg,border:`1px solid ${C.sageBd}`,borderRadius:20,padding:'4px 12px'}}>Visited · {visitedList.length}</span>
+      {/* Section toggle buttons */}
+      <div style={{display:'flex',gap:10,padding:'6px 16px 14px'}}>
+        {toggleBtn('want',    'To Visit', wantList.length,    C.amber, C.amberBg, C.amberBd)}
+        {toggleBtn('visited', 'Visited',  visitedList.length, C.sage,  C.sageBg,  C.sageBd)}
       </div>
 
-      {/* Full-width card list */}
+      {/* Card list */}
       <div style={{padding:'0 16px 80px',display:'flex',flexDirection:'column'}}>
-        {stickyHead('To Visit')}
-        {wantList.length===0
-          ?<p style={{fontFamily:C.ui,fontSize:13,color:C.dim,padding:'20px 0 32px'}}>{cuisine==='All'?'Nothing saved yet — tap + Add to start':`No ${cuisine} spots to visit`}</p>
-          :<div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:32}}>{wantList.map(r=><Card key={r.id} r={r} onClick={()=>onCardClick(r)}/>)}</div>
-        }
-        {stickyHead('Visited')}
-        {visitedList.length===0
-          ?<p style={{fontFamily:C.ui,fontSize:13,color:C.dim,padding:'20px 0'}}>{cuisine==='All'?'None yet — mark a spot as visited to see it here':`No ${cuisine} spots visited`}</p>
-          :<div style={{display:'flex',flexDirection:'column',gap:10}}>{visitedList.map(r=><Card key={r.id} r={r} onClick={()=>onCardClick(r)}/>)}</div>
+        {activeList.length===0
+          ?<p style={{fontFamily:C.ui,fontSize:13,color:C.dim,padding:'24px 0'}}>{emptyMsg}</p>
+          :<div style={{display:'flex',flexDirection:'column',gap:10}}>{activeList.map(r=><Card key={r.id} r={r} onClick={()=>onCardClick(r)}/>)}</div>
         }
       </div>
     </div>
@@ -809,7 +810,6 @@ function App() {
   const [showEdit,setShowEdit]       = useState(false);
   const [showImport,setShowImport]   = useState(false);
   const [showAddMenu,setShowAddMenu]     = useState(false);
-  const [refreshPending,setRefreshPending] = useState(false);
   const [editTarget,setEditTarget]   = useState(null);
   const [detail,setDetail]           = useState(null);
   const [search,setSearch]           = useState('');
@@ -861,16 +861,6 @@ function App() {
     setShowEdit(false); setShowImport(false); setEditTarget(null); setDetail(null);
     showToast(editTarget?'Updated':'Pinned');
     await loadSpots();
-  }
-
-  function handleRefresh() {
-    if (!refreshPending) {
-      setRefreshPending(true);
-      setTimeout(()=>setRefreshPending(false), 3000);
-    } else {
-      setRefreshPending(false);
-      loadSpots().then(()=>showToast('List refreshed'));
-    }
   }
 
   async function loadSpots() {
@@ -958,8 +948,8 @@ function App() {
               <p style={{fontFamily:C.ui,fontSize:11,color:C.dim,marginTop:3,fontWeight:400,display:'flex',alignItems:'center',gap:8}}>{wantCount} to visit · {visitedCount} visited<button onClick={()=>sb.auth.signOut()} style={{background:'none',border:'none',fontFamily:C.ui,fontSize:11,color:C.dim,cursor:'pointer',padding:0,textDecoration:'underline',textDecorationColor:'rgba(168,144,122,0.4)'}}>Sign out</button></p>
             </div>
             <div style={{display:'flex',gap:8,alignItems:'center',position:'relative'}}>
-              <button onClick={handleRefresh} title={refreshPending?'Tap again to confirm':'Refresh list'} style={{background:refreshPending?C.amberBg:'transparent',border:`1px solid ${refreshPending?C.amberBd:C.bd}`,borderRadius:10,padding:'8px 10px',color:refreshPending?C.amber:C.mid,cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontFamily:C.ui,fontSize:12,fontWeight:500,transition:'all 0.2s'}}>
-                <Ic n="refresh" size={14}/>{refreshPending&&'Confirm?'}
+              <button onClick={()=>location.reload()} title="Refresh" style={{background:'transparent',border:`1px solid ${C.bd}`,borderRadius:10,padding:'8px 10px',color:C.mid,cursor:'pointer',display:'flex',alignItems:'center'}}>
+                <Ic n="refresh" size={14}/>
               </button>
               <button onClick={()=>setShowAddMenu(v=>!v)} style={{background:C.espr,color:'#fdf8f3',border:'none',borderRadius:10,padding:'9px 16px',fontFamily:C.ui,fontSize:13,fontWeight:600,cursor:'pointer',letterSpacing:'0.01em'}}>+ Add</button>
               {showAddMenu&&(
