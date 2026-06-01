@@ -540,6 +540,20 @@ const Column = ({ title, icon, items, onCardClick }) => (
   </div>
 );
 
+const PENDING_SPOTS = [
+  {
+    id: '550e8400-e29b-41d4-a716-446655440001',
+    name: 'Eat Bar & Patio Haraheri',
+    cuisine: 'Japanese',
+    location: 'Vancouver, BC',
+    recommended_by: '',
+    notes: 'Modern izakaya · inventive Japanese small plates · sake, beer & unique cocktails · Happy hour food · Great cocktails · Vegan options',
+    visited: false,
+    price_range: '$20-60',
+    lat: 49.2658, lng: -123.1452,
+  },
+];
+
 // ── App ──────────────────────────────────────────────────────
 function App() {
   const [restaurants,setRestaurants] = useState([]);
@@ -555,7 +569,13 @@ function App() {
 
   function showToast(msg) { setToast(msg); setTimeout(()=>setToast(null),2500); }
 
+  async function insertPending() {
+    if (!PENDING_SPOTS.length) return;
+    await sb.from('spots').upsert(PENDING_SPOTS, { onConflict:'id', ignoreDuplicates:true });
+  }
+
   async function loadSpots() {
+    await insertPending();
     const {data,error} = await sb.from('spots').select('*').order('created_at',{ascending:false});
     if (error) { showToast('Failed to load'); return; }
     setRestaurants((data||[]).map(dbToApp));

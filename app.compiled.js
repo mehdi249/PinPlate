@@ -117,32 +117,32 @@ function nominatimReverse(_x, _x2) {
   return _nominatimReverse.apply(this, arguments);
 } // ── StarRating ───────────────────────────────────────────────
 function _nominatimReverse() {
-  _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6(lat, lng) {
+  _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7(lat, lng) {
     var r, d, a, _t3;
-    return _regenerator().w(function (_context6) {
-      while (1) switch (_context6.p = _context6.n) {
+    return _regenerator().w(function (_context7) {
+      while (1) switch (_context7.p = _context7.n) {
         case 0:
-          _context6.p = 0;
-          _context6.n = 1;
+          _context7.p = 0;
+          _context7.n = 1;
           return fetch("https://nominatim.openstreetmap.org/reverse?lat=".concat(lat, "&lon=").concat(lng, "&format=json"), {
             headers: {
               'Accept-Language': 'en'
             }
           });
         case 1:
-          r = _context6.v;
-          _context6.n = 2;
+          r = _context7.v;
+          _context7.n = 2;
           return r.json();
         case 2:
-          d = _context6.v;
+          d = _context7.v;
           a = d.address || {};
-          return _context6.a(2, [a.road, a.neighbourhood || a.suburb, a.city || a.town || a.village, a.country].filter(Boolean).slice(0, 3).join(', '));
+          return _context7.a(2, [a.road, a.neighbourhood || a.suburb, a.city || a.town || a.village, a.country].filter(Boolean).slice(0, 3).join(', '));
         case 3:
-          _context6.p = 3;
-          _t3 = _context6.v;
-          return _context6.a(2, '');
+          _context7.p = 3;
+          _t3 = _context7.v;
+          return _context7.a(2, '');
       }
-    }, _callee6, null, [[0, 3]]);
+    }, _callee7, null, [[0, 3]]);
   }));
   return _nominatimReverse.apply(this, arguments);
 }
@@ -1812,6 +1812,18 @@ var Column = function Column(_ref7) {
     });
   })));
 };
+var PENDING_SPOTS = [{
+  id: '550e8400-e29b-41d4-a716-446655440001',
+  name: 'Eat Bar & Patio Haraheri',
+  cuisine: 'Japanese',
+  location: 'Vancouver, BC',
+  recommended_by: '',
+  notes: 'Modern izakaya · inventive Japanese small plates · sake, beer & unique cocktails · Happy hour food · Great cocktails · Vegan options',
+  visited: false,
+  price_range: '$20-60',
+  lat: 49.2658,
+  lng: -123.1452
+}];
 
 // ── App ──────────────────────────────────────────────────────
 function App() {
@@ -1861,36 +1873,65 @@ function App() {
       return setToast(null);
     }, 2500);
   }
+  function insertPending() {
+    return _insertPending.apply(this, arguments);
+  }
+  function _insertPending() {
+    _insertPending = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+      return _regenerator().w(function (_context2) {
+        while (1) switch (_context2.n) {
+          case 0:
+            if (PENDING_SPOTS.length) {
+              _context2.n = 1;
+              break;
+            }
+            return _context2.a(2);
+          case 1:
+            _context2.n = 2;
+            return sb.from('spots').upsert(PENDING_SPOTS, {
+              onConflict: 'id',
+              ignoreDuplicates: true
+            });
+          case 2:
+            return _context2.a(2);
+        }
+      }, _callee2);
+    }));
+    return _insertPending.apply(this, arguments);
+  }
   function loadSpots() {
     return _loadSpots.apply(this, arguments);
   }
   function _loadSpots() {
-    _loadSpots = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+    _loadSpots = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
       var _yield$sb$from$select, data, error;
-      return _regenerator().w(function (_context2) {
-        while (1) switch (_context2.n) {
+      return _regenerator().w(function (_context3) {
+        while (1) switch (_context3.n) {
           case 0:
-            _context2.n = 1;
+            _context3.n = 1;
+            return insertPending();
+          case 1:
+            _context3.n = 2;
             return sb.from('spots').select('*').order('created_at', {
               ascending: false
             });
-          case 1:
-            _yield$sb$from$select = _context2.v;
+          case 2:
+            _yield$sb$from$select = _context3.v;
             data = _yield$sb$from$select.data;
             error = _yield$sb$from$select.error;
             if (!error) {
-              _context2.n = 2;
+              _context3.n = 3;
               break;
             }
             showToast('Failed to load');
-            return _context2.a(2);
-          case 2:
+            return _context3.a(2);
+          case 3:
             setRestaurants((data || []).map(dbToApp));
             setLoading(false);
-          case 3:
-            return _context2.a(2);
+          case 4:
+            return _context3.a(2);
         }
-      }, _callee2);
+      }, _callee3);
     }));
     return _loadSpots.apply(this, arguments);
   }
@@ -1913,48 +1954,48 @@ function App() {
     return _handleSave.apply(this, arguments);
   }
   function _handleSave() {
-    _handleSave = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3(form) {
+    _handleSave = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4(form) {
       var payload, error, _yield$sb$from$update, _yield$sb$from$insert;
-      return _regenerator().w(function (_context3) {
-        while (1) switch (_context3.n) {
+      return _regenerator().w(function (_context4) {
+        while (1) switch (_context4.n) {
           case 0:
             payload = appToDb(form);
             if (!editTarget) {
-              _context3.n = 2;
+              _context4.n = 2;
               break;
             }
-            _context3.n = 1;
+            _context4.n = 1;
             return sb.from('spots').update(payload).eq('id', editTarget.id);
           case 1:
-            _yield$sb$from$update = _context3.v;
+            _yield$sb$from$update = _context4.v;
             error = _yield$sb$from$update.error;
-            _context3.n = 4;
+            _context4.n = 4;
             break;
           case 2:
-            _context3.n = 3;
+            _context4.n = 3;
             return sb.from('spots').insert(payload);
           case 3:
-            _yield$sb$from$insert = _context3.v;
+            _yield$sb$from$insert = _context4.v;
             error = _yield$sb$from$insert.error;
           case 4:
             if (!error) {
-              _context3.n = 5;
+              _context4.n = 5;
               break;
             }
             showToast('Save failed: ' + error.message);
-            return _context3.a(2);
+            return _context4.a(2);
           case 5:
             setShowEdit(false);
             setShowImport(false);
             setEditTarget(null);
             setDetail(null);
             showToast(editTarget ? 'Updated!' : 'Pinned! 📍');
-            _context3.n = 6;
+            _context4.n = 6;
             return loadSpots();
           case 6:
-            return _context3.a(2);
+            return _context4.a(2);
         }
-      }, _callee3);
+      }, _callee4);
     }));
     return _handleSave.apply(this, arguments);
   }
@@ -1962,24 +2003,24 @@ function App() {
     return _handleMarkVisited.apply(this, arguments);
   }
   function _handleMarkVisited() {
-    _handleMarkVisited = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4(id) {
+    _handleMarkVisited = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5(id) {
       var _yield$sb$from$update2, error;
-      return _regenerator().w(function (_context4) {
-        while (1) switch (_context4.n) {
+      return _regenerator().w(function (_context5) {
+        while (1) switch (_context5.n) {
           case 0:
-            _context4.n = 1;
+            _context5.n = 1;
             return sb.from('spots').update({
               visited: true
             }).eq('id', id);
           case 1:
-            _yield$sb$from$update2 = _context4.v;
+            _yield$sb$from$update2 = _context5.v;
             error = _yield$sb$from$update2.error;
             if (!error) {
-              _context4.n = 2;
+              _context5.n = 2;
               break;
             }
             showToast('Update failed');
-            return _context4.a(2);
+            return _context5.a(2);
           case 2:
             setRestaurants(function (rs) {
               return rs.map(function (r) {
@@ -1995,9 +2036,9 @@ function App() {
             });
             showToast('Marked as visited! ✓');
           case 3:
-            return _context4.a(2);
+            return _context5.a(2);
         }
-      }, _callee4);
+      }, _callee5);
     }));
     return _handleMarkVisited.apply(this, arguments);
   }
@@ -2005,25 +2046,25 @@ function App() {
     return _handleRate.apply(this, arguments);
   }
   function _handleRate() {
-    _handleRate = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5(id, rating) {
+    _handleRate = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6(id, rating) {
       var _yield$sb$from$update3, error;
-      return _regenerator().w(function (_context5) {
-        while (1) switch (_context5.n) {
+      return _regenerator().w(function (_context6) {
+        while (1) switch (_context6.n) {
           case 0:
-            _context5.n = 1;
+            _context6.n = 1;
             return sb.from('spots').update({
               rating: rating,
               visited: true
             }).eq('id', id);
           case 1:
-            _yield$sb$from$update3 = _context5.v;
+            _yield$sb$from$update3 = _context6.v;
             error = _yield$sb$from$update3.error;
             if (!error) {
-              _context5.n = 2;
+              _context6.n = 2;
               break;
             }
             showToast('Rating failed');
-            return _context5.a(2);
+            return _context6.a(2);
           case 2:
             setRestaurants(function (rs) {
               return rs.map(function (r) {
@@ -2041,9 +2082,9 @@ function App() {
             });
             showToast('★'.repeat(rating) + ' Saved!');
           case 3:
-            return _context5.a(2);
+            return _context6.a(2);
         }
-      }, _callee5);
+      }, _callee6);
     }));
     return _handleRate.apply(this, arguments);
   }
