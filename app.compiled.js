@@ -26,6 +26,8 @@ var _React = React,
 var SUPABASE_URL = 'https://biafijftxhealzmmwsmk.supabase.co';
 var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYWZpamZ0eGhlYWx6bW13c21rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTQ3NjYsImV4cCI6MjA5NTgzMDc2Nn0.el4_ujwNYvbYdFtvzAEooKd1SvZlJd5YGVdlGlSo6Q8';
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+var GOOGLE_PLACES_KEY = ''; // paste your Places API (New) key here
+
 var CUISINES = ["Italian", "Japanese", "Mexican", "Thai", "Indian", "French", "Chinese", "Mediterranean", "American", "Korean", "Vietnamese", "Middle Eastern", "Other"];
 
 // Design tokens
@@ -152,10 +154,10 @@ function extractMapsUrlFromFdl(html) {
 }
 function nominatimReverse(_x, _x2) {
   return _nominatimReverse.apply(this, arguments);
-} // ── SVG icons ────────────────────────────────────────────────
+}
 function _nominatimReverse() {
   _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee9(lat, lng) {
-    var r, d, a, _t9;
+    var r, d, a, _t0;
     return _regenerator().w(function (_context9) {
       while (1) switch (_context9.p = _context9.n) {
         case 0:
@@ -176,12 +178,124 @@ function _nominatimReverse() {
           return _context9.a(2, [a.road, a.neighbourhood || a.suburb, a.city || a.town || a.village, a.country].filter(Boolean).slice(0, 3).join(', '));
         case 3:
           _context9.p = 3;
-          _t9 = _context9.v;
+          _t0 = _context9.v;
           return _context9.a(2, '');
       }
     }, _callee9, null, [[0, 3]]);
   }));
   return _nominatimReverse.apply(this, arguments);
+}
+function enrichWithPlaces(_x3, _x4, _x5) {
+  return _enrichWithPlaces.apply(this, arguments);
+} // ── SVG icons ────────────────────────────────────────────────
+function _enrichWithPlaces() {
+  _enrichWithPlaces = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee0(name, lat, lng) {
+    var _yield$searchRes$json, _d$regularOpeningHour, searchRes, placeId, detailRes, d, priceMap, _t1, _t10, _t11, _t12, _t13;
+    return _regenerator().w(function (_context0) {
+      while (1) switch (_context0.p = _context0.n) {
+        case 0:
+          if (GOOGLE_PLACES_KEY) {
+            _context0.n = 1;
+            break;
+          }
+          return _context0.a(2, {});
+        case 1:
+          _context0.p = 1;
+          _context0.n = 2;
+          return fetch('https://places.googleapis.com/v1/places:searchText', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Goog-Api-Key': GOOGLE_PLACES_KEY,
+              'X-Goog-FieldMask': 'places.id'
+            },
+            body: JSON.stringify({
+              textQuery: name,
+              locationBias: {
+                circle: {
+                  center: {
+                    latitude: lat,
+                    longitude: lng
+                  },
+                  radius: 200.0
+                }
+              }
+            })
+          });
+        case 2:
+          searchRes = _context0.v;
+          _context0.n = 3;
+          return searchRes.json();
+        case 3:
+          _t11 = _yield$searchRes$json = _context0.v.places;
+          _t10 = _t11 === null;
+          if (_t10) {
+            _context0.n = 4;
+            break;
+          }
+          _t10 = _yield$searchRes$json === void 0;
+        case 4:
+          _t1 = _t10;
+          if (_t1) {
+            _context0.n = 5;
+            break;
+          }
+          _t1 = (_yield$searchRes$json = _yield$searchRes$json[0]) === null || _yield$searchRes$json === void 0;
+        case 5:
+          if (!_t1) {
+            _context0.n = 6;
+            break;
+          }
+          _t12 = void 0;
+          _context0.n = 7;
+          break;
+        case 6:
+          _t12 = _yield$searchRes$json.id;
+        case 7:
+          placeId = _t12;
+          if (placeId) {
+            _context0.n = 8;
+            break;
+          }
+          return _context0.a(2, {});
+        case 8:
+          _context0.n = 9;
+          return fetch("https://places.googleapis.com/v1/places/".concat(placeId), {
+            headers: {
+              'X-Goog-Api-Key': GOOGLE_PLACES_KEY,
+              'X-Goog-FieldMask': 'internationalPhoneNumber,regularOpeningHours,websiteUri,priceLevel,photos'
+            }
+          });
+        case 9:
+          detailRes = _context0.v;
+          _context0.n = 10;
+          return detailRes.json();
+        case 10:
+          d = _context0.v;
+          priceMap = {
+            PRICE_LEVEL_FREE: '$',
+            PRICE_LEVEL_INEXPENSIVE: '$',
+            PRICE_LEVEL_MODERATE: '$$',
+            PRICE_LEVEL_EXPENSIVE: '$$$',
+            PRICE_LEVEL_VERY_EXPENSIVE: '$$$$'
+          };
+          return _context0.a(2, {
+            phone: d.internationalPhoneNumber || '',
+            hours: ((_d$regularOpeningHour = d.regularOpeningHours) === null || _d$regularOpeningHour === void 0 ? void 0 : _d$regularOpeningHour.weekdayDescriptions) || [],
+            website: d.websiteUri || '',
+            priceRange: priceMap[d.priceLevel] || '',
+            photos: (d.photos || []).slice(0, 3).map(function (p) {
+              return "https://places.googleapis.com/v1/".concat(p.name, "/media?maxWidthPx=800&key=").concat(GOOGLE_PLACES_KEY);
+            })
+          });
+        case 11:
+          _context0.p = 11;
+          _t13 = _context0.v;
+          return _context0.a(2, {});
+      }
+    }, _callee0, null, [[1, 11]]);
+  }));
+  return _enrichWithPlaces.apply(this, arguments);
 }
 var Ic = function Ic(_ref) {
   var n = _ref.n,
@@ -613,7 +727,7 @@ var ImportModal = function ImportModal(_ref4) {
   function _handleParse() {
     _handleParse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
       var _urlData$lat, _urlData$lng;
-      var rawUrl, isMapsGoo, isShort, resolved, htmlData, race, debugUrl, resp, html, mapsUrl, d, _mapsUrl, _html, _mapsUrl2, _resp, _d$status, _d, _html2, m, urlData, parsed, location, base, _t, _t2, _t3, _t4, _t5, _t6, _t7, _t8;
+      var rawUrl, isMapsGoo, isShort, resolved, htmlData, race, debugUrl, resp, html, mapsUrl, d, _mapsUrl, _html, _mapsUrl2, _resp, _d$status, _d, _html2, m, urlData, parsed, location, enriched, base, _t, _t2, _t3, _t4, _t5, _t6, _t7, _t8, _t9;
       return _regenerator().w(function (_context) {
         while (1) switch (_context.p = _context.n) {
           case 0:
@@ -782,6 +896,20 @@ var ImportModal = function ImportModal(_ref4) {
           case 29:
             location = _context.v;
           case 30:
+            if (!(parsed.lat && parsed.lng && GOOGLE_PLACES_KEY)) {
+              _context.n = 32;
+              break;
+            }
+            _context.n = 31;
+            return enrichWithPlaces(parsed.name || '', parsed.lat, parsed.lng);
+          case 31:
+            _t9 = _context.v;
+            _context.n = 33;
+            break;
+          case 32:
+            _t9 = {};
+          case 33:
+            enriched = _t9;
             base = {
               name: parsed.name || '',
               cuisine: 'Other',
@@ -790,12 +918,12 @@ var ImportModal = function ImportModal(_ref4) {
               note: '',
               status: 'want',
               rating: null,
-              priceRange: '',
-              phone: '',
-              website: '',
+              priceRange: enriched.priceRange || '',
+              phone: enriched.phone || '',
+              website: enriched.website || '',
               menuUrl: '',
-              hours: [],
-              photos: [],
+              hours: enriched.hours || [],
+              photos: enriched.photos || [],
               reviews: [],
               lat: parsed.lat,
               lng: parsed.lng,
@@ -808,7 +936,7 @@ var ImportModal = function ImportModal(_ref4) {
               setStep('preview');
             }
             setBusy(false);
-          case 31:
+          case 34:
             return _context.a(2);
         }
       }, _callee, null, [[25, 27], [22, 24], [16, 18], [14, 20], [10, 12], [7, 9], [2, 5]]);
@@ -2677,7 +2805,7 @@ function App() {
     }));
     return _insertPending.apply(this, arguments);
   }
-  function handleSave(_x3) {
+  function handleSave(_x6) {
     return _handleSave.apply(this, arguments);
   }
   function _handleSave() {
@@ -2809,7 +2937,7 @@ function App() {
   var visitedList = filtered.filter(function (r) {
     return r.status === 'visited';
   });
-  function handleMarkVisited(_x4) {
+  function handleMarkVisited(_x7) {
     return _handleMarkVisited.apply(this, arguments);
   }
   function _handleMarkVisited() {
@@ -2852,7 +2980,7 @@ function App() {
     }));
     return _handleMarkVisited.apply(this, arguments);
   }
-  function handleRate(_x5, _x6) {
+  function handleRate(_x8, _x9) {
     return _handleRate.apply(this, arguments);
   }
   function _handleRate() {
@@ -2898,7 +3026,7 @@ function App() {
     }));
     return _handleRate.apply(this, arguments);
   }
-  function handleDelete(_x7) {
+  function handleDelete(_x0) {
     return _handleDelete.apply(this, arguments);
   }
   function _handleDelete() {

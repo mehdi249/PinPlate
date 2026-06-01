@@ -3,6 +3,7 @@ const { useState, useMemo, useEffect, useRef } = React;
 const SUPABASE_URL = 'https://biafijftxhealzmmwsmk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYWZpamZ0eGhlYWx6bW13c21rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTQ3NjYsImV4cCI6MjA5NTgzMDc2Nn0.el4_ujwNYvbYdFtvzAEooKd1SvZlJd5YGVdlGlSo6Q8';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const GOOGLE_PLACES_KEY = ''; // paste your Places API (New) key here
 
 const CUISINES = ["Italian","Japanese","Mexican","Thai","Indian","French","Chinese","Mediterranean","American","Korean","Vietnamese","Middle Eastern","Other"];
 
@@ -115,6 +116,31 @@ async function nominatimReverse(lat, lng) {
     return [a.road, a.neighbourhood||a.suburb, a.city||a.town||a.village, a.country]
       .filter(Boolean).slice(0,3).join(', ');
   } catch(e){ return ''; }
+}
+
+async function enrichWithPlaces(name, lat, lng) {
+  if (!GOOGLE_PLACES_KEY) return {};
+  try {
+    const searchRes = await fetch('https://places.googleapis.com/v1/places:searchText', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'X-Goog-Api-Key':GOOGLE_PLACES_KEY, 'X-Goog-FieldMask':'places.id' },
+      body: JSON.stringify({ textQuery: name, locationBias: { circle: { center: { latitude: lat, longitude: lng }, radius: 200.0 } } }),
+    });
+    const placeId = (await searchRes.json()).places?.[0]?.id;
+    if (!placeId) return {};
+    const detailRes = await fetch(`https://places.googleapis.com/v1/places/${placeId}`, {
+      headers: { 'X-Goog-Api-Key':GOOGLE_PLACES_KEY, 'X-Goog-FieldMask':'internationalPhoneNumber,regularOpeningHours,websiteUri,priceLevel,photos' },
+    });
+    const d = await detailRes.json();
+    const priceMap = { PRICE_LEVEL_FREE:'$', PRICE_LEVEL_INEXPENSIVE:'$', PRICE_LEVEL_MODERATE:'$$', PRICE_LEVEL_EXPENSIVE:'$$$', PRICE_LEVEL_VERY_EXPENSIVE:'$$$$' };
+    return {
+      phone:      d.internationalPhoneNumber || '',
+      hours:      d.regularOpeningHours?.weekdayDescriptions || [],
+      website:    d.websiteUri || '',
+      priceRange: priceMap[d.priceLevel] || '',
+      photos:     (d.photos||[]).slice(0,3).map(p=>`https://places.googleapis.com/v1/${p.name}/media?maxWidthPx=800&key=${GOOGLE_PLACES_KEY}`),
+    };
+  } catch(e) { return {}; }
 }
 
 // ── SVG icons ────────────────────────────────────────────────
@@ -303,10 +329,15 @@ const ImportModal = ({ onClose, onImport }) => {
     };
     let location = '';
     if (parsed.lat && parsed.lng) location = await nominatimReverse(parsed.lat, parsed.lng);
+    const enriched = (parsed.lat && parsed.lng && GOOGLE_PLACES_KEY)
+      ? await enrichWithPlaces(parsed.name || '', parsed.lat, parsed.lng)
+      : {};
     const base = {
       name:parsed.name||'', cuisine:'Other', location,
-      recommender:'', note:'', status:'want', rating:null, priceRange:'',
-      phone:'', website:'', menuUrl:'', hours:[], photos:[], reviews:[],
+      recommender:'', note:'', status:'want', rating:null,
+      priceRange: enriched.priceRange || '',
+      phone: enriched.phone || '', website: enriched.website || '',
+      menuUrl:'', hours: enriched.hours || [], photos: enriched.photos || [], reviews:[],
       lat:parsed.lat, lng:parsed.lng, googleMapsUrl:rawUrl,
     };
     if (isShort && parsed.name) { onImport(base); }
