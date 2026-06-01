@@ -2250,23 +2250,20 @@ var Feed = function Feed(_ref9) {
 };
 
 // ── Sign-in screen ───────────────────────────────────────────
+var ADMIN_EMAIL = 'mehdiiaabbassii@gmail.com';
 var SignIn = function SignIn() {
   var _useState11 = useState(''),
     _useState12 = _slicedToArray(_useState11, 2),
-    email = _useState12[0],
-    setEmail = _useState12[1];
+    password = _useState12[0],
+    setPassword = _useState12[1];
   var _useState13 = useState(''),
     _useState14 = _slicedToArray(_useState13, 2),
-    password = _useState14[0],
-    setPassword = _useState14[1];
-  var _useState15 = useState(''),
+    err = _useState14[0],
+    setErr = _useState14[1];
+  var _useState15 = useState(false),
     _useState16 = _slicedToArray(_useState15, 2),
-    err = _useState16[0],
-    setErr = _useState16[1];
-  var _useState17 = useState(false),
-    _useState18 = _slicedToArray(_useState17, 2),
-    busy = _useState18[0],
-    setBusy = _useState18[1];
+    busy = _useState16[0],
+    setBusy = _useState16[1];
   var inp = {
     width: '100%',
     padding: '11px 14px',
@@ -2298,7 +2295,7 @@ var SignIn = function SignIn() {
       return _regenerator().w(function (_context2) {
         while (1) switch (_context2.n) {
           case 0:
-            if (!(!email || !password)) {
+            if (password) {
               _context2.n = 1;
               break;
             }
@@ -2308,14 +2305,14 @@ var SignIn = function SignIn() {
             setErr('');
             _context2.n = 2;
             return sb.auth.signInWithPassword({
-              email: email,
+              email: ADMIN_EMAIL,
               password: password
             });
           case 2:
             _yield$sb$auth$signIn = _context2.v;
             error = _yield$sb$auth$signIn.error;
             if (error) {
-              setErr(error.message);
+              setErr('Incorrect passphrase');
               setBusy(false);
             }
           case 3:
@@ -2374,18 +2371,7 @@ var SignIn = function SignIn() {
     }
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     style: lbl
-  }, "Email"), /*#__PURE__*/React.createElement("input", {
-    type: "email",
-    style: inp,
-    value: email,
-    onChange: function onChange(e) {
-      return setEmail(e.target.value);
-    },
-    placeholder: "you@example.com",
-    autoFocus: true
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
-    style: lbl
-  }, "Password"), /*#__PURE__*/React.createElement("input", {
+  }, "Passphrase"), /*#__PURE__*/React.createElement("input", {
     type: "password",
     style: inp,
     value: password,
@@ -2393,6 +2379,7 @@ var SignIn = function SignIn() {
       return setPassword(e.target.value);
     },
     placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022",
+    autoFocus: true,
     onKeyDown: function onKeyDown(e) {
       return e.key === 'Enter' && signIn();
     }
@@ -2449,54 +2436,54 @@ var PENDING_SPOTS = [{
 
 // ── App ──────────────────────────────────────────────────────
 function App() {
-  var _useState19 = useState([]),
+  var _useState17 = useState([]),
+    _useState18 = _slicedToArray(_useState17, 2),
+    restaurants = _useState18[0],
+    setRestaurants = _useState18[1];
+  var _useState19 = useState(true),
     _useState20 = _slicedToArray(_useState19, 2),
-    restaurants = _useState20[0],
-    setRestaurants = _useState20[1];
-  var _useState21 = useState(true),
+    loading = _useState20[0],
+    setLoading = _useState20[1];
+  var _useState21 = useState('home'),
     _useState22 = _slicedToArray(_useState21, 2),
-    loading = _useState22[0],
-    setLoading = _useState22[1];
-  var _useState23 = useState('home'),
+    tab = _useState22[0],
+    setTab = _useState22[1];
+  var _useState23 = useState(false),
     _useState24 = _slicedToArray(_useState23, 2),
-    tab = _useState24[0],
-    setTab = _useState24[1];
+    showEdit = _useState24[0],
+    setShowEdit = _useState24[1];
   var _useState25 = useState(false),
     _useState26 = _slicedToArray(_useState25, 2),
-    showEdit = _useState26[0],
-    setShowEdit = _useState26[1];
+    showImport = _useState26[0],
+    setShowImport = _useState26[1];
   var _useState27 = useState(false),
     _useState28 = _slicedToArray(_useState27, 2),
-    showImport = _useState28[0],
-    setShowImport = _useState28[1];
-  var _useState29 = useState(false),
+    showAddMenu = _useState28[0],
+    setShowAddMenu = _useState28[1];
+  var _useState29 = useState(null),
     _useState30 = _slicedToArray(_useState29, 2),
-    showAddMenu = _useState30[0],
-    setShowAddMenu = _useState30[1];
+    editTarget = _useState30[0],
+    setEditTarget = _useState30[1];
   var _useState31 = useState(null),
     _useState32 = _slicedToArray(_useState31, 2),
-    editTarget = _useState32[0],
-    setEditTarget = _useState32[1];
-  var _useState33 = useState(null),
+    detail = _useState32[0],
+    setDetail = _useState32[1];
+  var _useState33 = useState(''),
     _useState34 = _slicedToArray(_useState33, 2),
-    detail = _useState34[0],
-    setDetail = _useState34[1];
-  var _useState35 = useState(''),
+    search = _useState34[0],
+    setSearch = _useState34[1];
+  var _useState35 = useState(null),
     _useState36 = _slicedToArray(_useState35, 2),
-    search = _useState36[0],
-    setSearch = _useState36[1];
+    toast = _useState36[0],
+    setToast = _useState36[1];
   var _useState37 = useState(null),
     _useState38 = _slicedToArray(_useState37, 2),
-    toast = _useState38[0],
-    setToast = _useState38[1];
-  var _useState39 = useState(null),
+    session = _useState38[0],
+    setSession = _useState38[1];
+  var _useState39 = useState(false),
     _useState40 = _slicedToArray(_useState39, 2),
-    session = _useState40[0],
-    setSession = _useState40[1];
-  var _useState41 = useState(false),
-    _useState42 = _slicedToArray(_useState41, 2),
-    authChecked = _useState42[0],
-    setAuthChecked = _useState42[1];
+    authChecked = _useState40[0],
+    setAuthChecked = _useState40[1];
   function showToast(msg) {
     setToast(msg);
     setTimeout(function () {

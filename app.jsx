@@ -675,8 +675,9 @@ const Feed = ({ wantList, visitedList, onCardClick }) => (
 );
 
 // ── Sign-in screen ───────────────────────────────────────────
+const ADMIN_EMAIL = 'mehdiiaabbassii@gmail.com';
+
 const SignIn = () => {
-  const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
   const [err,      setErr]      = useState('');
   const [busy,     setBusy]     = useState(false);
@@ -685,10 +686,10 @@ const SignIn = () => {
   const lbl = {display:'block',fontFamily:C.ui,fontSize:11,fontWeight:600,letterSpacing:'0.05em',color:C.dim,marginBottom:5,textTransform:'uppercase'};
 
   async function signIn() {
-    if (!email||!password) return;
+    if (!password) return;
     setBusy(true); setErr('');
-    const { error } = await sb.auth.signInWithPassword({ email, password });
-    if (error) { setErr(error.message); setBusy(false); }
+    const { error } = await sb.auth.signInWithPassword({ email: ADMIN_EMAIL, password });
+    if (error) { setErr('Incorrect passphrase'); setBusy(false); }
   }
 
   return (
@@ -699,12 +700,8 @@ const SignIn = () => {
         <h2 style={{fontFamily:C.display,fontSize:22,color:C.text,margin:'0 0 22px'}}>Sign in</h2>
         <div style={{display:'flex',flexDirection:'column',gap:14}}>
           <div>
-            <label style={lbl}>Email</label>
-            <input type="email" style={inp} value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" autoFocus/>
-          </div>
-          <div>
-            <label style={lbl}>Password</label>
-            <input type="password" style={inp} value={password} onChange={e=>setPassword(e.target.value)} placeholder="••••••••" onKeyDown={e=>e.key==='Enter'&&signIn()}/>
+            <label style={lbl}>Passphrase</label>
+            <input type="password" style={inp} value={password} onChange={e=>setPassword(e.target.value)} placeholder="••••••••" autoFocus onKeyDown={e=>e.key==='Enter'&&signIn()}/>
           </div>
           {err&&<p style={{fontFamily:C.ui,fontSize:12,color:C.red,margin:0,lineHeight:1.5}}>{err}</p>}
           <button onClick={signIn} disabled={busy} style={{padding:12,borderRadius:11,background:C.espr,border:'none',color:'#fdf8f3',fontFamily:C.ui,fontSize:14,fontWeight:600,cursor:busy?'default':'pointer',marginTop:4,opacity:busy?0.6:1}}>{busy?'Signing in…':'Sign in'}</button>
