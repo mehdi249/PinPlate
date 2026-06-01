@@ -340,6 +340,16 @@ var Ic = function Ic(_ref) {
       points: "23,4 23,10 17,10"
     }), /*#__PURE__*/React.createElement("path", {
       d: "M20.49 15a9 9 0 1 1-2.12-9.36L23 10"
+    })),
+    search: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("circle", {
+      cx: "11",
+      cy: "11",
+      r: "8"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "21",
+      y1: "21",
+      x2: "16.65",
+      y2: "16.65"
     }))
   };
   return /*#__PURE__*/React.createElement("svg", {
@@ -1206,6 +1216,15 @@ var DetailPanel = function DetailPanel(_ref5) {
       size: 20
     }),
     fn: menu
+  }, {
+    label: 'Google',
+    icon: /*#__PURE__*/React.createElement(Ic, {
+      n: "search",
+      size: 20
+    }),
+    fn: function fn() {
+      return window.open("https://www.google.com/search?q=".concat(encodeURIComponent([r.name, r.location].filter(Boolean).join(' '))), '_blank');
+    }
   }, {
     label: 'Share',
     icon: /*#__PURE__*/React.createElement(Ic, {
