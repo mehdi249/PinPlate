@@ -447,6 +447,10 @@ var ImportModal = function ImportModal(_ref3) {
           case 4:
             html = _context.v;
             console.log('[PinPlate FDL] html snippet:', html.slice(0, 2000));
+            localStorage.setItem('fdl_debug', JSON.stringify({
+              url: debugUrl,
+              snippet: html.slice(0, 1500)
+            }));
             mapsUrl = extractMapsUrlFromFdl(html);
             console.log('[PinPlate FDL] extracted mapsUrl:', mapsUrl);
             if (mapsUrl) resolved = mapsUrl;
@@ -458,6 +462,10 @@ var ImportModal = function ImportModal(_ref3) {
             _context.p = 5;
             _t = _context.v;
             console.log('[PinPlate FDL] fetch error:', _t.message);
+            localStorage.setItem('fdl_debug', JSON.stringify({
+              error: _t.message,
+              url: debugUrl
+            }));
           case 6:
             if (htmlData.name) {
               _context.n = 13;
@@ -782,9 +790,27 @@ var ImportModal = function ImportModal(_ref3) {
       fontSize: 12,
       color: 'rgba(140,80,20,0.85)',
       margin: 0,
-      lineHeight: 1.6
+      lineHeight: 1.5
     }
-  }, "Google blocked the auto-read. The link is saved \u2014 just type the name below to pin it.")), /*#__PURE__*/React.createElement("div", {
+  }, "Couldn't auto-fill the name. Type it below to pin."), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      var d = localStorage.getItem('fdl_debug');
+      if (d) navigator.clipboard.writeText(d).then(function () {
+        return alert('Debug info copied — paste it to Claude');
+      });else alert('No debug info yet');
+    },
+    style: {
+      marginTop: 6,
+      fontSize: 11,
+      padding: '3px 8px',
+      borderRadius: 6,
+      border: '1px solid rgba(140,80,20,0.3)',
+      background: 'transparent',
+      color: 'rgba(140,80,20,0.7)',
+      cursor: 'pointer',
+      fontFamily: "'Lora',serif"
+    }
+  }, "Copy debug info")), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: 'column',

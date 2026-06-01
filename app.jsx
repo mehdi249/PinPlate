@@ -207,12 +207,16 @@ const ImportModal = ({ onClose, onImport }) => {
           const resp = await race(fetch(debugUrl));
           const html = await resp.text();
           console.log('[PinPlate FDL] html snippet:', html.slice(0,2000));
+          localStorage.setItem('fdl_debug', JSON.stringify({ url: debugUrl, snippet: html.slice(0,1500) }));
           const mapsUrl = extractMapsUrlFromFdl(html);
           console.log('[PinPlate FDL] extracted mapsUrl:', mapsUrl);
           if (mapsUrl) resolved = mapsUrl;
           htmlData = parseGoogleMapsHtml(html);
           console.log('[PinPlate FDL] htmlData:', htmlData);
-        } catch(e0) { console.log('[PinPlate FDL] fetch error:', e0.message); }
+        } catch(e0) {
+          console.log('[PinPlate FDL] fetch error:', e0.message);
+          localStorage.setItem('fdl_debug', JSON.stringify({ error: e0.message, url: debugUrl }));
+        }
         // Also try via proxy (works if proxy IP is allowed)
         if (!htmlData.name) {
           try {
@@ -319,7 +323,8 @@ const ImportModal = ({ onClose, onImport }) => {
         {step==='preview' && form && (<>
           {busy&&<p style={{fontFamily:"'Lora',serif",fontSize:12,color:'#c8773a',marginBottom:12}}>📍 Getting address…</p>}
           {!form.name&&<div style={{background:'rgba(200,119,58,0.1)',border:'1px solid rgba(200,119,58,0.25)',borderRadius:10,padding:'9px 12px',marginBottom:4}}>
-            <p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(140,80,20,0.85)',margin:0,lineHeight:1.6}}>Google blocked the auto-read. The link is saved — just type the name below to pin it.</p>
+            <p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(140,80,20,0.85)',margin:0,lineHeight:1.5}}>Couldn't auto-fill the name. Type it below to pin.</p>
+            <button onClick={()=>{const d=localStorage.getItem('fdl_debug');if(d)navigator.clipboard.writeText(d).then(()=>alert('Debug info copied — paste it to Claude'));else alert('No debug info yet');}} style={{marginTop:6,fontSize:11,padding:'3px 8px',borderRadius:6,border:'1px solid rgba(140,80,20,0.3)',background:'transparent',color:'rgba(140,80,20,0.7)',cursor:'pointer',fontFamily:"'Lora',serif"}}>Copy debug info</button>
           </div>}
           <div style={{display:'flex',flexDirection:'column',gap:13}}>
             <div><label style={lbl}>Restaurant Name *</label><input style={inp} value={form.name} onChange={e=>set('name',e.target.value)} autoFocus={!form.name}/></div>
