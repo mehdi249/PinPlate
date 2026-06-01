@@ -620,6 +620,18 @@ const PENDING_SPOTS = [
     price_range: '$20-60',
     lat: 49.2658, lng: -123.1452,
   },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440002',
+    name: 'Via Tevere Pizzeria Victoria Drive',
+    cuisine: 'Italian',
+    location: '1190 Victoria Dr, Vancouver, BC V5L 4G5',
+    recommended_by: '',
+    notes: 'Thin-crust wood-fired Neapolitan pies & wine · Outdoor seating · Great cocktails · Doesn\'t accept reservations',
+    visited: false,
+    price_range: '$20-30',
+    google_maps_url: 'https://maps.app.goo.gl/rpqoWYjLP4dnhais5',
+    lat: 49.2501, lng: -123.0686,
+  },
 ];
 
 // ── App ──────────────────────────────────────────────────────
