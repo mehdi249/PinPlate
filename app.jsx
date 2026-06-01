@@ -1129,16 +1129,20 @@ function App() {
 
   async function insertPending() {
     if (!PENDING_SPOTS.length) return;
-    const ids = PENDING_SPOTS.map(s=>s.id);
+    let deleted = new Set();
+    try { deleted = new Set(JSON.parse(localStorage.getItem('pinplate_deleted')||'[]')); } catch(e){}
+    const pending = PENDING_SPOTS.filter(s=>!deleted.has(s.id));
+    if (!pending.length) return;
+    const ids = pending.map(s=>s.id);
     const { data: existing } = await sb.from('spots').select('id').in('id', ids);
     const existingIds = new Set((existing||[]).map(r=>r.id));
-    const toInsert = PENDING_SPOTS.filter(s=>!existingIds.has(s.id));
+    const toInsert = pending.filter(s=>!existingIds.has(s.id));
     if (!toInsert.length) return;
-    let { error } = await sb.from('spots').insert(toInsert);
+    let { error } = await sb.from('spots').upsert(toInsert, { onConflict:'id', ignoreDuplicates:true });
     if (error && (error.message?.includes('column') || error.message?.includes('schema') || error.code==='PGRST204')) {
       const safe = toInsert.map(({id,name,cuisine,location,recommended_by,notes,visited,rating})=>
         ({id,name:name||'',cuisine:cuisine||'Other',location:location||null,recommended_by:recommended_by||null,notes:notes||null,visited:!!visited,rating:rating||null}));
-      ({ error } = await sb.from('spots').insert(safe));
+      ({ error } = await sb.from('spots').upsert(safe, { onConflict:'id', ignoreDuplicates:true }));
     }
     if (error) showToast('Seed error: '+error.message);
   }
@@ -1200,6 +1204,13 @@ function App() {
   async function handleDelete(id) {
     const {error}=await sb.from('spots').delete().eq('id',id);
     if (error) { showToast('Delete failed: '+error.message); return; }
+    // If this was a seeded spot, tombstone it so it doesn't get re-seeded on reload
+    if (PENDING_SPOTS.some(s=>s.id===id)) {
+      try {
+        const t = JSON.parse(localStorage.getItem('pinplate_deleted')||'[]');
+        localStorage.setItem('pinplate_deleted', JSON.stringify([...new Set([...t, id])]));
+      } catch(e){}
+    }
     setRestaurants(rs=>rs.filter(r=>r.id!==id));
     setDetail(null);
     showToast('Removed.');

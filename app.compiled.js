@@ -3185,7 +3185,7 @@ function App() {
   function _insertPending() {
     _insertPending = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
       var _error$message, _error$message2;
-      var ids, _yield$sb$from$select, existing, existingIds, toInsert, _yield$sb$from$insert, error, safe, _yield$sb$from$insert2;
+      var deleted, pending, ids, _yield$sb$from$select, existing, existingIds, toInsert, _yield$sb$from$upsert, error, safe, _yield$sb$from$upsert2;
       return _regenerator().w(function (_context3) {
         while (1) switch (_context3.n) {
           case 0:
@@ -3195,33 +3195,49 @@ function App() {
             }
             return _context3.a(2);
           case 1:
-            ids = PENDING_SPOTS.map(function (s) {
+            deleted = new Set();
+            try {
+              deleted = new Set(JSON.parse(localStorage.getItem('pinplate_deleted') || '[]'));
+            } catch (e) {}
+            pending = PENDING_SPOTS.filter(function (s) {
+              return !deleted.has(s.id);
+            });
+            if (pending.length) {
+              _context3.n = 2;
+              break;
+            }
+            return _context3.a(2);
+          case 2:
+            ids = pending.map(function (s) {
               return s.id;
             });
-            _context3.n = 2;
+            _context3.n = 3;
             return sb.from('spots').select('id').in('id', ids);
-          case 2:
+          case 3:
             _yield$sb$from$select = _context3.v;
             existing = _yield$sb$from$select.data;
             existingIds = new Set((existing || []).map(function (r) {
               return r.id;
             }));
-            toInsert = PENDING_SPOTS.filter(function (s) {
+            toInsert = pending.filter(function (s) {
               return !existingIds.has(s.id);
             });
             if (toInsert.length) {
-              _context3.n = 3;
+              _context3.n = 4;
               break;
             }
             return _context3.a(2);
-          case 3:
-            _context3.n = 4;
-            return sb.from('spots').insert(toInsert);
           case 4:
-            _yield$sb$from$insert = _context3.v;
-            error = _yield$sb$from$insert.error;
+            _context3.n = 5;
+            return sb.from('spots').upsert(toInsert, {
+              onConflict: 'id',
+              ignoreDuplicates: true
+            });
+          case 5:
+            _yield$sb$from$upsert = _context3.v;
+            error = _yield$sb$from$upsert.error;
             if (!(error && ((_error$message = error.message) !== null && _error$message !== void 0 && _error$message.includes('column') || (_error$message2 = error.message) !== null && _error$message2 !== void 0 && _error$message2.includes('schema') || error.code === 'PGRST204'))) {
-              _context3.n = 6;
+              _context3.n = 7;
               break;
             }
             safe = toInsert.map(function (_ref10) {
@@ -3244,14 +3260,17 @@ function App() {
                 rating: rating || null
               };
             });
-            _context3.n = 5;
-            return sb.from('spots').insert(safe);
-          case 5:
-            _yield$sb$from$insert2 = _context3.v;
-            error = _yield$sb$from$insert2.error;
+            _context3.n = 6;
+            return sb.from('spots').upsert(safe, {
+              onConflict: 'id',
+              ignoreDuplicates: true
+            });
           case 6:
-            if (error) showToast('Seed error: ' + error.message);
+            _yield$sb$from$upsert2 = _context3.v;
+            error = _yield$sb$from$upsert2.error;
           case 7:
+            if (error) showToast('Seed error: ' + error.message);
+          case 8:
             return _context3.a(2);
         }
       }, _callee3);
@@ -3264,7 +3283,7 @@ function App() {
   function _handleSave() {
     _handleSave = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4(form) {
       var _error$message3, _error$message4;
-      var payload, error, _yield$sb$from$update, _yield$sb$from$insert3, safe, _yield$sb$from$update2, _yield$sb$from$insert4;
+      var payload, error, _yield$sb$from$update, _yield$sb$from$insert, safe, _yield$sb$from$update2, _yield$sb$from$insert2;
       return _regenerator().w(function (_context4) {
         while (1) switch (_context4.n) {
           case 0:
@@ -3284,8 +3303,8 @@ function App() {
             _context4.n = 3;
             return sb.from('spots').insert(payload);
           case 3:
-            _yield$sb$from$insert3 = _context4.v;
-            error = _yield$sb$from$insert3.error;
+            _yield$sb$from$insert = _context4.v;
+            error = _yield$sb$from$insert.error;
           case 4:
             if (!(error && ((_error$message3 = error.message) !== null && _error$message3 !== void 0 && _error$message3.includes('column') || (_error$message4 = error.message) !== null && _error$message4 !== void 0 && _error$message4.includes('schema') || error.code === 'PGRST204'))) {
               _context4.n = 8;
@@ -3315,8 +3334,8 @@ function App() {
             _context4.n = 7;
             return sb.from('spots').insert(safe);
           case 7:
-            _yield$sb$from$insert4 = _context4.v;
-            error = _yield$sb$from$insert4.error;
+            _yield$sb$from$insert2 = _context4.v;
+            error = _yield$sb$from$insert2.error;
           case 8:
             if (!error) {
               _context4.n = 9;
@@ -3484,7 +3503,7 @@ function App() {
   }
   function _handleDelete() {
     _handleDelete = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8(id) {
-      var _yield$sb$from$delete, error;
+      var _yield$sb$from$delete, error, t;
       return _regenerator().w(function (_context8) {
         while (1) switch (_context8.n) {
           case 0:
@@ -3500,6 +3519,15 @@ function App() {
             showToast('Delete failed: ' + error.message);
             return _context8.a(2);
           case 2:
+            // If this was a seeded spot, tombstone it so it doesn't get re-seeded on reload
+            if (PENDING_SPOTS.some(function (s) {
+              return s.id === id;
+            })) {
+              try {
+                t = JSON.parse(localStorage.getItem('pinplate_deleted') || '[]');
+                localStorage.setItem('pinplate_deleted', JSON.stringify(_toConsumableArray(new Set([].concat(_toConsumableArray(t), [id])))));
+              } catch (e) {}
+            }
             setRestaurants(function (rs) {
               return rs.filter(function (r) {
                 return r.id !== id;
