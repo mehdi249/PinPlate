@@ -22,6 +22,10 @@ body{background:#f4ece0;-webkit-text-size-adjust:100%;}
 <script>
 window.onerror=function(m,s,l){document.getElementById('root').innerHTML='<div style="padding:20px;font-family:monospace;color:red">Error: '+m+' ('+s+':'+l+')</div>';};
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i.return) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -2183,161 +2187,166 @@ var Card = function Card(_ref7) {
   })))));
 };
 
-// ── Feed (single-column sections with jump bar) ───────────────
-var SectionHead = function SectionHead(_ref8) {
-  var title = _ref8.title,
-    count = _ref8.count;
-  return /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      alignItems: 'baseline',
-      gap: 10,
-      marginBottom: 14,
-      paddingBottom: 10,
-      borderBottom: "1px solid ".concat(C.bd)
-    }
-  }, /*#__PURE__*/React.createElement("h2", {
-    style: {
-      fontFamily: C.display,
-      fontSize: 20,
-      color: C.text,
-      margin: 0
-    }
-  }, title), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontFamily: C.ui,
-      fontSize: 12,
-      fontWeight: 500,
-      color: C.dim
-    }
-  }, count));
-};
-var Feed = function Feed(_ref9) {
-  var wantList = _ref9.wantList,
-    visitedList = _ref9.visitedList,
-    onCardClick = _ref9.onCardClick;
-  var scrollTo = function scrollTo(id) {
-    var _document$getElementB;
-    return (_document$getElementB = document.getElementById(id)) === null || _document$getElementB === void 0 ? void 0 : _document$getElementB.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    });
-  };
-  var pill = function pill(label, id) {
+// ── Feed (side-by-side lanes with cuisine chips) ─────────────
+var Feed = function Feed(_ref8) {
+  var restaurants = _ref8.restaurants,
+    onCardClick = _ref8.onCardClick;
+  var _useState11 = useState('All'),
+    _useState12 = _slicedToArray(_useState11, 2),
+    cuisine = _useState12[0],
+    setCuisine = _useState12[1];
+  var cuisines = useMemo(function () {
+    return _toConsumableArray(new Set(restaurants.map(function (r) {
+      return r.cuisine;
+    }).filter(Boolean))).sort();
+  }, [restaurants]);
+  var show = cuisine === 'All' ? restaurants : restaurants.filter(function (r) {
+    return r.cuisine === cuisine;
+  });
+  var wantList = show.filter(function (r) {
+    return r.status === 'want';
+  });
+  var visitedList = show.filter(function (r) {
+    return r.status === 'visited';
+  });
+  var chip = function chip(c) {
     return /*#__PURE__*/React.createElement("button", {
+      key: c,
       onClick: function onClick() {
-        return scrollTo(id);
+        return setCuisine(c);
       },
       style: {
+        flexShrink: 0,
         padding: '6px 14px',
         borderRadius: 20,
-        border: "1px solid ".concat(C.bd),
-        background: C.hi,
+        border: "1px solid ".concat(cuisine === c ? C.espr : C.bd),
+        background: cuisine === c ? C.espr : 'transparent',
+        color: cuisine === c ? '#fdf8f3' : C.mid,
         fontFamily: C.ui,
         fontSize: 12,
         fontWeight: 500,
-        color: C.mid,
         cursor: 'pointer',
-        whiteSpace: 'nowrap'
+        transition: 'all 0.15s'
       }
-    }, label);
+    }, c);
+  };
+  var Lane = function Lane(_ref9) {
+    var list = _ref9.list,
+      emptyMsg = _ref9.emptyMsg;
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        gap: 10,
+        overflowX: 'auto',
+        scrollSnapType: 'x mandatory',
+        WebkitOverflowScrolling: 'touch',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+        paddingBottom: 8
+      }
+    }, list.length === 0 ? /*#__PURE__*/React.createElement("p", {
+      style: {
+        fontFamily: C.ui,
+        fontSize: 12,
+        color: C.dim,
+        padding: '16px 2px',
+        flexShrink: 0,
+        lineHeight: 1.5
+      }
+    }, emptyMsg) : list.map(function (r) {
+      return /*#__PURE__*/React.createElement("div", {
+        key: r.id,
+        style: {
+          flex: '0 0 calc(100% - 16px)',
+          scrollSnapAlign: 'start'
+        }
+      }, /*#__PURE__*/React.createElement(Card, {
+        r: r,
+        onClick: function onClick() {
+          return onCardClick(r);
+        }
+      }));
+    }));
+  };
+  var LaneHead = function LaneHead(_ref0) {
+    var title = _ref0.title,
+      count = _ref0.count;
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        alignItems: 'baseline',
+        gap: 6,
+        marginBottom: 10,
+        paddingBottom: 8,
+        borderBottom: "1px solid ".concat(C.bd)
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontFamily: C.display,
+        fontSize: 17,
+        color: C.text
+      }
+    }, title), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontFamily: C.ui,
+        fontSize: 11,
+        color: C.dim,
+        fontWeight: 500
+      }
+    }, count));
   };
   return /*#__PURE__*/React.createElement("div", {
     style: {
-      maxWidth: 560,
-      margin: '0 auto',
-      width: '100%',
-      padding: '0 16px 80px'
+      display: 'flex',
+      flexDirection: 'column'
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      position: 'sticky',
-      top: 0,
-      zIndex: 100,
-      background: C.bg,
-      padding: '12px 0 10px',
       display: 'flex',
-      gap: 8
+      gap: 8,
+      overflowX: 'auto',
+      padding: '12px 16px 10px',
+      scrollbarWidth: 'none',
+      WebkitOverflowScrolling: 'touch',
+      flexShrink: 0
     }
-  }, pill("To Visit \xB7 ".concat(wantList.length), 'section-want'), pill("Visited \xB7 ".concat(visitedList.length), 'section-visited')), /*#__PURE__*/React.createElement("div", {
-    id: "section-want",
+  }, ['All'].concat(_toConsumableArray(cuisines)).map(chip)), /*#__PURE__*/React.createElement("div", {
     style: {
-      marginBottom: 32,
-      scrollMarginTop: 56
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: 8,
+      padding: '4px 16px 80px'
     }
-  }, /*#__PURE__*/React.createElement(SectionHead, {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(LaneHead, {
     title: "To Visit",
     count: wantList.length
-  }), wantList.length === 0 ? /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontFamily: C.ui,
-      fontSize: 13,
-      color: C.dim,
-      textAlign: 'center',
-      padding: '28px 0'
-    }
-  }, "Nothing saved yet \u2014 tap + Add to start") : /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 10
-    }
-  }, wantList.map(function (r) {
-    return /*#__PURE__*/React.createElement(Card, {
-      key: r.id,
-      r: r,
-      onClick: function onClick() {
-        return onCardClick(r);
-      }
-    });
-  }))), /*#__PURE__*/React.createElement("div", {
-    id: "section-visited",
-    style: {
-      scrollMarginTop: 56
-    }
-  }, /*#__PURE__*/React.createElement(SectionHead, {
+  }), /*#__PURE__*/React.createElement(Lane, {
+    list: wantList,
+    emptyMsg: cuisine === 'All' ? 'Nothing saved yet' : "No ".concat(cuisine, " spots to visit")
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(LaneHead, {
     title: "Visited",
     count: visitedList.length
-  }), visitedList.length === 0 ? /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontFamily: C.ui,
-      fontSize: 13,
-      color: C.dim,
-      textAlign: 'center',
-      padding: '28px 0'
-    }
-  }, "None yet \u2014 mark a spot as visited to see it here") : /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 10
-    }
-  }, visitedList.map(function (r) {
-    return /*#__PURE__*/React.createElement(Card, {
-      key: r.id,
-      r: r,
-      onClick: function onClick() {
-        return onCardClick(r);
-      }
-    });
+  }), /*#__PURE__*/React.createElement(Lane, {
+    list: visitedList,
+    emptyMsg: cuisine === 'All' ? 'None yet' : "No ".concat(cuisine, " visited")
   }))));
 };
 
 // ── Sign-in screen ───────────────────────────────────────────
 var ADMIN_EMAIL = 'mehdiiaabbassii@gmail.com';
 var SignIn = function SignIn() {
-  var _useState11 = useState(''),
-    _useState12 = _slicedToArray(_useState11, 2),
-    password = _useState12[0],
-    setPassword = _useState12[1];
   var _useState13 = useState(''),
     _useState14 = _slicedToArray(_useState13, 2),
-    err = _useState14[0],
-    setErr = _useState14[1];
-  var _useState15 = useState(false),
+    password = _useState14[0],
+    setPassword = _useState14[1];
+  var _useState15 = useState(''),
     _useState16 = _slicedToArray(_useState15, 2),
-    busy = _useState16[0],
-    setBusy = _useState16[1];
+    err = _useState16[0],
+    setErr = _useState16[1];
+  var _useState17 = useState(false),
+    _useState18 = _slicedToArray(_useState17, 2),
+    busy = _useState18[0],
+    setBusy = _useState18[1];
   var inp = {
     width: '100%',
     padding: '11px 14px',
@@ -2552,54 +2561,54 @@ var PENDING_SPOTS = [{
 
 // ── App ──────────────────────────────────────────────────────
 function App() {
-  var _useState17 = useState([]),
-    _useState18 = _slicedToArray(_useState17, 2),
-    restaurants = _useState18[0],
-    setRestaurants = _useState18[1];
-  var _useState19 = useState(true),
+  var _useState19 = useState([]),
     _useState20 = _slicedToArray(_useState19, 2),
-    loading = _useState20[0],
-    setLoading = _useState20[1];
-  var _useState21 = useState('home'),
+    restaurants = _useState20[0],
+    setRestaurants = _useState20[1];
+  var _useState21 = useState(true),
     _useState22 = _slicedToArray(_useState21, 2),
-    tab = _useState22[0],
-    setTab = _useState22[1];
-  var _useState23 = useState(false),
+    loading = _useState22[0],
+    setLoading = _useState22[1];
+  var _useState23 = useState('home'),
     _useState24 = _slicedToArray(_useState23, 2),
-    showEdit = _useState24[0],
-    setShowEdit = _useState24[1];
+    tab = _useState24[0],
+    setTab = _useState24[1];
   var _useState25 = useState(false),
     _useState26 = _slicedToArray(_useState25, 2),
-    showImport = _useState26[0],
-    setShowImport = _useState26[1];
+    showEdit = _useState26[0],
+    setShowEdit = _useState26[1];
   var _useState27 = useState(false),
     _useState28 = _slicedToArray(_useState27, 2),
-    showAddMenu = _useState28[0],
-    setShowAddMenu = _useState28[1];
-  var _useState29 = useState(null),
+    showImport = _useState28[0],
+    setShowImport = _useState28[1];
+  var _useState29 = useState(false),
     _useState30 = _slicedToArray(_useState29, 2),
-    editTarget = _useState30[0],
-    setEditTarget = _useState30[1];
+    showAddMenu = _useState30[0],
+    setShowAddMenu = _useState30[1];
   var _useState31 = useState(null),
     _useState32 = _slicedToArray(_useState31, 2),
-    detail = _useState32[0],
-    setDetail = _useState32[1];
-  var _useState33 = useState(''),
+    editTarget = _useState32[0],
+    setEditTarget = _useState32[1];
+  var _useState33 = useState(null),
     _useState34 = _slicedToArray(_useState33, 2),
-    search = _useState34[0],
-    setSearch = _useState34[1];
-  var _useState35 = useState(null),
+    detail = _useState34[0],
+    setDetail = _useState34[1];
+  var _useState35 = useState(''),
     _useState36 = _slicedToArray(_useState35, 2),
-    toast = _useState36[0],
-    setToast = _useState36[1];
+    search = _useState36[0],
+    setSearch = _useState36[1];
   var _useState37 = useState(null),
     _useState38 = _slicedToArray(_useState37, 2),
-    session = _useState38[0],
-    setSession = _useState38[1];
-  var _useState39 = useState(false),
+    toast = _useState38[0],
+    setToast = _useState38[1];
+  var _useState39 = useState(null),
     _useState40 = _slicedToArray(_useState39, 2),
-    authChecked = _useState40[0],
-    setAuthChecked = _useState40[1];
+    session = _useState40[0],
+    setSession = _useState40[1];
+  var _useState41 = useState(false),
+    _useState42 = _slicedToArray(_useState41, 2),
+    authChecked = _useState42[0],
+    setAuthChecked = _useState42[1];
   function showToast(msg) {
     setToast(msg);
     setTimeout(function () {
@@ -2609,8 +2618,8 @@ function App() {
 
   // Auth state
   useEffect(function () {
-    sb.auth.getSession().then(function (_ref0) {
-      var session = _ref0.data.session;
+    sb.auth.getSession().then(function (_ref1) {
+      var session = _ref1.data.session;
       setSession(session);
       setAuthChecked(true);
     });
@@ -2667,15 +2676,15 @@ function App() {
               _context3.n = 6;
               break;
             }
-            safe = toInsert.map(function (_ref1) {
-              var id = _ref1.id,
-                name = _ref1.name,
-                cuisine = _ref1.cuisine,
-                location = _ref1.location,
-                recommended_by = _ref1.recommended_by,
-                notes = _ref1.notes,
-                visited = _ref1.visited,
-                rating = _ref1.rating;
+            safe = toInsert.map(function (_ref10) {
+              var id = _ref10.id,
+                name = _ref10.name,
+                cuisine = _ref10.cuisine,
+                location = _ref10.location,
+                recommended_by = _ref10.recommended_by,
+                notes = _ref10.notes,
+                visited = _ref10.visited,
+                rating = _ref10.rating;
               return {
                 id: id,
                 name: name || '',
@@ -3203,8 +3212,7 @@ function App() {
       fontWeight: 400
     }
   }, "Loading\u2026")) : /*#__PURE__*/React.createElement(Feed, {
-    wantList: wantList,
-    visitedList: visitedList,
+    restaurants: filtered,
     onCardClick: setDetail
   })), tab === 'map' && !loading && /*#__PURE__*/React.createElement(MapView, {
     spots: restaurants,
@@ -3268,7 +3276,7 @@ function App() {
 }
 
 
-const BUILD_TIME = 1780349669;
+const BUILD_TIME = 1780352073;
 (function(){
   var checking=false;
   async function checkUpdate(){
