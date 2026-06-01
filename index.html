@@ -173,32 +173,32 @@ function nominatimReverse(_x, _x2) {
   return _nominatimReverse.apply(this, arguments);
 } // ── SVG icons ────────────────────────────────────────────────
 function _nominatimReverse() {
-  _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8(lat, lng) {
+  _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee9(lat, lng) {
     var r, d, a, _t9;
-    return _regenerator().w(function (_context8) {
-      while (1) switch (_context8.p = _context8.n) {
+    return _regenerator().w(function (_context9) {
+      while (1) switch (_context9.p = _context9.n) {
         case 0:
-          _context8.p = 0;
-          _context8.n = 1;
+          _context9.p = 0;
+          _context9.n = 1;
           return fetch("https://nominatim.openstreetmap.org/reverse?lat=".concat(lat, "&lon=").concat(lng, "&format=json"), {
             headers: {
               'Accept-Language': 'en'
             }
           });
         case 1:
-          r = _context8.v;
-          _context8.n = 2;
+          r = _context9.v;
+          _context9.n = 2;
           return r.json();
         case 2:
-          d = _context8.v;
+          d = _context9.v;
           a = d.address || {};
-          return _context8.a(2, [a.road, a.neighbourhood || a.suburb, a.city || a.town || a.village, a.country].filter(Boolean).slice(0, 3).join(', '));
+          return _context9.a(2, [a.road, a.neighbourhood || a.suburb, a.city || a.town || a.village, a.country].filter(Boolean).slice(0, 3).join(', '));
         case 3:
-          _context8.p = 3;
-          _t9 = _context8.v;
-          return _context8.a(2, '');
+          _context9.p = 3;
+          _t9 = _context9.v;
+          return _context9.a(2, '');
       }
-    }, _callee8, null, [[0, 3]]);
+    }, _callee9, null, [[0, 3]]);
   }));
   return _nominatimReverse.apply(this, arguments);
 }
@@ -2271,6 +2271,180 @@ var Feed = function Feed(_ref9) {
     });
   }))));
 };
+
+// ── Sign-in screen ───────────────────────────────────────────
+var SignIn = function SignIn() {
+  var _useState11 = useState(''),
+    _useState12 = _slicedToArray(_useState11, 2),
+    email = _useState12[0],
+    setEmail = _useState12[1];
+  var _useState13 = useState(''),
+    _useState14 = _slicedToArray(_useState13, 2),
+    password = _useState14[0],
+    setPassword = _useState14[1];
+  var _useState15 = useState(''),
+    _useState16 = _slicedToArray(_useState15, 2),
+    err = _useState16[0],
+    setErr = _useState16[1];
+  var _useState17 = useState(false),
+    _useState18 = _slicedToArray(_useState17, 2),
+    busy = _useState18[0],
+    setBusy = _useState18[1];
+  var inp = {
+    width: '100%',
+    padding: '11px 14px',
+    background: C.hi,
+    border: "1px solid ".concat(C.bdMid),
+    borderRadius: 10,
+    fontFamily: C.ui,
+    fontSize: 14,
+    color: C.text,
+    outline: 'none',
+    boxSizing: 'border-box'
+  };
+  var lbl = {
+    display: 'block',
+    fontFamily: C.ui,
+    fontSize: 11,
+    fontWeight: 600,
+    letterSpacing: '0.05em',
+    color: C.dim,
+    marginBottom: 5,
+    textTransform: 'uppercase'
+  };
+  function signIn() {
+    return _signIn.apply(this, arguments);
+  }
+  function _signIn() {
+    _signIn = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+      var _yield$sb$auth$signIn, error;
+      return _regenerator().w(function (_context2) {
+        while (1) switch (_context2.n) {
+          case 0:
+            if (!(!email || !password)) {
+              _context2.n = 1;
+              break;
+            }
+            return _context2.a(2);
+          case 1:
+            setBusy(true);
+            setErr('');
+            _context2.n = 2;
+            return sb.auth.signInWithPassword({
+              email: email,
+              password: password
+            });
+          case 2:
+            _yield$sb$auth$signIn = _context2.v;
+            error = _yield$sb$auth$signIn.error;
+            if (error) {
+              setErr(error.message);
+              setBusy(false);
+            }
+          case 3:
+            return _context2.a(2);
+        }
+      }, _callee2);
+    }));
+    return _signIn.apply(this, arguments);
+  }
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: C.bg,
+      padding: 24
+    }
+  }, /*#__PURE__*/React.createElement("h1", {
+    style: {
+      fontFamily: C.display,
+      fontSize: 38,
+      color: C.text,
+      margin: '0 0 6px',
+      letterSpacing: '-0.02em'
+    }
+  }, "PinPlate"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 13,
+      color: C.dim,
+      margin: '0 0 36px'
+    }
+  }, "Your personal city guide"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: '100%',
+      maxWidth: 340,
+      background: C.hi,
+      borderRadius: 20,
+      padding: 28,
+      boxShadow: '0 4px 28px rgba(0,0,0,0.09)'
+    }
+  }, /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontFamily: C.display,
+      fontSize: 22,
+      color: C.text,
+      margin: '0 0 22px'
+    }
+  }, "Sign in"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 14
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Email"), /*#__PURE__*/React.createElement("input", {
+    type: "email",
+    style: inp,
+    value: email,
+    onChange: function onChange(e) {
+      return setEmail(e.target.value);
+    },
+    placeholder: "you@example.com",
+    autoFocus: true
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, "Password"), /*#__PURE__*/React.createElement("input", {
+    type: "password",
+    style: inp,
+    value: password,
+    onChange: function onChange(e) {
+      return setPassword(e.target.value);
+    },
+    placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022",
+    onKeyDown: function onKeyDown(e) {
+      return e.key === 'Enter' && signIn();
+    }
+  })), err && /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 12,
+      color: C.red,
+      margin: 0,
+      lineHeight: 1.5
+    }
+  }, err), /*#__PURE__*/React.createElement("button", {
+    onClick: signIn,
+    disabled: busy,
+    style: {
+      padding: 12,
+      borderRadius: 11,
+      background: C.espr,
+      border: 'none',
+      color: '#fdf8f3',
+      fontFamily: C.ui,
+      fontSize: 14,
+      fontWeight: 600,
+      cursor: busy ? 'default' : 'pointer',
+      marginTop: 4,
+      opacity: busy ? 0.6 : 1
+    }
+  }, busy ? 'Signing in…' : 'Sign in'))));
+};
 var PENDING_SPOTS = [{
   id: '550e8400-e29b-41d4-a716-446655440001',
   name: 'Eat Bar & Patio Haraheri',
@@ -2298,75 +2472,99 @@ var PENDING_SPOTS = [{
 
 // ── App ──────────────────────────────────────────────────────
 function App() {
-  var _useState11 = useState([]),
-    _useState12 = _slicedToArray(_useState11, 2),
-    restaurants = _useState12[0],
-    setRestaurants = _useState12[1];
-  var _useState13 = useState(true),
-    _useState14 = _slicedToArray(_useState13, 2),
-    loading = _useState14[0],
-    setLoading = _useState14[1];
-  var _useState15 = useState('home'),
-    _useState16 = _slicedToArray(_useState15, 2),
-    tab = _useState16[0],
-    setTab = _useState16[1];
-  var _useState17 = useState(false),
-    _useState18 = _slicedToArray(_useState17, 2),
-    showEdit = _useState18[0],
-    setShowEdit = _useState18[1];
-  var _useState19 = useState(false),
+  var _useState19 = useState([]),
     _useState20 = _slicedToArray(_useState19, 2),
-    showImport = _useState20[0],
-    setShowImport = _useState20[1];
-  var _useState21 = useState(false),
+    restaurants = _useState20[0],
+    setRestaurants = _useState20[1];
+  var _useState21 = useState(true),
     _useState22 = _slicedToArray(_useState21, 2),
-    showAddMenu = _useState22[0],
-    setShowAddMenu = _useState22[1];
-  var _useState23 = useState(null),
+    loading = _useState22[0],
+    setLoading = _useState22[1];
+  var _useState23 = useState('home'),
     _useState24 = _slicedToArray(_useState23, 2),
-    editTarget = _useState24[0],
-    setEditTarget = _useState24[1];
-  var _useState25 = useState(null),
+    tab = _useState24[0],
+    setTab = _useState24[1];
+  var _useState25 = useState(false),
     _useState26 = _slicedToArray(_useState25, 2),
-    detail = _useState26[0],
-    setDetail = _useState26[1];
-  var _useState27 = useState(''),
+    showEdit = _useState26[0],
+    setShowEdit = _useState26[1];
+  var _useState27 = useState(false),
     _useState28 = _slicedToArray(_useState27, 2),
-    search = _useState28[0],
-    setSearch = _useState28[1];
-  var _useState29 = useState(null),
+    showImport = _useState28[0],
+    setShowImport = _useState28[1];
+  var _useState29 = useState(false),
     _useState30 = _slicedToArray(_useState29, 2),
-    toast = _useState30[0],
-    setToast = _useState30[1];
+    showAddMenu = _useState30[0],
+    setShowAddMenu = _useState30[1];
+  var _useState31 = useState(null),
+    _useState32 = _slicedToArray(_useState31, 2),
+    editTarget = _useState32[0],
+    setEditTarget = _useState32[1];
+  var _useState33 = useState(null),
+    _useState34 = _slicedToArray(_useState33, 2),
+    detail = _useState34[0],
+    setDetail = _useState34[1];
+  var _useState35 = useState(''),
+    _useState36 = _slicedToArray(_useState35, 2),
+    search = _useState36[0],
+    setSearch = _useState36[1];
+  var _useState37 = useState(null),
+    _useState38 = _slicedToArray(_useState37, 2),
+    toast = _useState38[0],
+    setToast = _useState38[1];
+  var _useState39 = useState(null),
+    _useState40 = _slicedToArray(_useState39, 2),
+    session = _useState40[0],
+    setSession = _useState40[1];
+  var _useState41 = useState(false),
+    _useState42 = _slicedToArray(_useState41, 2),
+    authChecked = _useState42[0],
+    setAuthChecked = _useState42[1];
   function showToast(msg) {
     setToast(msg);
     setTimeout(function () {
       return setToast(null);
     }, 2500);
   }
+
+  // Auth state
+  useEffect(function () {
+    sb.auth.getSession().then(function (_ref0) {
+      var session = _ref0.data.session;
+      setSession(session);
+      setAuthChecked(true);
+    });
+    var _sb$auth$onAuthStateC = sb.auth.onAuthStateChange(function (_ev, session) {
+        setSession(session);
+      }),
+      subscription = _sb$auth$onAuthStateC.data.subscription;
+    return function () {
+      return subscription.unsubscribe();
+    };
+  }, []);
   function insertPending() {
     return _insertPending.apply(this, arguments);
   }
   function _insertPending() {
-    _insertPending = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+    _insertPending = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
       var _error$message, _error$message2;
       var ids, _yield$sb$from$select, existing, existingIds, toInsert, _yield$sb$from$insert, error, safe, _yield$sb$from$insert2;
-      return _regenerator().w(function (_context2) {
-        while (1) switch (_context2.n) {
+      return _regenerator().w(function (_context3) {
+        while (1) switch (_context3.n) {
           case 0:
             if (PENDING_SPOTS.length) {
-              _context2.n = 1;
+              _context3.n = 1;
               break;
             }
-            return _context2.a(2);
+            return _context3.a(2);
           case 1:
             ids = PENDING_SPOTS.map(function (s) {
               return s.id;
             });
-            _context2.n = 2;
+            _context3.n = 2;
             return sb.from('spots').select('id').in('id', ids);
           case 2:
-            _yield$sb$from$select = _context2.v;
+            _yield$sb$from$select = _context3.v;
             existing = _yield$sb$from$select.data;
             existingIds = new Set((existing || []).map(function (r) {
               return r.id;
@@ -2375,29 +2573,29 @@ function App() {
               return !existingIds.has(s.id);
             });
             if (toInsert.length) {
-              _context2.n = 3;
+              _context3.n = 3;
               break;
             }
-            return _context2.a(2);
+            return _context3.a(2);
           case 3:
-            _context2.n = 4;
+            _context3.n = 4;
             return sb.from('spots').insert(toInsert);
           case 4:
-            _yield$sb$from$insert = _context2.v;
+            _yield$sb$from$insert = _context3.v;
             error = _yield$sb$from$insert.error;
             if (!(error && ((_error$message = error.message) !== null && _error$message !== void 0 && _error$message.includes('column') || (_error$message2 = error.message) !== null && _error$message2 !== void 0 && _error$message2.includes('schema') || error.code === 'PGRST204'))) {
-              _context2.n = 6;
+              _context3.n = 6;
               break;
             }
-            safe = toInsert.map(function (_ref0) {
-              var id = _ref0.id,
-                name = _ref0.name,
-                cuisine = _ref0.cuisine,
-                location = _ref0.location,
-                recommended_by = _ref0.recommended_by,
-                notes = _ref0.notes,
-                visited = _ref0.visited,
-                rating = _ref0.rating;
+            safe = toInsert.map(function (_ref1) {
+              var id = _ref1.id,
+                name = _ref1.name,
+                cuisine = _ref1.cuisine,
+                location = _ref1.location,
+                recommended_by = _ref1.recommended_by,
+                notes = _ref1.notes,
+                visited = _ref1.visited,
+                rating = _ref1.rating;
               return {
                 id: id,
                 name: name || '',
@@ -2409,17 +2607,17 @@ function App() {
                 rating: rating || null
               };
             });
-            _context2.n = 5;
+            _context3.n = 5;
             return sb.from('spots').insert(safe);
           case 5:
-            _yield$sb$from$insert2 = _context2.v;
+            _yield$sb$from$insert2 = _context3.v;
             error = _yield$sb$from$insert2.error;
           case 6:
             if (error) showToast('Seed error: ' + error.message);
           case 7:
-            return _context2.a(2);
+            return _context3.a(2);
         }
-      }, _callee2);
+      }, _callee3);
     }));
     return _insertPending.apply(this, arguments);
   }
@@ -2427,33 +2625,33 @@ function App() {
     return _handleSave.apply(this, arguments);
   }
   function _handleSave() {
-    _handleSave = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3(form) {
+    _handleSave = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4(form) {
       var _error$message3, _error$message4;
       var payload, error, _yield$sb$from$update, _yield$sb$from$insert3, safe, _yield$sb$from$update2, _yield$sb$from$insert4;
-      return _regenerator().w(function (_context3) {
-        while (1) switch (_context3.n) {
+      return _regenerator().w(function (_context4) {
+        while (1) switch (_context4.n) {
           case 0:
             payload = appToDb(form);
             if (!editTarget) {
-              _context3.n = 2;
+              _context4.n = 2;
               break;
             }
-            _context3.n = 1;
+            _context4.n = 1;
             return sb.from('spots').update(payload).eq('id', editTarget.id);
           case 1:
-            _yield$sb$from$update = _context3.v;
+            _yield$sb$from$update = _context4.v;
             error = _yield$sb$from$update.error;
-            _context3.n = 4;
+            _context4.n = 4;
             break;
           case 2:
-            _context3.n = 3;
+            _context4.n = 3;
             return sb.from('spots').insert(payload);
           case 3:
-            _yield$sb$from$insert3 = _context3.v;
+            _yield$sb$from$insert3 = _context4.v;
             error = _yield$sb$from$insert3.error;
           case 4:
             if (!(error && ((_error$message3 = error.message) !== null && _error$message3 !== void 0 && _error$message3.includes('column') || (_error$message4 = error.message) !== null && _error$message4 !== void 0 && _error$message4.includes('schema') || error.code === 'PGRST204'))) {
-              _context3.n = 8;
+              _context4.n = 8;
               break;
             }
             safe = {
@@ -2466,41 +2664,41 @@ function App() {
               rating: payload.rating
             };
             if (!editTarget) {
-              _context3.n = 6;
+              _context4.n = 6;
               break;
             }
-            _context3.n = 5;
+            _context4.n = 5;
             return sb.from('spots').update(safe).eq('id', editTarget.id);
           case 5:
-            _yield$sb$from$update2 = _context3.v;
+            _yield$sb$from$update2 = _context4.v;
             error = _yield$sb$from$update2.error;
-            _context3.n = 8;
+            _context4.n = 8;
             break;
           case 6:
-            _context3.n = 7;
+            _context4.n = 7;
             return sb.from('spots').insert(safe);
           case 7:
-            _yield$sb$from$insert4 = _context3.v;
+            _yield$sb$from$insert4 = _context4.v;
             error = _yield$sb$from$insert4.error;
           case 8:
             if (!error) {
-              _context3.n = 9;
+              _context4.n = 9;
               break;
             }
             showToast('Save failed: ' + error.message);
-            return _context3.a(2);
+            return _context4.a(2);
           case 9:
             setShowEdit(false);
             setShowImport(false);
             setEditTarget(null);
             setDetail(null);
             showToast(editTarget ? 'Updated' : 'Pinned');
-            _context3.n = 10;
+            _context4.n = 10;
             return loadSpots();
           case 10:
-            return _context3.a(2);
+            return _context4.a(2);
         }
-      }, _callee3);
+      }, _callee4);
     }));
     return _handleSave.apply(this, arguments);
   }
@@ -2508,41 +2706,41 @@ function App() {
     return _loadSpots.apply(this, arguments);
   }
   function _loadSpots() {
-    _loadSpots = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
+    _loadSpots = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
       var _yield$sb$from$select2, data, error;
-      return _regenerator().w(function (_context4) {
-        while (1) switch (_context4.n) {
+      return _regenerator().w(function (_context5) {
+        while (1) switch (_context5.n) {
           case 0:
-            _context4.n = 1;
+            _context5.n = 1;
             return insertPending();
           case 1:
-            _context4.n = 2;
+            _context5.n = 2;
             return sb.from('spots').select('*').order('created_at', {
               ascending: false
             });
           case 2:
-            _yield$sb$from$select2 = _context4.v;
+            _yield$sb$from$select2 = _context5.v;
             data = _yield$sb$from$select2.data;
             error = _yield$sb$from$select2.error;
             if (!error) {
-              _context4.n = 3;
+              _context5.n = 3;
               break;
             }
             showToast('Load error: ' + error.message);
-            return _context4.a(2);
+            return _context5.a(2);
           case 3:
             setRestaurants((data || []).map(dbToApp));
             setLoading(false);
           case 4:
-            return _context4.a(2);
+            return _context5.a(2);
         }
-      }, _callee4);
+      }, _callee5);
     }));
     return _loadSpots.apply(this, arguments);
   }
   useEffect(function () {
-    loadSpots();
-  }, []);
+    if (session) loadSpots();
+  }, [session]);
   var filtered = useMemo(function () {
     var q = search.toLowerCase();
     return restaurants.filter(function (r) {
@@ -2559,24 +2757,24 @@ function App() {
     return _handleMarkVisited.apply(this, arguments);
   }
   function _handleMarkVisited() {
-    _handleMarkVisited = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5(id) {
+    _handleMarkVisited = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6(id) {
       var _yield$sb$from$update3, error;
-      return _regenerator().w(function (_context5) {
-        while (1) switch (_context5.n) {
+      return _regenerator().w(function (_context6) {
+        while (1) switch (_context6.n) {
           case 0:
-            _context5.n = 1;
+            _context6.n = 1;
             return sb.from('spots').update({
               visited: true
             }).eq('id', id);
           case 1:
-            _yield$sb$from$update3 = _context5.v;
+            _yield$sb$from$update3 = _context6.v;
             error = _yield$sb$from$update3.error;
             if (!error) {
-              _context5.n = 2;
+              _context6.n = 2;
               break;
             }
             showToast('Update failed');
-            return _context5.a(2);
+            return _context6.a(2);
           case 2:
             setRestaurants(function (rs) {
               return rs.map(function (r) {
@@ -2592,9 +2790,9 @@ function App() {
             });
             showToast('Marked as visited');
           case 3:
-            return _context5.a(2);
+            return _context6.a(2);
         }
-      }, _callee5);
+      }, _callee6);
     }));
     return _handleMarkVisited.apply(this, arguments);
   }
@@ -2602,25 +2800,25 @@ function App() {
     return _handleRate.apply(this, arguments);
   }
   function _handleRate() {
-    _handleRate = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6(id, rating) {
+    _handleRate = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7(id, rating) {
       var _yield$sb$from$update4, error;
-      return _regenerator().w(function (_context6) {
-        while (1) switch (_context6.n) {
+      return _regenerator().w(function (_context7) {
+        while (1) switch (_context7.n) {
           case 0:
-            _context6.n = 1;
+            _context7.n = 1;
             return sb.from('spots').update({
               rating: rating,
               visited: true
             }).eq('id', id);
           case 1:
-            _yield$sb$from$update4 = _context6.v;
+            _yield$sb$from$update4 = _context7.v;
             error = _yield$sb$from$update4.error;
             if (!error) {
-              _context6.n = 2;
+              _context7.n = 2;
               break;
             }
             showToast('Rating failed');
-            return _context6.a(2);
+            return _context7.a(2);
           case 2:
             setRestaurants(function (rs) {
               return rs.map(function (r) {
@@ -2638,9 +2836,9 @@ function App() {
             });
             showToast(rating + '/5 — saved');
           case 3:
-            return _context6.a(2);
+            return _context7.a(2);
         }
-      }, _callee6);
+      }, _callee7);
     }));
     return _handleRate.apply(this, arguments);
   }
@@ -2648,22 +2846,22 @@ function App() {
     return _handleDelete.apply(this, arguments);
   }
   function _handleDelete() {
-    _handleDelete = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7(id) {
+    _handleDelete = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8(id) {
       var _yield$sb$from$delete, error;
-      return _regenerator().w(function (_context7) {
-        while (1) switch (_context7.n) {
+      return _regenerator().w(function (_context8) {
+        while (1) switch (_context8.n) {
           case 0:
-            _context7.n = 1;
+            _context8.n = 1;
             return sb.from('spots').delete().eq('id', id);
           case 1:
-            _yield$sb$from$delete = _context7.v;
+            _yield$sb$from$delete = _context8.v;
             error = _yield$sb$from$delete.error;
             if (!error) {
-              _context7.n = 2;
+              _context8.n = 2;
               break;
             }
             showToast('Delete failed: ' + error.message);
-            return _context7.a(2);
+            return _context8.a(2);
           case 2:
             setRestaurants(function (rs) {
               return rs.filter(function (r) {
@@ -2673,9 +2871,9 @@ function App() {
             setDetail(null);
             showToast('Removed.');
           case 3:
-            return _context7.a(2);
+            return _context8.a(2);
         }
-      }, _callee7);
+      }, _callee8);
     }));
     return _handleDelete.apply(this, arguments);
   }
@@ -2685,6 +2883,24 @@ function App() {
   var visitedCount = restaurants.filter(function (r) {
     return r.status === 'visited';
   }).length;
+
+  // Auth guards — show nothing until we know the auth state
+  if (!authChecked) return /*#__PURE__*/React.createElement("div", {
+    style: {
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: C.bg
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: C.ui,
+      fontSize: 14,
+      color: C.dim
+    }
+  }, "Loading\u2026"));
+  if (!session) return /*#__PURE__*/React.createElement(SignIn, null);
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("style", null, "\n      @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap');\n      *{box-sizing:border-box;margin:0;padding:0;}\n      body{background:".concat(C.bg, ";-webkit-text-size-adjust:100%;}\n      ::placeholder{color:").concat(C.dim, "!important;opacity:0.7;}\n      ::-webkit-scrollbar{width:4px;}\n      ::-webkit-scrollbar-track{background:transparent;}\n      ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:4px;}\n      select option{background:").concat(C.hi, ";}\n      .leaflet-container{font-family:'Inter',system-ui,sans-serif!important;}\n      @keyframes fadeIn{from{opacity:0}to{opacity:1}}\n      @keyframes slideUp{from{opacity:0;transform:translateY(20px) scale(0.98)}to{opacity:1;transform:none}}\n    ")), /*#__PURE__*/React.createElement("div", {
     style: {
       minHeight: '100vh',
@@ -2730,9 +2946,27 @@ function App() {
       fontSize: 11,
       color: C.dim,
       marginTop: 3,
-      fontWeight: 400
+      fontWeight: 400,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8
     }
-  }, wantCount, " to visit \xB7 ", visitedCount, " visited")), /*#__PURE__*/React.createElement("div", {
+  }, wantCount, " to visit \xB7 ", visitedCount, " visited", /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return sb.auth.signOut();
+    },
+    style: {
+      background: 'none',
+      border: 'none',
+      fontFamily: C.ui,
+      fontSize: 11,
+      color: C.dim,
+      cursor: 'pointer',
+      padding: 0,
+      textDecoration: 'underline',
+      textDecorationColor: 'rgba(168,144,122,0.4)'
+    }
+  }, "Sign out"))), /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'relative'
     }
@@ -2953,7 +3187,7 @@ function App() {
 }
 
 
-const BUILD_TIME = 1780336821;
+const BUILD_TIME = 1780338089;
 (function(){
   var checking=false;
   async function checkUpdate(){

@@ -674,6 +674,46 @@ const Feed = ({ wantList, visitedList, onCardClick }) => (
   </div>
 );
 
+// ── Sign-in screen ───────────────────────────────────────────
+const SignIn = () => {
+  const [email,    setEmail]    = useState('');
+  const [password, setPassword] = useState('');
+  const [err,      setErr]      = useState('');
+  const [busy,     setBusy]     = useState(false);
+
+  const inp = {width:'100%',padding:'11px 14px',background:C.hi,border:`1px solid ${C.bdMid}`,borderRadius:10,fontFamily:C.ui,fontSize:14,color:C.text,outline:'none',boxSizing:'border-box'};
+  const lbl = {display:'block',fontFamily:C.ui,fontSize:11,fontWeight:600,letterSpacing:'0.05em',color:C.dim,marginBottom:5,textTransform:'uppercase'};
+
+  async function signIn() {
+    if (!email||!password) return;
+    setBusy(true); setErr('');
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) { setErr(error.message); setBusy(false); }
+  }
+
+  return (
+    <div style={{minHeight:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',background:C.bg,padding:24}}>
+      <h1 style={{fontFamily:C.display,fontSize:38,color:C.text,margin:'0 0 6px',letterSpacing:'-0.02em'}}>PinPlate</h1>
+      <p style={{fontFamily:C.ui,fontSize:13,color:C.dim,margin:'0 0 36px'}}>Your personal city guide</p>
+      <div style={{width:'100%',maxWidth:340,background:C.hi,borderRadius:20,padding:28,boxShadow:'0 4px 28px rgba(0,0,0,0.09)'}}>
+        <h2 style={{fontFamily:C.display,fontSize:22,color:C.text,margin:'0 0 22px'}}>Sign in</h2>
+        <div style={{display:'flex',flexDirection:'column',gap:14}}>
+          <div>
+            <label style={lbl}>Email</label>
+            <input type="email" style={inp} value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" autoFocus/>
+          </div>
+          <div>
+            <label style={lbl}>Password</label>
+            <input type="password" style={inp} value={password} onChange={e=>setPassword(e.target.value)} placeholder="••••••••" onKeyDown={e=>e.key==='Enter'&&signIn()}/>
+          </div>
+          {err&&<p style={{fontFamily:C.ui,fontSize:12,color:C.red,margin:0,lineHeight:1.5}}>{err}</p>}
+          <button onClick={signIn} disabled={busy} style={{padding:12,borderRadius:11,background:C.espr,border:'none',color:'#fdf8f3',fontFamily:C.ui,fontSize:14,fontWeight:600,cursor:busy?'default':'pointer',marginTop:4,opacity:busy?0.6:1}}>{busy?'Signing in…':'Sign in'}</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const PENDING_SPOTS = [
   {
     id: '550e8400-e29b-41d4-a716-446655440001',
@@ -712,8 +752,22 @@ function App() {
   const [detail,setDetail]           = useState(null);
   const [search,setSearch]           = useState('');
   const [toast,setToast]             = useState(null);
+  const [session,setSession]         = useState(null);
+  const [authChecked,setAuthChecked] = useState(false);
 
   function showToast(msg) { setToast(msg); setTimeout(()=>setToast(null),2500); }
+
+  // Auth state
+  useEffect(() => {
+    sb.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setAuthChecked(true);
+    });
+    const { data: { subscription } } = sb.auth.onAuthStateChange((_ev, session) => {
+      setSession(session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   async function insertPending() {
     if (!PENDING_SPOTS.length) return;
@@ -755,7 +809,7 @@ function App() {
     setLoading(false);
   }
 
-  useEffect(()=>{ loadSpots(); },[]);
+  useEffect(()=>{ if (session) loadSpots(); },[session]);
 
   const filtered = useMemo(()=>{
     const q=search.toLowerCase();
@@ -796,6 +850,14 @@ function App() {
   const wantCount    = restaurants.filter(r=>r.status==='want').length;
   const visitedCount = restaurants.filter(r=>r.status==='visited').length;
 
+  // Auth guards — show nothing until we know the auth state
+  if (!authChecked) return (
+    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:C.bg}}>
+      <p style={{fontFamily:C.ui,fontSize:14,color:C.dim}}>Loading…</p>
+    </div>
+  );
+  if (!session) return <SignIn/>;
+
   return (<>
     <style>{`
       @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap');
@@ -821,7 +883,7 @@ function App() {
           <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}>
             <div>
               <h1 style={{fontFamily:C.display,fontSize:26,color:C.text,margin:0,letterSpacing:'-0.01em',lineHeight:1}}>PinPlate</h1>
-              <p style={{fontFamily:C.ui,fontSize:11,color:C.dim,marginTop:3,fontWeight:400}}>{wantCount} to visit · {visitedCount} visited</p>
+              <p style={{fontFamily:C.ui,fontSize:11,color:C.dim,marginTop:3,fontWeight:400,display:'flex',alignItems:'center',gap:8}}>{wantCount} to visit · {visitedCount} visited<button onClick={()=>sb.auth.signOut()} style={{background:'none',border:'none',fontFamily:C.ui,fontSize:11,color:C.dim,cursor:'pointer',padding:0,textDecoration:'underline',textDecorationColor:'rgba(168,144,122,0.4)'}}>Sign out</button></p>
             </div>
             <div style={{position:'relative'}}>
               <button onClick={()=>setShowAddMenu(v=>!v)} style={{background:C.espr,color:'#fdf8f3',border:'none',borderRadius:10,padding:'9px 16px',fontFamily:C.ui,fontSize:13,fontWeight:600,cursor:'pointer',letterSpacing:'0.01em'}}>+ Add</button>
