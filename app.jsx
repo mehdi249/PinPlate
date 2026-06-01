@@ -39,15 +39,29 @@ function parseGoogleMapsUrl(url) {
   const out = { name:'', lat:null, lng:null };
   try {
     const nm = url.match(/\/place\/([^/@?&#]+)/);
-    if (nm) out.name = decodeURIComponent(nm[1].replace(/\+/g,' '));
+    if (nm) out.name = decodeURIComponent(nm[1].replace(/\+/g,' ').replace(/_/g,' '));
     const cm = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
     if (cm) { out.lat=parseFloat(cm[1]); out.lng=parseFloat(cm[2]); }
     if (!out.lat) {
       const dm = url.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
       if (dm) { out.lat=parseFloat(dm[1]); out.lng=parseFloat(dm[2]); }
     }
+    if (!out.lat) {
+      const qm = url.match(/[?&]q=([^&]+)/);
+      if (qm) { const p=qm[1].split(','); if(p.length===2&&!isNaN(p[0])){ out.lat=parseFloat(p[0]); out.lng=parseFloat(p[1]); } }
+    }
   } catch(e){}
   return out;
+}
+
+function parseGoogleMapsHtml(html) {
+  const name =
+    html.match(/<title>([^<|]+?) ?[-–|] ?Google Maps<\/title>/i)?.[1]?.trim() ||
+    html.match(/property="og:title"[^>]+content="([^"]+)"/i)?.[1]?.trim() ||
+    html.match(/content="([^"]+)"[^>]+property="og:title"/i)?.[1]?.trim() || '';
+  const latM = html.match(/"latitude"\s*:\s*(-?\d+\.\d+)/) || html.match(/itemprop="latitude"[^>]+content="(-?\d+\.\d+)"/i);
+  const lngM = html.match(/"longitude"\s*:\s*(-?\d+\.\d+)/) || html.match(/itemprop="longitude"[^>]+content="(-?\d+\.\d+)"/i);
+  return { name, lat: latM?parseFloat(latM[1]):null, lng: lngM?parseFloat(lngM[1]):null };
 }
 
 async function nominatimReverse(lat, lng) {
@@ -159,20 +173,28 @@ const ImportModal = ({ onClose, onImport }) => {
     const isShort = rawUrl.includes('share.google') || rawUrl.includes('maps.app.goo.gl') || rawUrl.includes('goo.gl/maps');
     setBusy(true);
     let resolved = rawUrl;
+    let htmlData = { name:'', lat:null, lng:null };
     if (isShort) {
-      const race = (p) => Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),9000))]);
+      const race = p => Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),10000))]);
       try {
         const d = await race(fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(rawUrl)}`).then(r=>r.json()));
         if (d.status?.url) resolved = d.status.url;
+        if (d.contents)    htmlData = parseGoogleMapsHtml(d.contents);
       } catch(e1) {
         try {
           const html = await race(fetch(`https://corsproxy.io/?${encodeURIComponent(rawUrl)}`).then(r=>r.text()));
+          htmlData = parseGoogleMapsHtml(html);
           const m = html.match(/"(https?:\/\/(?:www\.)?google\.com\/maps\/[^"]{20,})"/);
           if (m) resolved = m[1].replace(/\\u003d/g,'=').replace(/\\u0026/g,'&');
-        } catch(e2) { /* both proxies failed — fall through with original url */ }
+        } catch(e2) { /* both failed — fall through */ }
       }
     }
-    const parsed = parseGoogleMapsUrl(resolved);
+    const urlData = parseGoogleMapsUrl(resolved);
+    const parsed = {
+      name: urlData.name || htmlData.name,
+      lat:  urlData.lat  ?? htmlData.lat,
+      lng:  urlData.lng  ?? htmlData.lng,
+    };
     let location = '';
     if (parsed.lat && parsed.lng) location = await nominatimReverse(parsed.lat, parsed.lng);
     const base = {
@@ -206,12 +228,17 @@ const ImportModal = ({ onClose, onImport }) => {
         </div>
 
         {step==='paste' && (<>
-          <p style={{fontFamily:"'Lora',serif",fontSize:13,color:'rgba(100,70,40,0.6)',marginBottom:16,lineHeight:1.6}}>
-            On <strong>Google Maps</strong>, tap <strong>Share → Copy link</strong> and paste it below. Short links (<code>share.google/…</code>) are imported automatically — no typing needed.
+          <p style={{fontFamily:"'Lora',serif",fontSize:13,color:'rgba(100,70,40,0.6)',marginBottom:10,lineHeight:1.6}}>
+            Paste any Google Maps link below and tap Import.
           </p>
+          <div style={{background:'rgba(200,119,58,0.08)',border:'1px solid rgba(200,119,58,0.2)',borderRadius:10,padding:'10px 13px',marginBottom:14}}>
+            <p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(100,70,40,0.7)',lineHeight:1.7,margin:0}}>
+              <strong>Best results:</strong> In Google Maps, tap the restaurant → tap <strong>Share</strong> → choose <strong>Safari</strong> → long-press the address bar → <strong>Copy</strong>. This gives a full URL with all details.
+            </p>
+          </div>
           <div style={{marginBottom:16}}>
             <label style={lbl}>Google Maps Link</label>
-            <input style={inp} value={url} onChange={e=>setUrl(e.target.value)} placeholder="https://share.google/… or maps.google.com/…" autoFocus/>
+            <input style={inp} value={url} onChange={e=>setUrl(e.target.value)} placeholder="https://maps.app.goo.gl/… or maps.google.com/…" autoFocus/>
           </div>
           <div style={{display:'flex',gap:10}}>
             <button onClick={onClose} style={{flex:1,padding:11,borderRadius:10,background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.2)',color:'rgba(100,70,40,0.5)',fontFamily:"'DM Serif Display',serif",fontSize:14,cursor:'pointer'}}>Cancel</button>

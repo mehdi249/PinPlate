@@ -76,7 +76,7 @@ function parseGoogleMapsUrl(url) {
   };
   try {
     var nm = url.match(/\/place\/([^/@?&#]+)/);
-    if (nm) out.name = decodeURIComponent(nm[1].replace(/\+/g, ' '));
+    if (nm) out.name = decodeURIComponent(nm[1].replace(/\+/g, ' ').replace(/_/g, ' '));
     var cm = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
     if (cm) {
       out.lat = parseFloat(cm[1]);
@@ -89,8 +89,29 @@ function parseGoogleMapsUrl(url) {
         out.lng = parseFloat(dm[2]);
       }
     }
+    if (!out.lat) {
+      var qm = url.match(/[?&]q=([^&]+)/);
+      if (qm) {
+        var p = qm[1].split(',');
+        if (p.length === 2 && !isNaN(p[0])) {
+          out.lat = parseFloat(p[0]);
+          out.lng = parseFloat(p[1]);
+        }
+      }
+    }
   } catch (e) {}
   return out;
+}
+function parseGoogleMapsHtml(html) {
+  var _html$match, _html$match2, _html$match3;
+  var name = ((_html$match = html.match(/<title>([^<|]+?) ?[-–|] ?Google Maps<\/title>/i)) === null || _html$match === void 0 || (_html$match = _html$match[1]) === null || _html$match === void 0 ? void 0 : _html$match.trim()) || ((_html$match2 = html.match(/property="og:title"[^>]+content="([^"]+)"/i)) === null || _html$match2 === void 0 || (_html$match2 = _html$match2[1]) === null || _html$match2 === void 0 ? void 0 : _html$match2.trim()) || ((_html$match3 = html.match(/content="([^"]+)"[^>]+property="og:title"/i)) === null || _html$match3 === void 0 || (_html$match3 = _html$match3[1]) === null || _html$match3 === void 0 ? void 0 : _html$match3.trim()) || '';
+  var latM = html.match(/"latitude"\s*:\s*(-?\d+\.\d+)/) || html.match(/itemprop="latitude"[^>]+content="(-?\d+\.\d+)"/i);
+  var lngM = html.match(/"longitude"\s*:\s*(-?\d+\.\d+)/) || html.match(/itemprop="longitude"[^>]+content="(-?\d+\.\d+)"/i);
+  return {
+    name: name,
+    lat: latM ? parseFloat(latM[1]) : null,
+    lng: lngM ? parseFloat(lngM[1]) : null
+  };
 }
 function nominatimReverse(_x, _x2) {
   return _nominatimReverse.apply(this, arguments);
@@ -365,7 +386,8 @@ var ImportModal = function ImportModal(_ref3) {
   }
   function _handleParse() {
     _handleParse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
-      var rawUrl, isShort, resolved, race, _d$status, d, html, m, parsed, location, base, _t, _t2;
+      var _urlData$lat, _urlData$lng;
+      var rawUrl, isShort, resolved, htmlData, race, _d$status, d, html, m, urlData, parsed, location, base, _t, _t2;
       return _regenerator().w(function (_context) {
         while (1) switch (_context.p = _context.n) {
           case 0:
@@ -379,6 +401,11 @@ var ImportModal = function ImportModal(_ref3) {
             isShort = rawUrl.includes('share.google') || rawUrl.includes('maps.app.goo.gl') || rawUrl.includes('goo.gl/maps');
             setBusy(true);
             resolved = rawUrl;
+            htmlData = {
+              name: '',
+              lat: null,
+              lng: null
+            };
             if (!isShort) {
               _context.n = 8;
               break;
@@ -387,7 +414,7 @@ var ImportModal = function ImportModal(_ref3) {
               return Promise.race([p, new Promise(function (_, rej) {
                 return setTimeout(function () {
                   return rej(new Error('timeout'));
-                }, 9000);
+                }, 10000);
               })]);
             };
             _context.p = 2;
@@ -398,6 +425,7 @@ var ImportModal = function ImportModal(_ref3) {
           case 3:
             d = _context.v;
             if ((_d$status = d.status) !== null && _d$status !== void 0 && _d$status.url) resolved = d.status.url;
+            if (d.contents) htmlData = parseGoogleMapsHtml(d.contents);
             _context.n = 8;
             break;
           case 4:
@@ -410,6 +438,7 @@ var ImportModal = function ImportModal(_ref3) {
             }));
           case 6:
             html = _context.v;
+            htmlData = parseGoogleMapsHtml(html);
             m = html.match(/"(https?:\/\/(?:www\.)?google\.com\/maps\/[^"]{20,})"/);
             if (m) resolved = m[1].replace(/\\u003d/g, '=').replace(/\\u0026/g, '&');
             _context.n = 8;
@@ -418,7 +447,12 @@ var ImportModal = function ImportModal(_ref3) {
             _context.p = 7;
             _t2 = _context.v;
           case 8:
-            parsed = parseGoogleMapsUrl(resolved);
+            urlData = parseGoogleMapsUrl(resolved);
+            parsed = {
+              name: urlData.name || htmlData.name,
+              lat: (_urlData$lat = urlData.lat) !== null && _urlData$lat !== void 0 ? _urlData$lat : htmlData.lat,
+              lng: (_urlData$lng = urlData.lng) !== null && _urlData$lng !== void 0 ? _urlData$lng : htmlData.lng
+            };
             location = '';
             if (!(parsed.lat && parsed.lng)) {
               _context.n = 10;
@@ -551,10 +585,26 @@ var ImportModal = function ImportModal(_ref3) {
       fontFamily: "'Lora',serif",
       fontSize: 13,
       color: 'rgba(100,70,40,0.6)',
-      marginBottom: 16,
+      marginBottom: 10,
       lineHeight: 1.6
     }
-  }, "On ", /*#__PURE__*/React.createElement("strong", null, "Google Maps"), ", tap ", /*#__PURE__*/React.createElement("strong", null, "Share \u2192 Copy link"), " and paste it below. Short links (", /*#__PURE__*/React.createElement("code", null, "share.google/\u2026"), ") are imported automatically \u2014 no typing needed."), /*#__PURE__*/React.createElement("div", {
+  }, "Paste any Google Maps link below and tap Import."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: 'rgba(200,119,58,0.08)',
+      border: '1px solid rgba(200,119,58,0.2)',
+      borderRadius: 10,
+      padding: '10px 13px',
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontFamily: "'Lora',serif",
+      fontSize: 12,
+      color: 'rgba(100,70,40,0.7)',
+      lineHeight: 1.7,
+      margin: 0
+    }
+  }, /*#__PURE__*/React.createElement("strong", null, "Best results:"), " In Google Maps, tap the restaurant \u2192 tap ", /*#__PURE__*/React.createElement("strong", null, "Share"), " \u2192 choose ", /*#__PURE__*/React.createElement("strong", null, "Safari"), " \u2192 long-press the address bar \u2192 ", /*#__PURE__*/React.createElement("strong", null, "Copy"), ". This gives a full URL with all details.")), /*#__PURE__*/React.createElement("div", {
     style: {
       marginBottom: 16
     }
@@ -566,7 +616,7 @@ var ImportModal = function ImportModal(_ref3) {
     onChange: function onChange(e) {
       return setUrl(e.target.value);
     },
-    placeholder: "https://share.google/\u2026 or maps.google.com/\u2026",
+    placeholder: "https://maps.app.goo.gl/\u2026 or maps.google.com/\u2026",
     autoFocus: true
   })), /*#__PURE__*/React.createElement("div", {
     style: {
