@@ -64,6 +64,21 @@ function parseGoogleMapsHtml(html) {
   return { name, lat: latM?parseFloat(latM[1]):null, lng: lngM?parseFloat(lngM[1]):null };
 }
 
+// Extract full Google Maps URL embedded in Firebase Dynamic Link debug (?d=1) pages
+function extractMapsUrlFromFdl(html) {
+  const patterns = [
+    /href="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/,
+    /content="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/,
+    /content="(https:\/\/maps\.app\.goo\.gl\/[^"]+)"/,
+    /"(https:\/\/www\.google\.com\/maps\/place\/[^"]{20,})"/,
+  ];
+  for (const p of patterns) {
+    const m = html.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
 async function nominatimReverse(lat, lng) {
   try {
     const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
@@ -178,30 +193,35 @@ const ImportModal = ({ onClose, onImport }) => {
     if (isShort) {
       const race = p => Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))]);
 
-      // For maps.app.goo.gl: try Firebase Dynamic Link debug endpoint (?d=1)
-      // This returns a plain HTML page (no auth redirect) that embeds the full Maps URL
-      if (isMapsGoo && !htmlData.name) {
+      // Try Firebase Dynamic Link debug endpoint (?d=1) for both maps.app.goo.gl AND share.google
+      // Appending ?d=1 returns a plain HTML page with the full destination Maps URL embedded
+      if (!htmlData.name) {
         const debugUrl = rawUrl.split('?')[0] + '?d=1';
+        // Direct browser fetch first — user's phone IP is not blocked by Google
         try {
           const resp = await race(fetch(debugUrl));
           const html = await resp.text();
-          htmlData = parseGoogleMapsHtml(html);
-          const m = html.match(/href="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/);
-          if (m) resolved = m[1];
-          const m2 = html.match(/content="(https:\/\/(?:maps\.app\.goo\.gl|www\.google\.com\/maps)[^"]+)"/);
-          if (!resolved.includes('google.com/maps') && m2) resolved = m2[1];
+          const mapsUrl = extractMapsUrlFromFdl(html);
+          if (mapsUrl) { resolved = mapsUrl; htmlData = parseGoogleMapsHtml(html) || htmlData; }
+          if (!htmlData.name) htmlData = parseGoogleMapsHtml(html);
         } catch(e0) {}
-        // Also try via proxy in case direct fetch is CORS-blocked
+        // Also try via proxy (works if proxy IP is allowed)
         if (!htmlData.name) {
-          const debugUrl2 = rawUrl.split('?')[0] + '?d=1';
           try {
-            const d = await race(fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(debugUrl2)}`).then(r=>r.json()));
+            const d = await race(fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(debugUrl)}`).then(r=>r.json()));
             if (d.contents) {
+              const mapsUrl = extractMapsUrlFromFdl(d.contents);
+              if (mapsUrl) resolved = mapsUrl;
               htmlData = parseGoogleMapsHtml(d.contents);
-              const m = d.contents.match(/href="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/);
-              if (m) resolved = m[1];
             }
-          } catch(e1) {}
+          } catch(e1) {
+            try {
+              const html = await race(fetch(`https://corsproxy.io/?${encodeURIComponent(debugUrl)}`).then(r=>r.text()));
+              const mapsUrl = extractMapsUrlFromFdl(html);
+              if (mapsUrl) resolved = mapsUrl;
+              if (!htmlData.name) htmlData = parseGoogleMapsHtml(html);
+            } catch(e2) {}
+          }
         }
       }
 

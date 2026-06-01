@@ -113,12 +113,23 @@ function parseGoogleMapsHtml(html) {
     lng: lngM ? parseFloat(lngM[1]) : null
   };
 }
+
+// Extract full Google Maps URL embedded in Firebase Dynamic Link debug (?d=1) pages
+function extractMapsUrlFromFdl(html) {
+  var patterns = [/href="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/, /content="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/, /content="(https:\/\/maps\.app\.goo\.gl\/[^"]+)"/, /"(https:\/\/www\.google\.com\/maps\/place\/[^"]{20,})"/];
+  for (var _i = 0, _patterns = patterns; _i < _patterns.length; _i++) {
+    var p = _patterns[_i];
+    var m = html.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
 function nominatimReverse(_x, _x2) {
   return _nominatimReverse.apply(this, arguments);
 } // ── StarRating ───────────────────────────────────────────────
 function _nominatimReverse() {
   _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7(lat, lng) {
-    var r, d, a, _t8;
+    var r, d, a, _t9;
     return _regenerator().w(function (_context7) {
       while (1) switch (_context7.p = _context7.n) {
         case 0:
@@ -139,7 +150,7 @@ function _nominatimReverse() {
           return _context7.a(2, [a.road, a.neighbourhood || a.suburb, a.city || a.town || a.village, a.country].filter(Boolean).slice(0, 3).join(', '));
         case 3:
           _context7.p = 3;
-          _t8 = _context7.v;
+          _t9 = _context7.v;
           return _context7.a(2, '');
       }
     }, _callee7, null, [[0, 3]]);
@@ -387,7 +398,7 @@ var ImportModal = function ImportModal(_ref3) {
   function _handleParse() {
     _handleParse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
       var _urlData$lat, _urlData$lng;
-      var rawUrl, isMapsGoo, isShort, resolved, htmlData, race, debugUrl, resp, html, m, m2, debugUrl2, d, _m, _resp, _d$status, _d, _html, _m2, urlData, parsed, location, base, _t, _t2, _t3, _t4, _t5, _t6, _t7;
+      var rawUrl, isMapsGoo, isShort, resolved, htmlData, race, debugUrl, resp, html, mapsUrl, d, _mapsUrl, _html, _mapsUrl2, _resp, _d$status, _d, _html2, m, urlData, parsed, location, base, _t, _t2, _t3, _t4, _t5, _t6, _t7, _t8;
       return _regenerator().w(function (_context) {
         while (1) switch (_context.p = _context.n) {
           case 0:
@@ -408,7 +419,7 @@ var ImportModal = function ImportModal(_ref3) {
               lng: null
             };
             if (!isShort) {
-              _context.n = 25;
+              _context.n = 28;
               break;
             }
             race = function race(p) {
@@ -417,13 +428,13 @@ var ImportModal = function ImportModal(_ref3) {
                   return rej(new Error('timeout'));
                 }, 8000);
               })]);
-            }; // For maps.app.goo.gl: try Firebase Dynamic Link debug endpoint (?d=1)
-            // This returns a plain HTML page (no auth redirect) that embeds the full Maps URL
-            if (!(isMapsGoo && !htmlData.name)) {
-              _context.n = 10;
+            }; // Try Firebase Dynamic Link debug endpoint (?d=1) for both maps.app.goo.gl AND share.google
+            // Appending ?d=1 returns a plain HTML page with the full destination Maps URL embedded
+            if (htmlData.name) {
+              _context.n = 13;
               break;
             }
-            debugUrl = rawUrl.split('?')[0] + '?d=1';
+            debugUrl = rawUrl.split('?')[0] + '?d=1'; // Direct browser fetch first — user's phone IP is not blocked by Google
             _context.p = 2;
             _context.n = 3;
             return race(fetch(debugUrl));
@@ -433,11 +444,12 @@ var ImportModal = function ImportModal(_ref3) {
             return resp.text();
           case 4:
             html = _context.v;
-            htmlData = parseGoogleMapsHtml(html);
-            m = html.match(/href="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/);
-            if (m) resolved = m[1];
-            m2 = html.match(/content="(https:\/\/(?:maps\.app\.goo\.gl|www\.google\.com\/maps)[^"]+)"/);
-            if (!resolved.includes('google.com/maps') && m2) resolved = m2[1];
+            mapsUrl = extractMapsUrlFromFdl(html);
+            if (mapsUrl) {
+              resolved = mapsUrl;
+              htmlData = parseGoogleMapsHtml(html) || htmlData;
+            }
+            if (!htmlData.name) htmlData = parseGoogleMapsHtml(html);
             _context.n = 6;
             break;
           case 5:
@@ -445,90 +457,104 @@ var ImportModal = function ImportModal(_ref3) {
             _t = _context.v;
           case 6:
             if (htmlData.name) {
-              _context.n = 10;
+              _context.n = 13;
               break;
             }
-            debugUrl2 = rawUrl.split('?')[0] + '?d=1';
             _context.p = 7;
             _context.n = 8;
-            return race(fetch("https://api.allorigins.win/get?url=".concat(encodeURIComponent(debugUrl2))).then(function (r) {
+            return race(fetch("https://api.allorigins.win/get?url=".concat(encodeURIComponent(debugUrl))).then(function (r) {
               return r.json();
             }));
           case 8:
             d = _context.v;
             if (d.contents) {
+              _mapsUrl = extractMapsUrlFromFdl(d.contents);
+              if (_mapsUrl) resolved = _mapsUrl;
               htmlData = parseGoogleMapsHtml(d.contents);
-              _m = d.contents.match(/href="(https:\/\/www\.google\.com\/maps\/place\/[^"]+)"/);
-              if (_m) resolved = _m[1];
             }
-            _context.n = 10;
+            _context.n = 13;
             break;
           case 9:
             _context.p = 9;
             _t2 = _context.v;
-          case 10:
+            _context.p = 10;
+            _context.n = 11;
+            return race(fetch("https://corsproxy.io/?".concat(encodeURIComponent(debugUrl))).then(function (r) {
+              return r.text();
+            }));
+          case 11:
+            _html = _context.v;
+            _mapsUrl2 = extractMapsUrlFromFdl(_html);
+            if (_mapsUrl2) resolved = _mapsUrl2;
+            if (!htmlData.name) htmlData = parseGoogleMapsHtml(_html);
+            _context.n = 13;
+            break;
+          case 12:
+            _context.p = 12;
+            _t3 = _context.v;
+          case 13:
             if (!(!htmlData.name && resolved === rawUrl)) {
-              _context.n = 18;
+              _context.n = 21;
               break;
             }
-            _context.p = 11;
-            _context.n = 12;
+            _context.p = 14;
+            _context.n = 15;
             return race(fetch(rawUrl));
-          case 12:
+          case 15:
             _resp = _context.v;
             if (_resp.url && _resp.url !== rawUrl) resolved = _resp.url;
-            _context.p = 13;
-            _t3 = parseGoogleMapsHtml;
-            _context.n = 14;
+            _context.p = 16;
+            _t4 = parseGoogleMapsHtml;
+            _context.n = 17;
             return _resp.text();
-          case 14:
-            htmlData = _t3(_context.v);
-            _context.n = 16;
-            break;
-          case 15:
-            _context.p = 15;
-            _t4 = _context.v;
-          case 16:
-            _context.n = 18;
-            break;
           case 17:
-            _context.p = 17;
-            _t5 = _context.v;
+            htmlData = _t4(_context.v);
+            _context.n = 19;
+            break;
           case 18:
+            _context.p = 18;
+            _t5 = _context.v;
+          case 19:
+            _context.n = 21;
+            break;
+          case 20:
+            _context.p = 20;
+            _t6 = _context.v;
+          case 21:
             if (!(!htmlData.name && resolved === rawUrl)) {
-              _context.n = 25;
+              _context.n = 28;
               break;
             }
-            _context.p = 19;
-            _context.n = 20;
+            _context.p = 22;
+            _context.n = 23;
             return race(fetch("https://api.allorigins.win/get?url=".concat(encodeURIComponent(rawUrl))).then(function (r) {
               return r.json();
             }));
-          case 20:
+          case 23:
             _d = _context.v;
             if ((_d$status = _d.status) !== null && _d$status !== void 0 && _d$status.url && _d.status.url !== rawUrl) resolved = _d.status.url;
             if (_d.contents) htmlData = parseGoogleMapsHtml(_d.contents);
-            _context.n = 25;
-            break;
-          case 21:
-            _context.p = 21;
-            _t6 = _context.v;
-            _context.p = 22;
-            _context.n = 23;
-            return race(fetch("https://corsproxy.io/?".concat(encodeURIComponent(rawUrl))).then(function (r) {
-              return r.text();
-            }));
-          case 23:
-            _html = _context.v;
-            htmlData = parseGoogleMapsHtml(_html);
-            _m2 = _html.match(/"(https?:\/\/(?:www\.)?google\.com\/maps\/[^"]{20,})"/);
-            if (_m2) resolved = _m2[1].replace(/\\u003d/g, '=').replace(/\\u0026/g, '&');
-            _context.n = 25;
+            _context.n = 28;
             break;
           case 24:
             _context.p = 24;
             _t7 = _context.v;
-          case 25:
+            _context.p = 25;
+            _context.n = 26;
+            return race(fetch("https://corsproxy.io/?".concat(encodeURIComponent(rawUrl))).then(function (r) {
+              return r.text();
+            }));
+          case 26:
+            _html2 = _context.v;
+            htmlData = parseGoogleMapsHtml(_html2);
+            m = _html2.match(/"(https?:\/\/(?:www\.)?google\.com\/maps\/[^"]{20,})"/);
+            if (m) resolved = m[1].replace(/\\u003d/g, '=').replace(/\\u0026/g, '&');
+            _context.n = 28;
+            break;
+          case 27:
+            _context.p = 27;
+            _t8 = _context.v;
+          case 28:
             urlData = parseGoogleMapsUrl(resolved);
             parsed = {
               name: urlData.name || htmlData.name,
@@ -537,14 +563,14 @@ var ImportModal = function ImportModal(_ref3) {
             };
             location = '';
             if (!(parsed.lat && parsed.lng)) {
-              _context.n = 27;
+              _context.n = 30;
               break;
             }
-            _context.n = 26;
+            _context.n = 29;
             return nominatimReverse(parsed.lat, parsed.lng);
-          case 26:
+          case 29:
             location = _context.v;
-          case 27:
+          case 30:
             base = {
               name: parsed.name || '',
               cuisine: 'Other',
@@ -571,10 +597,10 @@ var ImportModal = function ImportModal(_ref3) {
               setStep('preview');
             }
             setBusy(false);
-          case 28:
+          case 31:
             return _context.a(2);
         }
-      }, _callee, null, [[22, 24], [19, 21], [13, 15], [11, 17], [7, 9], [2, 5]]);
+      }, _callee, null, [[25, 27], [22, 24], [16, 18], [14, 20], [10, 12], [7, 9], [2, 5]]);
     }));
     return _handleParse.apply(this, arguments);
   }
