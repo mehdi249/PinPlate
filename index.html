@@ -4,446 +4,535 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>PinPlate</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg: #f9f6f1;
-      --surface: #ffffff;
-      --primary: #d94f3d;
-      --text: #1a1a1a;
-      --muted: #888;
-      --border: #e5e0d8;
-      --radius: 14px;
-      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-
-    body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* ── Header ── */
-    #header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    #header h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.3px; }
-    #header h1 span { color: var(--primary); }
-    #btn-add {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 50px;
-      padding: 8px 18px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    /* ── Filter bar ── */
-    #filter-bar {
-      display: flex;
-      gap: 8px;
-      padding: 12px 16px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    #filter-bar::-webkit-scrollbar { display: none; }
-    .filter-chip {
-      flex-shrink: 0;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 50px;
-      padding: 6px 14px;
-      font-size: 0.82rem;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .filter-chip.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
-
-    /* ── List ── */
-    #list {
-      flex: 1;
-      padding: 0 16px 100px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-      border: 1px solid var(--border);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .card-emoji { font-size: 1.8rem; flex-shrink: 0; }
-    .card-body { flex: 1; min-width: 0; }
-    .card-name {
-      font-size: 1rem;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .card-meta { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
-    .card-badge {
-      flex-shrink: 0;
-      font-size: 0.72rem;
-      padding: 3px 10px;
-      border-radius: 50px;
-      background: #eef;
-      color: var(--muted);
-    }
-    .card-badge.visited {
-      background: #e8f5e9;
-      color: #2e7d32;
-    }
-
-    /* ── Empty state ── */
-    #empty {
-      display: none;
-      text-align: center;
-      padding: 60px 24px;
-      color: var(--muted);
-    }
-    #empty p { font-size: 1rem; margin-top: 8px; }
-
-    /* ── Modal ── */
-    .modal-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      z-index: 100;
-      align-items: flex-end;
-      justify-content: center;
-    }
-    .modal-backdrop.open { display: flex; }
-    .modal {
-      background: var(--surface);
-      border-radius: var(--radius) var(--radius) 0 0;
-      width: 100%;
-      max-width: 540px;
-      max-height: 90dvh;
-      overflow-y: auto;
-      padding: 24px 20px 40px;
-    }
-    .modal h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; }
-    .field { margin-bottom: 14px; }
-    .field label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 5px; font-weight: 500; }
-    .field input, .field select, .field textarea {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 0.95rem;
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text);
-      outline: none;
-    }
-    .field input:focus, .field select:focus, .field textarea:focus {
-      border-color: var(--primary);
-    }
-    .field textarea { resize: vertical; min-height: 72px; }
-    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-    .btn-primary {
-      flex: 1;
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 13px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-secondary {
-      background: var(--bg);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 13px 18px;
-      font-size: 0.95rem;
-      cursor: pointer;
-    }
-    .btn-danger {
-      background: #fff0ee;
-      color: var(--primary);
-      border: 1px solid #ffd0ca;
-      border-radius: 10px;
-      padding: 13px 18px;
-      font-size: 0.95rem;
-      cursor: pointer;
-    }
-
-    /* ── Detail modal extras ── */
-    .detail-name { font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
-    .detail-meta { font-size: 0.85rem; color: var(--muted); margin-bottom: 16px; }
-    .detail-row { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 10px; font-size: 0.9rem; }
-    .detail-row-label { color: var(--muted); min-width: 110px; font-size: 0.82rem; padding-top: 1px; }
-    .stars { font-size: 1.2rem; letter-spacing: 2px; }
-
-    /* ── Toast ── */
-    #toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: #1a1a1a;
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 50px;
-      font-size: 0.88rem;
-      opacity: 0;
-      transition: opacity 0.2s, transform 0.2s;
-      z-index: 200;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  </style>
 </head>
-<body>
+<body style="margin:0;background:#e8d9c8;">
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useMemo, useEffect } = React;
 
-  <div id="header">
-    <h1>Pin<span>Plate</span></h1>
-    <button id="btn-add" onclick="openAdd()">+ Add</button>
-  </div>
+    const SUPABASE_URL = 'https://biafijftxhealzmmwsmk.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYWZpamZ0eGhlYWx6bW13c21rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTQ3NjYsImV4cCI6MjA5NTgzMDc2Nn0.el4_ujwNYvbYdFtvzAEooKd1SvZlJd5YGVdlGlSo6Q8';
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  <div id="filter-bar">
-    <div class="filter-chip active" data-filter="all" onclick="setFilter('all', this)">All</div>
-    <div class="filter-chip" data-filter="unvisited" onclick="setFilter('unvisited', this)">Want to go</div>
-    <div class="filter-chip" data-filter="visited" onclick="setFilter('visited', this)">Been there</div>
-  </div>
+    const CUISINES = ["Italian","Japanese","Mexican","Thai","Indian","French","Chinese","Mediterranean","American","Korean","Vietnamese","Middle Eastern","Other"];
 
-  <div id="list"></div>
-  <div id="empty"><div style="font-size:2.5rem">📍</div><p>No spots yet.<br>Add your first recommendation!</p></div>
-
-  <!-- Add / Edit Modal -->
-  <div class="modal-backdrop" id="add-modal">
-    <div class="modal">
-      <h2 id="add-modal-title">Pin a spot</h2>
-      <input type="hidden" id="edit-id">
-      <div class="field"><label>Restaurant name *</label><input id="f-name" placeholder="e.g. Sushi Nakazawa" /></div>
-      <div class="field"><label>Cuisine</label><input id="f-cuisine" placeholder="e.g. Japanese, Italian…" /></div>
-      <div class="field"><label>Neighbourhood / City</label><input id="f-location" placeholder="e.g. West Village, NYC" /></div>
-      <div class="field"><label>Recommended by</label><input id="f-rec-by" placeholder="e.g. Sarah" /></div>
-      <div class="field"><label>Notes</label><textarea id="f-notes" placeholder="Any details — must-orders, vibe, price range…"></textarea></div>
-      <div class="modal-actions">
-        <button class="btn-secondary" onclick="closeAdd()">Cancel</button>
-        <button class="btn-primary" onclick="saveSpot()">Save</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Detail Modal -->
-  <div class="modal-backdrop" id="detail-modal">
-    <div class="modal" id="detail-content"></div>
-  </div>
-
-  <div id="toast"></div>
-
-<script>
-  // ── Supabase ──────────────────────────────────────────────────
-  const SUPABASE_URL = 'https://biafijftxhealzmmwsmk.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYWZpamZ0eGhlYWx6bW13c21rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTQ3NjYsImV4cCI6MjA5NTgzMDc2Nn0.el4_ujwNYvbYdFtvzAEooKd1SvZlJd5YGVdlGlSo6Q8';
-  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  const CUISINE_EMOJI = {
-    japanese: '🍣', italian: '🍝', mexican: '🌮', french: '🥐',
-    chinese: '🥢', indian: '🍛', american: '🍔', thai: '🍜',
-    mediterranean: '🫒', korean: '🥩', greek: '🥗', default: '📍'
-  };
-
-  function cuisineEmoji(c) {
-    if (!c) return CUISINE_EMOJI.default;
-    const key = c.toLowerCase().trim();
-    const match = Object.keys(CUISINE_EMOJI).find(k => key.includes(k));
-    return match ? CUISINE_EMOJI[match] : CUISINE_EMOJI.default;
-  }
-
-  // ── State ─────────────────────────────────────────────────────
-  let spots = [];
-  let activeFilter = 'all';
-  let detailId = null;
-
-  // ── Fetch ─────────────────────────────────────────────────────
-  async function fetchSpots() {
-    const { data, error } = await sb.from('spots').select('*').order('created_at', { ascending: false });
-    if (error) { toast('Failed to load spots'); return; }
-    spots = data || [];
-    render();
-  }
-
-  // ── Render ────────────────────────────────────────────────────
-  function render() {
-    const list = document.getElementById('list');
-    const empty = document.getElementById('empty');
-    const filtered = spots.filter(s => {
-      if (activeFilter === 'visited') return s.visited;
-      if (activeFilter === 'unvisited') return !s.visited;
-      return true;
-    });
-    if (!filtered.length) {
-      list.innerHTML = '';
-      empty.style.display = 'block';
-      return;
+    function dbToApp(row) {
+      return {
+        id:          row.id,
+        name:        row.name,
+        cuisine:     row.cuisine || 'Other',
+        location:    row.location || '',
+        recommender: row.recommended_by || '',
+        note:        row.notes || '',
+        status:      row.visited ? 'visited' : 'want',
+        rating:      row.rating || null,
+        date:        (row.created_at || '').split('T')[0],
+        phone:       row.phone || '',
+        website:     row.website || '',
+        priceRange:  row.price_range || '',
+        hours:       row.hours || [],
+        photos:      row.photos || [],
+        reviews:     row.reviews || [],
+      };
     }
-    empty.style.display = 'none';
-    list.innerHTML = filtered.map(s => `
-      <div class="card" onclick="openDetail('${s.id}')">
-        <div class="card-emoji">${cuisineEmoji(s.cuisine)}</div>
-        <div class="card-body">
-          <div class="card-name">${esc(s.name)}</div>
-          <div class="card-meta">${[s.location, s.recommended_by ? '👤 ' + esc(s.recommended_by) : ''].filter(Boolean).join(' · ')}</div>
+
+    function appToDb(form) {
+      return {
+        name:           form.name,
+        cuisine:        form.cuisine,
+        location:       form.location || null,
+        recommended_by: form.recommender,
+        notes:          form.note || null,
+        visited:        form.status === 'visited',
+        rating:         form.status === 'visited' ? (form.rating || null) : null,
+        phone:          form.phone || null,
+        website:        form.website || null,
+        price_range:    form.priceRange || null,
+        hours:          form.hours?.length ? form.hours : null,
+        photos:         form.photos?.length ? form.photos : null,
+        reviews:        form.reviews?.length ? form.reviews : null,
+      };
+    }
+
+    // ── StarRating ──────────────────────────────────────────────
+    const StarRating = ({ value, onChange, readonly, size=16 }) => (
+      <div style={{display:"flex",gap:"2px"}}>
+        {[1,2,3,4,5].map(n => (
+          <span key={n} onClick={() => !readonly && onChange && onChange(n)} style={{
+            fontSize:`${size}px`, cursor:readonly?"default":"pointer",
+            color: n<=(value||0) ? "#c8773a" : "rgba(180,140,110,0.25)",
+            transition:"color 0.15s", userSelect:"none",
+          }}>★</span>
+        ))}
+      </div>
+    );
+
+    // ── DetailPanel ─────────────────────────────────────────────
+    const DetailPanel = ({ r, onClose, onEdit, onMarkVisited }) => {
+      const [tab, setTab] = useState("info");
+      return (
+        <div style={{
+          position:"fixed", inset:0, zIndex:200,
+          background:"rgba(20,12,6,0.55)",
+          backdropFilter:"blur(6px)", WebkitBackdropFilter:"blur(6px)",
+          display:"flex", alignItems:"center", justifyContent:"center",
+          padding:"16px", animation:"fadeIn 0.2s ease",
+        }} onClick={onClose}>
+          <div style={{
+            width:"100%", maxWidth:"500px", maxHeight:"88vh",
+            borderRadius:"24px", overflow:"hidden",
+            background:"rgba(255,248,240,0.72)",
+            backdropFilter:"blur(32px)", WebkitBackdropFilter:"blur(32px)",
+            border:"1px solid rgba(255,255,255,0.55)",
+            boxShadow:"0 24px 64px rgba(30,14,4,0.22), inset 0 1px 0 rgba(255,255,255,0.7)",
+            display:"flex", flexDirection:"column",
+            animation:"slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)",
+          }} onClick={e => e.stopPropagation()}>
+
+            {/* Hero */}
+            <div style={{padding:"26px 26px 18px", borderBottom:"1px solid rgba(180,140,110,0.18)"}}>
+              <div style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:"8px"}}>
+                <div>
+                  <div style={{display:"flex", gap:"8px", alignItems:"center", marginBottom:"6px"}}>
+                    <span style={{fontSize:"11px", letterSpacing:"0.1em", textTransform:"uppercase", color:"#c8773a", fontFamily:"'Lora',serif", fontWeight:500}}>{r.cuisine}</span>
+                    {r.priceRange && <>
+                      <span style={{color:"rgba(120,80,40,0.3)"}}>·</span>
+                      <span style={{fontSize:"11px", color:"rgba(100,70,40,0.6)", fontFamily:"'Lora',serif"}}>{r.priceRange}</span>
+                    </>}
+                    <span style={{color:"rgba(120,80,40,0.3)"}}>·</span>
+                    <span style={{fontSize:"11px", fontFamily:"'Lora',serif", color:r.status==="visited"?"#5a9a6a":"#b8873a"}}>
+                      {r.status==="visited" ? "✓ Visited" : "◎ Want to Try"}
+                    </span>
+                  </div>
+                  <h2 style={{fontFamily:"'DM Serif Display',serif", fontSize:"26px", color:"#1e0e04", margin:0, lineHeight:1.1}}>{r.name}</h2>
+                </div>
+                <button onClick={onClose} style={{background:"rgba(180,140,110,0.15)", border:"1px solid rgba(180,140,110,0.25)", color:"rgba(100,70,40,0.6)", borderRadius:"50%", width:"32px", height:"32px", cursor:"pointer", fontSize:"14px", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center"}}>✕</button>
+              </div>
+              {r.location && <p style={{fontSize:"13px", color:"rgba(100,70,40,0.55)", fontFamily:"'Lora',serif", margin:"0 0 10px"}}>📍 {r.location}</p>}
+              {r.status==="visited" && r.rating && <StarRating value={r.rating} readonly size={17}/>}
+              {r.photos && r.photos.length > 0 && (
+                <div style={{display:"flex", gap:"8px", marginTop:"14px"}}>
+                  {r.photos.map((p,i) => (
+                    <div key={i} style={{width:"64px", height:"64px", borderRadius:"12px", background:"rgba(200,160,120,0.15)", border:"1px solid rgba(200,160,120,0.25)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"26px"}}>{p}</div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Tabs */}
+            <div style={{display:"flex", padding:"0 18px", borderBottom:"1px solid rgba(180,140,110,0.15)", background:"rgba(255,248,240,0.4)"}}>
+              {["info","hours","reviews"].map(t => (
+                <button key={t} onClick={() => setTab(t)} style={{
+                  padding:"13px 15px 11px", background:"none", border:"none", cursor:"pointer",
+                  fontFamily:"'Lora',serif", fontSize:"13px", letterSpacing:"0.05em", textTransform:"capitalize",
+                  color: tab===t ? "#1e0e04" : "rgba(100,70,40,0.45)",
+                  borderBottom:`2px solid ${tab===t ? "#c8773a" : "transparent"}`,
+                  marginBottom:"-1px", transition:"all 0.15s",
+                }}>{t}</button>
+              ))}
+            </div>
+
+            {/* Tab body */}
+            <div style={{flex:1, overflowY:"auto", padding:"22px 26px"}}>
+              {tab==="info" && (
+                <div style={{display:"flex", flexDirection:"column", gap:"14px"}}>
+                  {r.note && (
+                    <div style={{background:"rgba(200,120,58,0.08)", border:"1px solid rgba(200,120,58,0.2)", borderLeft:"3px solid #c8773a", borderRadius:"10px", padding:"14px 16px"}}>
+                      <p style={{fontSize:"11px", color:"#c8773a", letterSpacing:"0.1em", textTransform:"uppercase", fontFamily:"'Lora',serif", marginBottom:"5px"}}>Note from {r.recommender}</p>
+                      <p style={{fontFamily:"'Lora',serif", fontSize:"15px", color:"rgba(30,14,4,0.8)", fontStyle:"italic", lineHeight:1.5, margin:0}}>"{r.note}"</p>
+                    </div>
+                  )}
+                  {(r.phone || r.website) && (
+                    <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:"10px"}}>
+                      {r.phone && (
+                        <div style={{background:"rgba(180,140,110,0.1)", border:"1px solid rgba(180,140,110,0.2)", borderRadius:"10px", padding:"12px 14px"}}>
+                          <p style={{fontSize:"10px", color:"rgba(100,70,40,0.5)", letterSpacing:"0.1em", textTransform:"uppercase", fontFamily:"'Lora',serif", marginBottom:"4px"}}>Phone</p>
+                          <p style={{fontSize:"14px", color:"#1e0e04", fontFamily:"'Lora',serif"}}>{r.phone}</p>
+                        </div>
+                      )}
+                      {r.website && (
+                        <div style={{background:"rgba(180,140,110,0.1)", border:"1px solid rgba(180,140,110,0.2)", borderRadius:"10px", padding:"12px 14px"}}>
+                          <p style={{fontSize:"10px", color:"rgba(100,70,40,0.5)", letterSpacing:"0.1em", textTransform:"uppercase", fontFamily:"'Lora',serif", marginBottom:"4px"}}>Website</p>
+                          <p style={{fontSize:"14px", color:"#c8773a", fontFamily:"'Lora',serif"}}>{r.website}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <div style={{display:"flex", gap:"8px", marginTop:"4px"}}>
+                    <button onClick={() => onEdit(r)} style={{flex:1, padding:"11px", borderRadius:"10px", background:"rgba(180,140,110,0.12)", border:"1px solid rgba(180,140,110,0.22)", color:"rgba(60,35,14,0.7)", fontFamily:"'DM Serif Display',serif", fontSize:"14px", cursor:"pointer"}}>✏️ Edit</button>
+                    {r.status==="want" && (
+                      <button onClick={() => onMarkVisited(r.id)} style={{flex:2, padding:"11px", borderRadius:"10px", background:"rgba(90,154,106,0.15)", border:"1px solid rgba(90,154,106,0.3)", color:"#3d7a4f", fontFamily:"'DM Serif Display',serif", fontSize:"14px", cursor:"pointer"}}>✓ Mark as Visited</button>
+                    )}
+                  </div>
+                </div>
+              )}
+              {tab==="hours" && (
+                <div style={{display:"flex", flexDirection:"column", gap:"8px"}}>
+                  {r.hours && r.hours.length > 0 ? r.hours.map((h,i) => (
+                    <div key={i} style={{display:"flex", justifyContent:"space-between", padding:"11px 14px", background:"rgba(180,140,110,0.1)", border:"1px solid rgba(180,140,110,0.18)", borderRadius:"10px"}}>
+                      <span style={{fontFamily:"'Lora',serif", fontSize:"14px", color:"rgba(60,35,14,0.6)"}}>{h.day}</span>
+                      <span style={{fontFamily:"'Lora',serif", fontSize:"14px", color:h.time==="Closed"?"#b05050":"#3d7a4f", fontWeight:500}}>{h.time}</span>
+                    </div>
+                  )) : (
+                    <p style={{fontFamily:"'Lora',serif", fontSize:"14px", color:"rgba(100,70,40,0.4)", textAlign:"center", padding:"20px 0"}}>No hours added yet</p>
+                  )}
+                </div>
+              )}
+              {tab==="reviews" && (
+                <div style={{display:"flex", flexDirection:"column", gap:"10px"}}>
+                  {r.reviews && r.reviews.length > 0 ? r.reviews.map((rv,i) => (
+                    <div key={i} style={{background:"rgba(180,140,110,0.1)", border:"1px solid rgba(180,140,110,0.18)", borderRadius:"12px", padding:"14px 16px"}}>
+                      <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"7px"}}>
+                        <span style={{fontFamily:"'DM Serif Display',serif", fontSize:"15px", color:"#1e0e04"}}>{rv.author}</span>
+                        <StarRating value={rv.stars} readonly size={13}/>
+                      </div>
+                      <p style={{fontFamily:"'Lora',serif", fontSize:"14px", color:"rgba(60,35,14,0.7)", fontStyle:"italic", lineHeight:1.5, margin:0}}>{rv.text}</p>
+                    </div>
+                  )) : (
+                    <p style={{fontFamily:"'Lora',serif", fontSize:"14px", color:"rgba(100,70,40,0.4)", textAlign:"center", padding:"20px 0"}}>No reviews yet</p>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-        <div class="card-badge ${s.visited ? 'visited' : ''}">${s.visited ? 'Been ✓' : 'Want to go'}</div>
-      </div>
-    `).join('');
-  }
-
-  function setFilter(f, el) {
-    activeFilter = f;
-    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-    el.classList.add('active');
-    render();
-  }
-
-  // ── Add / Edit ────────────────────────────────────────────────
-  function openAdd(spot) {
-    document.getElementById('add-modal-title').textContent = spot ? 'Edit spot' : 'Pin a spot';
-    document.getElementById('edit-id').value = spot ? spot.id : '';
-    document.getElementById('f-name').value = spot ? spot.name : '';
-    document.getElementById('f-cuisine').value = spot ? (spot.cuisine || '') : '';
-    document.getElementById('f-location').value = spot ? (spot.location || '') : '';
-    document.getElementById('f-rec-by').value = spot ? (spot.recommended_by || '') : '';
-    document.getElementById('f-notes').value = spot ? (spot.notes || '') : '';
-    document.getElementById('add-modal').classList.add('open');
-  }
-
-  function closeAdd() { document.getElementById('add-modal').classList.remove('open'); }
-
-  async function saveSpot() {
-    const name = document.getElementById('f-name').value.trim();
-    if (!name) { toast('Name is required'); return; }
-    const id = document.getElementById('edit-id').value;
-    const payload = {
-      name,
-      cuisine: document.getElementById('f-cuisine').value.trim() || null,
-      location: document.getElementById('f-location').value.trim() || null,
-      recommended_by: document.getElementById('f-rec-by').value.trim() || null,
-      notes: document.getElementById('f-notes').value.trim() || null,
+      );
     };
-    let error;
-    if (id) {
-      ({ error } = await sb.from('spots').update(payload).eq('id', id));
-    } else {
-      payload.visited = false;
-      ({ error } = await sb.from('spots').insert(payload));
+
+    // ── Modal ───────────────────────────────────────────────────
+    const Modal = ({ onClose, onSave, editData }) => {
+      const [form, setForm] = useState(editData || {
+        name:"", cuisine:"Italian", location:"", recommender:"",
+        note:"", status:"want", rating:null, priceRange:"",
+        phone:"", website:"", hours:[], photos:[], reviews:[],
+      });
+      const set = (k,v) => setForm(f => ({...f,[k]:v}));
+      const inp = {width:"100%",padding:"10px 13px",background:"rgba(200,160,120,0.12)",border:"1px solid rgba(180,140,110,0.28)",borderRadius:"10px",fontFamily:"'Lora',serif",fontSize:"14px",color:"#1e0e04",outline:"none",boxSizing:"border-box"};
+      const lbl = {display:"block",fontFamily:"'DM Serif Display',serif",fontSize:"11px",letterSpacing:"0.08em",color:"rgba(100,70,40,0.55)",marginBottom:"5px",textTransform:"uppercase"};
+      const canSave = form.name.trim() && form.recommender.trim();
+      return (
+        <div style={{position:"fixed",inset:0,zIndex:300,background:"rgba(20,12,6,0.5)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",display:"flex",alignItems:"center",justifyContent:"center",padding:"20px",animation:"fadeIn 0.2s ease"}} onClick={onClose}>
+          <div style={{width:"100%",maxWidth:"440px",maxHeight:"88vh",overflowY:"auto",borderRadius:"22px",background:"rgba(255,248,240,0.82)",backdropFilter:"blur(32px)",WebkitBackdropFilter:"blur(32px)",border:"1px solid rgba(255,255,255,0.6)",boxShadow:"0 24px 64px rgba(30,14,4,0.2), inset 0 1px 0 rgba(255,255,255,0.8)",padding:"28px",animation:"slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)"}} onClick={e => e.stopPropagation()}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"24px"}}>
+              <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"22px",color:"#1e0e04",margin:0}}>{editData ? "Edit Restaurant" : "Add Recommendation"}</h2>
+              <button onClick={onClose} style={{background:"rgba(180,140,110,0.15)",border:"1px solid rgba(180,140,110,0.25)",color:"rgba(100,70,40,0.5)",borderRadius:"50%",width:"30px",height:"30px",cursor:"pointer",fontSize:"13px",display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+            </div>
+            <div style={{display:"flex",flexDirection:"column",gap:"15px"}}>
+              <div>
+                <label style={lbl}>Restaurant Name *</label>
+                <input style={inp} value={form.name} onChange={e=>set("name",e.target.value)} placeholder="e.g. Chez Pierre"/>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px"}}>
+                <div>
+                  <label style={lbl}>Cuisine</label>
+                  <select style={{...inp,cursor:"pointer"}} value={form.cuisine} onChange={e=>set("cuisine",e.target.value)}>
+                    {CUISINES.map(c => <option key={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label style={lbl}>Recommended By *</label>
+                  <input style={inp} value={form.recommender} onChange={e=>set("recommender",e.target.value)} placeholder="e.g. Sarah"/>
+                </div>
+              </div>
+              <div>
+                <label style={lbl}>Location</label>
+                <input style={inp} value={form.location} onChange={e=>set("location",e.target.value)} placeholder="e.g. Le Marais, Paris"/>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px"}}>
+                <div>
+                  <label style={lbl}>Phone</label>
+                  <input style={inp} value={form.phone} onChange={e=>set("phone",e.target.value)} placeholder="+1 (212) 000-0000"/>
+                </div>
+                <div>
+                  <label style={lbl}>Website</label>
+                  <input style={inp} value={form.website} onChange={e=>set("website",e.target.value)} placeholder="restaurant.com"/>
+                </div>
+              </div>
+              <div>
+                <label style={lbl}>Notes</label>
+                <textarea style={{...inp,resize:"vertical",minHeight:"70px"}} value={form.note} onChange={e=>set("note",e.target.value)} placeholder="What to order, tips, vibes…"/>
+              </div>
+              <div>
+                <label style={lbl}>Status</label>
+                <div style={{display:"flex",gap:"10px"}}>
+                  {["want","visited"].map(s => (
+                    <button key={s} onClick={()=>set("status",s)} style={{
+                      flex:1, padding:"10px", borderRadius:"10px",
+                      border:`1.5px solid ${form.status===s?"#c8773a":"rgba(180,140,110,0.25)"}`,
+                      background:form.status===s?"rgba(200,119,58,0.1)":"transparent",
+                      color:form.status===s?"#c8773a":"rgba(100,70,40,0.45)",
+                      fontFamily:"'DM Serif Display',serif", fontSize:"13px", cursor:"pointer",
+                      transition:"all 0.15s", letterSpacing:"0.03em",
+                    }}>
+                      {s==="want" ? "◎ Want to Try" : "✓ Been There"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {form.status==="visited" && (
+                <div>
+                  <label style={lbl}>Your Rating</label>
+                  <StarRating value={form.rating} onChange={v=>set("rating",v)} size={22}/>
+                </div>
+              )}
+            </div>
+            <div style={{display:"flex",gap:"10px",marginTop:"24px"}}>
+              <button onClick={onClose} style={{flex:1,padding:"11px",borderRadius:"10px",background:"rgba(180,140,110,0.1)",border:"1px solid rgba(180,140,110,0.2)",color:"rgba(100,70,40,0.5)",fontFamily:"'DM Serif Display',serif",fontSize:"14px",cursor:"pointer"}}>Cancel</button>
+              <button onClick={()=>canSave&&onSave(form)} style={{
+                flex:2, padding:"11px", borderRadius:"10px",
+                background:canSave?"#2c1f14":"rgba(180,140,110,0.12)",
+                border:"none",
+                color:canSave?"#fdf8f3":"rgba(100,70,40,0.3)",
+                fontFamily:"'DM Serif Display',serif", fontSize:"14px",
+                cursor:canSave?"pointer":"default",
+                letterSpacing:"0.03em", transition:"all 0.2s",
+              }}>Save Restaurant</button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ── Card ────────────────────────────────────────────────────
+    const Card = ({ r, onClick }) => (
+      <div onClick={onClick} style={{
+        background:"rgba(255,248,240,0.55)",
+        backdropFilter:"blur(20px)", WebkitBackdropFilter:"blur(20px)",
+        border:"1px solid rgba(255,255,255,0.5)",
+        borderRadius:"16px", padding:"18px 20px",
+        cursor:"pointer", overflow:"hidden",
+        boxShadow:"0 2px 12px rgba(30,14,4,0.07), inset 0 1px 0 rgba(255,255,255,0.7)",
+        transition:"transform 0.18s, box-shadow 0.18s, background 0.18s",
+      }}
+      onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.background="rgba(255,248,240,0.72)";e.currentTarget.style.boxShadow="0 8px 28px rgba(30,14,4,0.12), inset 0 1px 0 rgba(255,255,255,0.8)";}}
+      onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.background="rgba(255,248,240,0.55)";e.currentTarget.style.boxShadow="0 2px 12px rgba(30,14,4,0.07), inset 0 1px 0 rgba(255,255,255,0.7)";}}
+      >
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+          <div style={{flex:1,minWidth:0}}>
+            <h3 style={{fontFamily:"'DM Serif Display',serif",fontSize:"18px",color:"#1e0e04",margin:"0 0 5px",lineHeight:1.2}}>{r.name}</h3>
+            <div style={{display:"flex",gap:"6px",alignItems:"center",flexWrap:"wrap"}}>
+              <span style={{fontSize:"11px",color:"#c8773a",fontFamily:"'Lora',serif",letterSpacing:"0.06em"}}>{r.cuisine}</span>
+              {r.priceRange && <>
+                <span style={{color:"rgba(120,80,40,0.3)",fontSize:"10px"}}>·</span>
+                <span style={{fontSize:"11px",color:"rgba(100,70,40,0.5)",fontFamily:"'Lora',serif"}}>{r.priceRange}</span>
+              </>}
+              {r.location && <>
+                <span style={{color:"rgba(120,80,40,0.3)",fontSize:"10px"}}>·</span>
+                <span style={{fontSize:"11px",color:"rgba(100,70,40,0.45)",fontFamily:"'Lora',serif",maxWidth:"160px",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",display:"inline-block"}}>📍 {r.location}</span>
+              </>}
+            </div>
+          </div>
+          <div style={{flexShrink:0,marginLeft:"12px",textAlign:"right"}}>
+            {r.status==="visited" && r.rating && <StarRating value={r.rating} readonly size={13}/>}
+            {r.status==="want" && <span style={{fontSize:"11px",color:"#b8873a",fontFamily:"'Lora',serif",letterSpacing:"0.05em"}}>◎ Wishlist</span>}
+          </div>
+        </div>
+        {r.note && <p style={{fontFamily:"'Lora',serif",fontSize:"13px",color:"rgba(60,35,14,0.55)",margin:"9px 0 0",fontStyle:"italic",lineHeight:1.4,overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>"{r.note}"</p>}
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:"11px"}}>
+          <span style={{fontSize:"12px",color:"rgba(100,70,40,0.45)",fontFamily:"'Lora',serif"}}>Rec'd by <span style={{color:"#c8773a"}}>{r.recommender}</span></span>
+          <span style={{fontSize:"11px",color:"rgba(100,70,40,0.3)",fontFamily:"'Lora',serif"}}>View details →</span>
+        </div>
+      </div>
+    );
+
+    // ── Section ─────────────────────────────────────────────────
+    const Section = ({ title, icon, items, onCardClick }) => {
+      const [open, setOpen] = useState(true);
+      if (items.length === 0) return null;
+      return (
+        <div style={{marginBottom:"28px"}}>
+          <div onClick={()=>setOpen(o=>!o)} style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:open?"14px":"6px",cursor:"pointer",userSelect:"none",padding:"4px 0"}}>
+            <span style={{fontSize:"16px"}}>{icon}</span>
+            <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"18px",color:"#1e0e04",margin:0,flex:1}}>{title}</h2>
+            <span style={{fontSize:"12px",color:"rgba(100,70,40,0.4)",fontFamily:"'Lora',serif"}}>{items.length}</span>
+            <span style={{fontSize:"11px",color:"rgba(100,70,40,0.3)",transition:"transform 0.2s",display:"inline-block",transform:open?"":"rotate(-90deg)"}}>▾</span>
+          </div>
+          {open && (
+            <div style={{display:"flex",flexDirection:"column",gap:"10px"}}>
+              {items.map(r => <Card key={r.id} r={r} onClick={()=>onCardClick(r)}/>)}
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // ── App ─────────────────────────────────────────────────────
+    function App() {
+      const [restaurants, setRestaurants] = useState([]);
+      const [loading, setLoading]         = useState(true);
+      const [showModal, setShowModal]     = useState(false);
+      const [editTarget, setEditTarget]   = useState(null);
+      const [detail, setDetail]           = useState(null);
+      const [search, setSearch]           = useState("");
+      const [view, setView]               = useState("status");
+      const [toastMsg, setToastMsg]       = useState(null);
+
+      function showToast(msg) {
+        setToastMsg(msg);
+        setTimeout(() => setToastMsg(null), 2500);
+      }
+
+      async function fetchRestaurants() {
+        const { data, error } = await sb.from('spots').select('*').order('created_at', { ascending: false });
+        if (error) { showToast('Failed to load'); return; }
+        setRestaurants((data || []).map(dbToApp));
+        setLoading(false);
+      }
+
+      useEffect(() => { fetchRestaurants(); }, []);
+
+      const filtered = useMemo(() => {
+        const q = search.toLowerCase();
+        return restaurants.filter(r => !q ||
+          r.name.toLowerCase().includes(q) ||
+          r.cuisine.toLowerCase().includes(q) ||
+          r.recommender.toLowerCase().includes(q) ||
+          (r.location || "").toLowerCase().includes(q)
+        );
+      }, [restaurants, search]);
+
+      async function handleSave(form) {
+        const payload = appToDb(form);
+        let error;
+        if (editTarget) {
+          ({ error } = await sb.from('spots').update(payload).eq('id', editTarget.id));
+        } else {
+          ({ error } = await sb.from('spots').insert(payload));
+        }
+        if (error) { showToast('Save failed: ' + error.message); return; }
+        setShowModal(false);
+        setEditTarget(null);
+        setDetail(null);
+        showToast(editTarget ? 'Updated!' : 'Pinned! 📍');
+        await fetchRestaurants();
+      }
+
+      async function handleMarkVisited(id) {
+        const { error } = await sb.from('spots').update({ visited: true }).eq('id', id);
+        if (error) { showToast('Update failed'); return; }
+        setRestaurants(rs => rs.map(r => r.id === id ? {...r, status:'visited'} : r));
+        setDetail(d => d?.id === id ? {...d, status:'visited'} : d);
+        showToast('Marked as visited! ✓');
+      }
+
+      const wantList    = filtered.filter(r => r.status === "want");
+      const visitedList = filtered.filter(r => r.status === "visited");
+      const cuisineGroups = useMemo(() => {
+        const m = {};
+        filtered.forEach(r => { (m[r.cuisine] = m[r.cuisine] || []).push(r); });
+        return Object.entries(m).sort((a,b) => b[1].length - a[1].length);
+      }, [filtered]);
+
+      return (
+        <>
+          <style>{`
+            @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body { background: #e8d9c8; }
+            ::placeholder { color: rgba(100,70,40,0.35) !important; }
+            ::-webkit-scrollbar { width: 4px; }
+            ::-webkit-scrollbar-track { background: transparent; }
+            ::-webkit-scrollbar-thumb { background: rgba(180,140,110,0.3); border-radius: 4px; }
+            select option { background: #f5ede0; }
+            @keyframes fadeIn  { from { opacity: 0 } to { opacity: 1 } }
+            @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.98) } to { opacity: 1; transform: none } }
+          `}</style>
+
+          <div style={{minHeight:"100vh", background:"linear-gradient(160deg,#e8d5be 0%,#ddc9b0 40%,#e0cfc0 100%)", fontFamily:"'Lora',serif", position:"relative"}}>
+            <div style={{position:"fixed",inset:0,pointerEvents:"none",background:"radial-gradient(ellipse at 20% 20%,rgba(255,245,230,0.4) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(200,160,110,0.15) 0%,transparent 60%)"}}/>
+
+            {/* Header */}
+            <div style={{position:"sticky",top:0,zIndex:50,background:"rgba(240,226,208,0.7)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",borderBottom:"1px solid rgba(255,255,255,0.5)",boxShadow:"0 1px 0 rgba(180,140,110,0.15)",padding:"18px 20px 16px"}}>
+              <div style={{maxWidth:"640px",margin:"0 auto"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"14px"}}>
+                  <div>
+                    <h1 style={{fontFamily:"'DM Serif Display',serif",fontSize:"24px",color:"#1e0e04",letterSpacing:"-0.01em"}}>PinPlate</h1>
+                    <p style={{fontSize:"12px",color:"rgba(100,70,40,0.5)",marginTop:"2px",fontFamily:"'Lora',serif",letterSpacing:"0.04em"}}>
+                      {restaurants.filter(r=>r.status==="want").length} to try · {restaurants.filter(r=>r.status==="visited").length} visited
+                    </p>
+                  </div>
+                  <button onClick={()=>{setEditTarget(null);setShowModal(true);}} style={{background:"#2c1f14",color:"#fdf8f3",border:"none",borderRadius:"12px",padding:"9px 18px",fontFamily:"'DM Serif Display',serif",fontSize:"14px",cursor:"pointer",letterSpacing:"0.03em",boxShadow:"0 4px 14px rgba(30,14,4,0.22)"}}>+ Add</button>
+                </div>
+
+                <input
+                  value={search}
+                  onChange={e=>setSearch(e.target.value)}
+                  placeholder="Search restaurants, cuisine, city, friend…"
+                  style={{width:"100%",padding:"10px 15px",background:"rgba(255,248,240,0.55)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:"1px solid rgba(255,255,255,0.55)",borderRadius:"12px",color:"#1e0e04",fontFamily:"'Lora',serif",fontSize:"14px",outline:"none",marginBottom:"12px",boxShadow:"inset 0 1px 3px rgba(30,14,4,0.05)"}}
+                />
+
+                <div style={{display:"flex",gap:"6px"}}>
+                  {[{k:"status",l:"By Status"},{k:"cuisine",l:"By Cuisine"}].map(tab => (
+                    <button key={tab.k} onClick={()=>setView(tab.k)} style={{
+                      padding:"6px 15px",borderRadius:"20px",cursor:"pointer",
+                      background:view===tab.k?"rgba(44,31,20,0.12)":"transparent",
+                      border:`1px solid ${view===tab.k?"rgba(44,31,20,0.2)":"rgba(180,140,110,0.25)"}`,
+                      color:view===tab.k?"#2c1f14":"rgba(100,70,40,0.5)",
+                      fontFamily:"'Lora',serif",fontSize:"12px",letterSpacing:"0.05em",transition:"all 0.15s",
+                    }}>{tab.l}</button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div style={{maxWidth:"640px",margin:"0 auto",padding:"26px 20px 60px"}}>
+              {loading ? (
+                <div style={{textAlign:"center",padding:"80px 20px"}}>
+                  <p style={{fontFamily:"'Lora',serif",fontSize:"16px",color:"rgba(60,35,14,0.4)"}}>Loading your spots…</p>
+                </div>
+              ) : filtered.length === 0 ? (
+                <div style={{textAlign:"center",padding:"80px 20px"}}>
+                  <div style={{fontSize:"40px",marginBottom:"14px",opacity:0.4}}>🍽</div>
+                  <p style={{fontFamily:"'DM Serif Display',serif",fontSize:"18px",color:"rgba(60,35,14,0.5)",marginBottom:"6px"}}>
+                    {search ? "No results" : "Nothing here yet"}
+                  </p>
+                  <p style={{fontSize:"13px",color:"rgba(100,70,40,0.35)",fontFamily:"'Lora',serif"}}>
+                    {search ? "Try a different search" : "Add a restaurant your friends recommended"}
+                  </p>
+                </div>
+              ) : view==="status" ? (
+                <>
+                  <Section title="Want to Try" icon="◎" items={wantList} onCardClick={setDetail}/>
+                  <Section title="Visited" icon="✓" items={visitedList} onCardClick={setDetail}/>
+                </>
+              ) : (
+                cuisineGroups.map(([cuisine,items]) => (
+                  <Section key={cuisine} title={cuisine} icon="🍴" items={items} onCardClick={setDetail}/>
+                ))
+              )}
+            </div>
+          </div>
+
+          {detail && (
+            <DetailPanel
+              r={detail}
+              onClose={()=>setDetail(null)}
+              onEdit={r=>{setEditTarget(r);setDetail(null);setShowModal(true);}}
+              onMarkVisited={handleMarkVisited}
+            />
+          )}
+          {showModal && (
+            <Modal
+              onClose={()=>{setShowModal(false);setEditTarget(null);}}
+              onSave={handleSave}
+              editData={editTarget}
+            />
+          )}
+          {toastMsg && (
+            <div style={{position:"fixed",bottom:"24px",left:"50%",transform:"translateX(-50%)",background:"#2c1f14",color:"#fdf8f3",padding:"10px 20px",borderRadius:"50px",fontFamily:"'Lora',serif",fontSize:"14px",zIndex:500,boxShadow:"0 4px 20px rgba(30,14,4,0.25)",animation:"slideUp 0.2s ease",whiteSpace:"nowrap"}}>
+              {toastMsg}
+            </div>
+          )}
+        </>
+      );
     }
-    if (error) { toast('Save failed: ' + error.message); return; }
-    closeAdd();
-    closeDetail();
-    toast(id ? 'Updated!' : 'Pinned!');
-    await fetchSpots();
-  }
 
-  // ── Detail ────────────────────────────────────────────────────
-  function openDetail(id) {
-    detailId = id;
-    const s = spots.find(x => x.id === id);
-    if (!s) return;
-    const stars = s.rating ? '★'.repeat(s.rating) + '☆'.repeat(5 - s.rating) : null;
-    document.getElementById('detail-content').innerHTML = `
-      <div style="font-size:2.5rem;margin-bottom:10px">${cuisineEmoji(s.cuisine)}</div>
-      <div class="detail-name">${esc(s.name)}</div>
-      <div class="detail-meta">${[s.cuisine, s.location].filter(Boolean).map(esc).join(' · ')}</div>
-      ${s.recommended_by ? `<div class="detail-row"><span class="detail-row-label">Recommended by</span><span>${esc(s.recommended_by)}</span></div>` : ''}
-      ${s.notes ? `<div class="detail-row"><span class="detail-row-label">Notes</span><span>${esc(s.notes)}</span></div>` : ''}
-      ${stars ? `<div class="detail-row"><span class="detail-row-label">Rating</span><span class="stars">${stars}</span></div>` : ''}
-      <div style="margin-top:20px;display:flex;gap:8px;flex-wrap:wrap">
-        ${[1,2,3,4,5].map(n => `<button class="btn-secondary" style="flex:1;padding:10px 4px;font-size:1rem" onclick="rateSpot(${n})">★${n}</button>`).join('')}
-      </div>
-      <div class="modal-actions" style="margin-top:12px">
-        <button class="btn-danger" onclick="deleteSpot()">Delete</button>
-        <button class="btn-secondary" onclick="openAdd(spots.find(x=>x.id==='${id}'))">Edit</button>
-        <button class="btn-primary" onclick="toggleVisited()">${s.visited ? 'Mark unvisited' : 'Mark visited ✓'}</button>
-      </div>
-      <button class="btn-secondary" style="width:100%;margin-top:10px" onclick="closeDetail()">Close</button>
-    `;
-    document.getElementById('detail-modal').classList.add('open');
-  }
-
-  function closeDetail() { document.getElementById('detail-modal').classList.remove('open'); }
-
-  async function toggleVisited() {
-    const s = spots.find(x => x.id === detailId);
-    const { error } = await sb.from('spots').update({ visited: !s.visited }).eq('id', detailId);
-    if (error) { toast('Update failed'); return; }
-    toast(s.visited ? 'Marked as want-to-go' : 'Marked as visited!');
-    await fetchSpots();
-    openDetail(detailId);
-  }
-
-  async function rateSpot(n) {
-    const { error } = await sb.from('spots').update({ rating: n }).eq('id', detailId);
-    if (error) { toast('Rating failed'); return; }
-    toast('Rated ' + '★'.repeat(n));
-    await fetchSpots();
-    openDetail(detailId);
-  }
-
-  async function deleteSpot() {
-    if (!confirm('Delete this spot?')) return;
-    const { error } = await sb.from('spots').delete().eq('id', detailId);
-    if (error) { toast('Delete failed'); return; }
-    closeDetail();
-    toast('Deleted');
-    await fetchSpots();
-  }
-
-  // ── Utils ─────────────────────────────────────────────────────
-  function esc(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  let toastTimer;
-  function toast(msg) {
-    const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
-  }
-
-  // Close modals on backdrop click
-  document.querySelectorAll('.modal-backdrop').forEach(el => {
-    el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
-  });
-
-  // ── Init ──────────────────────────────────────────────────────
-  fetchSpots();
-</script>
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
 </body>
 </html>
