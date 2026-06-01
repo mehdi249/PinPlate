@@ -6,13 +6,28 @@
   <title>PinPlate</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body style="margin:0;background:#e8d9c8;">
-<div id="root"></div>
+<div id="root">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(160deg,#e8d5be,#ddc9b0);">
+    <p style="font-family:Georgia,serif;font-size:24px;color:rgba(30,14,4,0.55);letter-spacing:-0.01em;margin-bottom:10px">PinPlate</p>
+    <p style="font-family:Georgia,serif;font-size:13px;color:rgba(100,70,40,0.35)">Loading…</p>
+  </div>
+</div>
+<script>
+  window.onerror = function(msg,_,line,col,err){
+    document.getElementById('root').innerHTML =
+      '<div style="padding:28px;font-family:Georgia,serif;color:#c8773a;max-width:480px;margin:40px auto">'
+      +'<p style="font-size:16px;margin-bottom:8px">Something went wrong</p>'
+      +'<p style="font-size:12px;color:rgba(100,70,40,0.5)">'+msg+'<br/>Line '+line+'</p>'
+      +'<p style="font-size:12px;margin-top:12px;color:rgba(100,70,40,0.4)">Try a hard refresh (hold the reload button).</p>'
+      +'</div>';
+  };
+</script>
 <script type="text/babel">
 const { useState, useMemo, useEffect, useRef } = React;
 
@@ -489,14 +504,14 @@ function App() {
 
   function showToast(msg) { setToast(msg); setTimeout(()=>setToast(null),2500); }
 
-  async function fetch() {
+  async function loadSpots() {
     const {data,error} = await sb.from('spots').select('*').order('created_at',{ascending:false});
     if (error) { showToast('Failed to load'); return; }
     setRestaurants((data||[]).map(dbToApp));
     setLoading(false);
   }
 
-  useEffect(()=>{ fetch(); },[]);
+  useEffect(()=>{ loadSpots(); },[]);
 
   const filtered = useMemo(()=>{
     const q=search.toLowerCase();
@@ -518,7 +533,7 @@ function App() {
     if (error) { showToast('Save failed: '+error.message); return; }
     setShowEdit(false); setShowImport(false); setEditTarget(null); setDetail(null);
     showToast(editTarget?'Updated!':'Pinned! 📍');
-    await fetch();
+    await loadSpots();
   }
 
   async function handleMarkVisited(id) {
