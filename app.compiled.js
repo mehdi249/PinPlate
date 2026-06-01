@@ -128,7 +128,7 @@ function extractMapsUrlFromFdl(html) {
 }
 function nominatimReverse(_x, _x2) {
   return _nominatimReverse.apply(this, arguments);
-} // ── StarRating ───────────────────────────────────────────────
+} // ── SVG icon helper ─────────────────────────────────────────
 function _nominatimReverse() {
   _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8(lat, lng) {
     var r, d, a, _t9;
@@ -159,12 +159,179 @@ function _nominatimReverse() {
   }));
   return _nominatimReverse.apply(this, arguments);
 }
-var StarRating = function StarRating(_ref) {
-  var value = _ref.value,
-    onChange = _ref.onChange,
-    readonly = _ref.readonly,
+var Ic = function Ic(_ref) {
+  var n = _ref.n,
     _ref$size = _ref.size,
-    size = _ref$size === void 0 ? 16 : _ref$size;
+    size = _ref$size === void 0 ? 18 : _ref$size;
+  var p = {
+    phone: /*#__PURE__*/React.createElement("path", {
+      d: "M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 014 6a2 2 0 012-2z"
+    }),
+    nav: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("line", {
+      x1: "12",
+      y1: "19",
+      x2: "12",
+      y2: "5"
+    }), /*#__PURE__*/React.createElement("polyline", {
+      points: "5,12 12,5 19,12"
+    })),
+    globe: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("circle", {
+      cx: "12",
+      cy: "12",
+      r: "9"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: "M3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 000 18M12 3a14 14 0 010 18"
+    })),
+    list: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("line", {
+      x1: "9",
+      y1: "6",
+      x2: "20",
+      y2: "6"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "9",
+      y1: "12",
+      x2: "20",
+      y2: "12"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "9",
+      y1: "18",
+      x2: "20",
+      y2: "18"
+    }), /*#__PURE__*/React.createElement("circle", {
+      cx: "4",
+      cy: "6",
+      r: "1",
+      fill: "currentColor",
+      stroke: "none"
+    }), /*#__PURE__*/React.createElement("circle", {
+      cx: "4",
+      cy: "12",
+      r: "1",
+      fill: "currentColor",
+      stroke: "none"
+    }), /*#__PURE__*/React.createElement("circle", {
+      cx: "4",
+      cy: "18",
+      r: "1",
+      fill: "currentColor",
+      stroke: "none"
+    })),
+    share: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("circle", {
+      cx: "18",
+      cy: "5",
+      r: "2"
+    }), /*#__PURE__*/React.createElement("circle", {
+      cx: "6",
+      cy: "12",
+      r: "2"
+    }), /*#__PURE__*/React.createElement("circle", {
+      cx: "18",
+      cy: "19",
+      r: "2"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "8.59",
+      y1: "10.51",
+      x2: "15.42",
+      y2: "6.49"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "8.59",
+      y1: "13.51",
+      x2: "15.42",
+      y2: "17.51"
+    })),
+    pin: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+      d: "M12 2a7 7 0 017 7c0 5-7 13-7 13S5 14 5 9a7 7 0 017-7z"
+    }), /*#__PURE__*/React.createElement("circle", {
+      cx: "12",
+      cy: "9",
+      r: "2.5"
+    })),
+    clock: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("circle", {
+      cx: "12",
+      cy: "12",
+      r: "9"
+    }), /*#__PURE__*/React.createElement("polyline", {
+      points: "12,7 12,12 15,14"
+    })),
+    chat: /*#__PURE__*/React.createElement("path", {
+      d: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
+    }),
+    person: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+      d: "M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"
+    }), /*#__PURE__*/React.createElement("circle", {
+      cx: "12",
+      cy: "7",
+      r: "4"
+    })),
+    star: /*#__PURE__*/React.createElement("polygon", {
+      points: "12,2 15.1,8.3 22,9.3 17,14.1 18.2,21 12,17.8 5.8,21 7,14.1 2,9.3 8.9,8.3"
+    }),
+    edit: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("path", {
+      d: "M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: "M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
+    })),
+    trash: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("polyline", {
+      points: "3,6 5,6 21,6"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: "M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"
+    })),
+    close: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("line", {
+      x1: "18",
+      y1: "6",
+      x2: "6",
+      y2: "18"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "6",
+      y1: "6",
+      x2: "18",
+      y2: "18"
+    })),
+    aim: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("circle", {
+      cx: "12",
+      cy: "12",
+      r: "8"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "12",
+      y1: "2",
+      x2: "12",
+      y2: "6"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "12",
+      y1: "18",
+      x2: "12",
+      y2: "22"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "2",
+      y1: "12",
+      x2: "6",
+      y2: "12"
+    }), /*#__PURE__*/React.createElement("line", {
+      x1: "18",
+      y1: "12",
+      x2: "22",
+      y2: "12"
+    }))
+  };
+  return /*#__PURE__*/React.createElement("svg", {
+    width: size,
+    height: size,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.5",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p[n]);
+};
+
+// ── StarRating ───────────────────────────────────────────────
+var StarRating = function StarRating(_ref2) {
+  var value = _ref2.value,
+    onChange = _ref2.onChange,
+    readonly = _ref2.readonly,
+    _ref2$size = _ref2.size,
+    size = _ref2$size === void 0 ? 16 : _ref2$size;
   return /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
@@ -188,9 +355,9 @@ var StarRating = function StarRating(_ref) {
 };
 
 // ── Map view ─────────────────────────────────────────────────
-var MapView = function MapView(_ref2) {
-  var spots = _ref2.spots,
-    onMarkerClick = _ref2.onMarkerClick;
+var MapView = function MapView(_ref3) {
+  var spots = _ref3.spots,
+    onMarkerClick = _ref3.onMarkerClick;
   var el = useRef(null);
   var map = useRef(null);
   var marks = useRef({});
@@ -230,7 +397,7 @@ var MapView = function MapView(_ref2) {
       });
       var mk = L.marker([r.lat, r.lng], {
         icon: icon
-      }).addTo(map.current).bindPopup("<div style=\"font-family:serif;min-width:140px\"><strong style=\"font-size:14px\">".concat(r.name, "</strong><br/><span style=\"font-size:11px;color:").concat(bg, "\">").concat(r.cuisine, "</span>").concat(r.location ? "<br/><span style=\"font-size:11px;color:#666\">\uD83D\uDCCD ".concat(r.location, "</span>") : '', "</div>"));
+      }).addTo(map.current).bindPopup("<div style=\"font-family:serif;min-width:140px\"><strong style=\"font-size:14px\">".concat(r.name, "</strong><br/><span style=\"font-size:11px;color:").concat(bg, "\">").concat(r.cuisine, "</span>").concat(r.location ? "<br/><span style=\"font-size:11px;color:#666\">".concat(r.location, "</span>") : '', "</div>"));
       mk.on('click', function () {
         mk.openPopup();
         onMarkerClick(r);
@@ -279,7 +446,7 @@ var MapView = function MapView(_ref2) {
           weight: 2.5,
           opacity: 1,
           fillOpacity: 1
-        }).addTo(map.current).bindPopup('📍 You are here');
+        }).addTo(map.current).bindPopup('You are here');
       }, function () {
         return alert('Location access denied. Please allow location in your browser settings.');
       });
@@ -304,7 +471,10 @@ var MapView = function MapView(_ref2) {
       alignItems: 'center',
       gap: 6
     }
-  }, "\uD83C\uDFAF Locate Me"), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "aim",
+    size: 15
+  }), "Locate Me"), /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
       top: 12,
@@ -369,10 +539,10 @@ var MapView = function MapView(_ref2) {
 };
 
 // ── Import modal ─────────────────────────────────────────────
-var ImportModal = function ImportModal(_ref3) {
+var ImportModal = function ImportModal(_ref4) {
   var _form$name;
-  var onClose = _ref3.onClose,
-    onImport = _ref3.onImport;
+  var onClose = _ref4.onClose,
+    onImport = _ref4.onImport;
   var _useState = useState(''),
     _useState2 = _slicedToArray(_useState, 2),
     url = _useState2[0],
@@ -682,12 +852,14 @@ var ImportModal = function ImportModal(_ref3) {
       width: 30,
       height: 30,
       cursor: 'pointer',
-      fontSize: 13,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center'
     }
-  }, "\u2715")), step === 'paste' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "close",
+    size: 13
+  }))), step === 'paste' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
     style: {
       fontFamily: "'Lora',serif",
       fontSize: 13,
@@ -764,7 +936,7 @@ var ImportModal = function ImportModal(_ref3) {
       color: '#c8773a',
       marginBottom: 12
     }
-  }, "\uD83D\uDCCD Getting address\u2026"), !form.name && /*#__PURE__*/React.createElement("div", {
+  }, "Getting address\u2026"), !form.name && /*#__PURE__*/React.createElement("div", {
     style: {
       background: 'rgba(200,119,58,0.1)',
       border: '1px solid rgba(200,119,58,0.25)',
@@ -867,7 +1039,7 @@ var ImportModal = function ImportModal(_ref3) {
       color: '#3d7a4f',
       margin: 0
     }
-  }, "\u2713 Coordinates found \u2014 will appear on map"))), /*#__PURE__*/React.createElement("div", {
+  }, "Coordinates found \u2014 will appear on map"))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       gap: 10,
@@ -904,18 +1076,18 @@ var ImportModal = function ImportModal(_ref3) {
       cursor: canSave ? 'pointer' : 'default',
       transition: 'all 0.2s'
     }
-  }, "\uD83D\uDCCD Pin It")))));
+  }, "Pin It")))));
 };
 
 // ── Detail panel ─────────────────────────────────────────────
-var DetailPanel = function DetailPanel(_ref4) {
+var DetailPanel = function DetailPanel(_ref5) {
   var _r$hours;
-  var r = _ref4.r,
-    onClose = _ref4.onClose,
-    onEdit = _ref4.onEdit,
-    onMarkVisited = _ref4.onMarkVisited,
-    onRate = _ref4.onRate,
-    onDelete = _ref4.onDelete;
+  var r = _ref5.r,
+    onClose = _ref5.onClose,
+    onEdit = _ref5.onEdit,
+    onMarkVisited = _ref5.onMarkVisited,
+    onRate = _ref5.onRate,
+    onDelete = _ref5.onDelete;
   var _useState9 = useState(false),
     _useState0 = _slicedToArray(_useState9, 2),
     hoursOpen = _useState0[0],
@@ -950,25 +1122,40 @@ var DetailPanel = function DetailPanel(_ref4) {
   });
   var actionBtns = [r.phone && {
     label: 'Call',
-    icon: '📞',
+    icon: /*#__PURE__*/React.createElement(Ic, {
+      n: "phone",
+      size: 22
+    }),
     fn: call
   }, {
     label: 'Directions',
-    icon: '🧭',
+    icon: /*#__PURE__*/React.createElement(Ic, {
+      n: "nav",
+      size: 22
+    }),
     fn: directions
   }, r.website && {
     label: 'Website',
-    icon: '🌐',
+    icon: /*#__PURE__*/React.createElement(Ic, {
+      n: "globe",
+      size: 22
+    }),
     fn: function fn() {
       return openUrl(r.website);
     }
   }, {
     label: 'Menu',
-    icon: '📋',
+    icon: /*#__PURE__*/React.createElement(Ic, {
+      n: "list",
+      size: 22
+    }),
     fn: menu
   }, {
     label: 'Share',
-    icon: '📤',
+    icon: /*#__PURE__*/React.createElement(Ic, {
+      n: "share",
+      size: 22
+    }),
     fn: share
   }].filter(Boolean);
   var row = function row(icon, content, onTap) {
@@ -988,10 +1175,11 @@ var DetailPanel = function DetailPanel(_ref4) {
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
-        fontSize: 19,
         flexShrink: 0,
         width: 24,
-        textAlign: 'center'
+        display: 'flex',
+        justifyContent: 'center',
+        color: 'rgba(60,35,14,0.45)'
       }
     }, icon), /*#__PURE__*/React.createElement("div", {
       style: {
@@ -1109,12 +1297,15 @@ var DetailPanel = function DetailPanel(_ref4) {
       justifyContent: 'center',
       border: '1px solid rgba(180,140,110,0.15)'
     }
-  }, /*#__PURE__*/React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("div", {
     style: {
-      fontSize: 44,
-      opacity: 0.25
+      opacity: 0.2,
+      color: '#8b6040'
     }
-  }, "\uD83C\uDF7D")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "pin",
+    size: 42
+  }))), /*#__PURE__*/React.createElement("div", {
     style: {
       padding: '18px 18px 14px',
       borderBottom: '1px solid rgba(180,140,110,0.13)'
@@ -1175,7 +1366,7 @@ var DetailPanel = function DetailPanel(_ref4) {
       fontSize: 13,
       color: r.status === 'visited' ? '#5a9a6a' : '#b8873a'
     }
-  }, r.status === 'visited' ? '✓ Visited' : '◎ Want to Try'))), /*#__PURE__*/React.createElement("div", {
+  }, r.status === 'visited' ? 'Visited' : 'To Visit'))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       gap: 10,
@@ -1200,13 +1391,10 @@ var DetailPanel = function DetailPanel(_ref4) {
         cursor: 'pointer',
         flexShrink: 0,
         minWidth: 68,
-        transition: 'background 0.15s'
+        transition: 'background 0.15s',
+        color: 'rgba(50,28,8,0.7)'
       }
-    }, /*#__PURE__*/React.createElement("span", {
-      style: {
-        fontSize: 22
-      }
-    }, b.icon), /*#__PURE__*/React.createElement("span", {
+    }, b.icon, /*#__PURE__*/React.createElement("span", {
       style: {
         fontFamily: "'Lora',serif",
         fontSize: 11,
@@ -1218,7 +1406,10 @@ var DetailPanel = function DetailPanel(_ref4) {
     style: {
       paddingBottom: 8
     }
-  }, r.location && row('📍', /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
+  }, r.location && row(/*#__PURE__*/React.createElement(Ic, {
+    n: "pin",
+    size: 17
+  }), /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
     style: {
       fontFamily: "'Lora',serif",
       fontSize: 14,
@@ -1254,12 +1445,16 @@ var DetailPanel = function DetailPanel(_ref4) {
     }
   }, /*#__PURE__*/React.createElement("span", {
     style: {
-      fontSize: 19,
       width: 24,
-      textAlign: 'center',
-      flexShrink: 0
+      display: 'flex',
+      justifyContent: 'center',
+      flexShrink: 0,
+      color: 'rgba(60,35,14,0.5)'
     }
-  }, "\uD83D\uDD50"), /*#__PURE__*/React.createElement("span", {
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "clock",
+    size: 17
+  })), /*#__PURE__*/React.createElement("span", {
     style: {
       fontFamily: "'Lora',serif",
       fontSize: 14,
@@ -1301,13 +1496,19 @@ var DetailPanel = function DetailPanel(_ref4) {
         fontWeight: 500
       }
     }, h.time));
-  }))), r.phone && row('📞', /*#__PURE__*/React.createElement("span", {
+  }))), r.phone && row(/*#__PURE__*/React.createElement(Ic, {
+    n: "phone",
+    size: 17
+  }), /*#__PURE__*/React.createElement("span", {
     style: {
       fontFamily: "'Lora',serif",
       fontSize: 14,
       color: '#c8773a'
     }
-  }, r.phone), call), r.website && row('🌐', /*#__PURE__*/React.createElement("span", {
+  }, r.phone), call), r.website && row(/*#__PURE__*/React.createElement(Ic, {
+    n: "globe",
+    size: 17
+  }), /*#__PURE__*/React.createElement("span", {
     style: {
       fontFamily: "'Lora',serif",
       fontSize: 14,
@@ -1319,7 +1520,10 @@ var DetailPanel = function DetailPanel(_ref4) {
     }
   }, r.website.replace(/^https?:\/\//, '')), function () {
     return openUrl(r.website);
-  }), r.note && row('💬', /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
+  }), r.note && row(/*#__PURE__*/React.createElement(Ic, {
+    n: "chat",
+    size: 17
+  }), /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
     style: {
       fontFamily: "'Lora',serif",
       fontSize: 12,
@@ -1334,7 +1538,10 @@ var DetailPanel = function DetailPanel(_ref4) {
       fontStyle: 'italic',
       lineHeight: 1.5
     }
-  }, "\"", r.note, "\""))), r.recommender && row('👤', /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
+  }, "\"", r.note, "\""))), r.recommender && row(/*#__PURE__*/React.createElement(Ic, {
+    n: "person",
+    size: 17
+  }), /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", {
     style: {
       fontFamily: "'Lora',serif",
       fontSize: 12,
@@ -1357,12 +1564,16 @@ var DetailPanel = function DetailPanel(_ref4) {
     }
   }, /*#__PURE__*/React.createElement("span", {
     style: {
-      fontSize: 19,
       width: 24,
-      textAlign: 'center',
-      flexShrink: 0
+      display: 'flex',
+      justifyContent: 'center',
+      flexShrink: 0,
+      color: 'rgba(60,35,14,0.5)'
     }
-  }, "\u2B50"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "star",
+    size: 17
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     style: {
       fontFamily: "'Lora',serif",
       fontSize: 12,
@@ -1400,7 +1611,7 @@ var DetailPanel = function DetailPanel(_ref4) {
       justifyContent: 'center',
       gap: 6
     }
-  }, "\u2713 Mark as Visited"), /*#__PURE__*/React.createElement("button", {
+  }, "Mark as Visited"), /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
       return onEdit(r);
     },
@@ -1413,9 +1624,16 @@ var DetailPanel = function DetailPanel(_ref4) {
       color: 'rgba(60,35,14,0.7)',
       fontFamily: "'DM Serif Display',serif",
       fontSize: 15,
-      cursor: 'pointer'
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 7
     }
-  }, "\u270F\uFE0F Edit"), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "edit",
+    size: 15
+  }), "Edit"), /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
       if (window.confirm('Remove "' + r.name + '"? This cannot be undone.')) onDelete(r.id);
     },
@@ -1424,23 +1642,24 @@ var DetailPanel = function DetailPanel(_ref4) {
       borderRadius: 14,
       background: 'rgba(180,60,60,0.08)',
       border: '1px solid rgba(180,60,60,0.2)',
-      color: 'rgba(160,50,50,0.75)',
-      fontFamily: "'DM Serif Display',serif",
-      fontSize: 15,
+      color: 'rgba(160,50,50,0.7)',
       cursor: 'pointer',
       minWidth: 52,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center'
     }
-  }, "\uD83D\uDDD1"))));
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "trash",
+    size: 16
+  })))));
 };
 
 // ── Add / Edit modal ─────────────────────────────────────────
-var EditModal = function EditModal(_ref5) {
-  var onClose = _ref5.onClose,
-    onSave = _ref5.onSave,
-    editData = _ref5.editData;
+var EditModal = function EditModal(_ref6) {
+  var onClose = _ref6.onClose,
+    onSave = _ref6.onSave,
+    editData = _ref6.editData;
   var _useState1 = useState(editData || {
       name: '',
       cuisine: 'Italian',
@@ -1547,12 +1766,14 @@ var EditModal = function EditModal(_ref5) {
       width: 30,
       height: 30,
       cursor: 'pointer',
-      fontSize: 13,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center'
     }
-  }, "\u2715")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "close",
+    size: 13
+  }))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: 'column',
@@ -1675,7 +1896,7 @@ var EditModal = function EditModal(_ref5) {
         cursor: 'pointer',
         transition: 'all 0.15s'
       }
-    }, s === 'want' ? '◎ Want to Try' : '✓ Been There');
+    }, s === 'want' ? 'To Visit' : 'Visited');
   }))), form.status === 'visited' && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     style: lbl
   }, "Your Rating"), /*#__PURE__*/React.createElement(StarRating, {
@@ -1723,9 +1944,9 @@ var EditModal = function EditModal(_ref5) {
 };
 
 // ── Card ─────────────────────────────────────────────────────
-var Card = function Card(_ref6) {
-  var r = _ref6.r,
-    onClick = _ref6.onClick;
+var Card = function Card(_ref7) {
+  var r = _ref7.r,
+    onClick = _ref7.onClick;
   function nav(e) {
     e.stopPropagation();
     var q = r.lat && r.lng ? "".concat(r.lat, ",").concat(r.lng) : encodeURIComponent([r.name, r.location].filter(Boolean).join(' '));
@@ -1810,7 +2031,7 @@ var Card = function Card(_ref6) {
       maxWidth: 110,
       display: 'inline-block'
     }
-  }, "\uD83D\uDCCD ", r.location))), r.note && /*#__PURE__*/React.createElement("p", {
+  }, r.location))), r.note && /*#__PURE__*/React.createElement("p", {
     style: {
       fontFamily: "'Lora',serif",
       fontSize: 11,
@@ -1829,17 +2050,17 @@ var Card = function Card(_ref6) {
       justifyContent: 'space-between',
       alignItems: 'center'
     }
-  }, /*#__PURE__*/React.createElement("span", {
+  }, r.recommender ? /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 10,
       color: 'rgba(100,70,40,0.4)',
       fontFamily: "'Lora',serif"
     }
-  }, "by ", /*#__PURE__*/React.createElement("span", {
+  }, "via ", /*#__PURE__*/React.createElement("span", {
     style: {
       color: '#c8773a'
     }
-  }, r.recommender)), /*#__PURE__*/React.createElement("div", {
+  }, r.recommender)) : /*#__PURE__*/React.createElement("span", null), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       gap: 4
@@ -1848,35 +2069,43 @@ var Card = function Card(_ref6) {
     onClick: nav,
     title: "Directions",
     style: {
-      padding: '4px 8px',
+      padding: '5px 7px',
       borderRadius: 6,
       background: 'rgba(200,119,58,0.12)',
       border: '1px solid rgba(200,119,58,0.2)',
       color: '#c8773a',
-      fontSize: 11,
-      cursor: 'pointer'
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center'
     }
-  }, "\uD83E\uDDED"), r.website && /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "nav",
+    size: 13
+  })), r.website && /*#__PURE__*/React.createElement("button", {
     onClick: site,
     title: "Website",
     style: {
-      padding: '4px 8px',
+      padding: '5px 7px',
       borderRadius: 6,
       background: 'rgba(180,140,110,0.1)',
       border: '1px solid rgba(180,140,110,0.2)',
       color: 'rgba(60,35,14,0.6)',
-      fontSize: 11,
-      cursor: 'pointer'
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center'
     }
-  }, "\uD83C\uDF10"))));
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "globe",
+    size: 13
+  })))));
 };
 
 // ── Column ───────────────────────────────────────────────────
-var Column = function Column(_ref7) {
-  var title = _ref7.title,
-    icon = _ref7.icon,
-    items = _ref7.items,
-    onCardClick = _ref7.onCardClick;
+var Column = function Column(_ref8) {
+  var title = _ref8.title,
+    icon = _ref8.icon,
+    items = _ref8.items,
+    onCardClick = _ref8.onCardClick;
   return /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1,
@@ -1889,11 +2118,7 @@ var Column = function Column(_ref7) {
       gap: 8,
       marginBottom: 12
     }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 13
-    }
-  }, icon), /*#__PURE__*/React.createElement("h2", {
+  }, /*#__PURE__*/React.createElement("h2", {
     style: {
       fontFamily: "'DM Serif Display',serif",
       fontSize: 15,
@@ -2058,15 +2283,15 @@ function App() {
               _context2.n = 6;
               break;
             }
-            safe = toInsert.map(function (_ref8) {
-              var id = _ref8.id,
-                name = _ref8.name,
-                cuisine = _ref8.cuisine,
-                location = _ref8.location,
-                recommended_by = _ref8.recommended_by,
-                notes = _ref8.notes,
-                visited = _ref8.visited,
-                rating = _ref8.rating;
+            safe = toInsert.map(function (_ref9) {
+              var id = _ref9.id,
+                name = _ref9.name,
+                cuisine = _ref9.cuisine,
+                location = _ref9.location,
+                recommended_by = _ref9.recommended_by,
+                notes = _ref9.notes,
+                visited = _ref9.visited,
+                rating = _ref9.rating;
               return {
                 id: id,
                 name: name || '',
@@ -2163,7 +2388,7 @@ function App() {
             setShowImport(false);
             setEditTarget(null);
             setDetail(null);
-            showToast(editTarget ? 'Updated!' : 'Pinned! 📍');
+            showToast(editTarget ? 'Updated' : 'Pinned');
             _context3.n = 10;
             return loadSpots();
           case 10:
@@ -2259,7 +2484,7 @@ function App() {
                 status: 'visited'
               }) : d;
             });
-            showToast('Marked as visited! ✓');
+            showToast('Marked as visited');
           case 3:
             return _context5.a(2);
         }
@@ -2305,7 +2530,7 @@ function App() {
                 status: 'visited'
               }) : d;
             });
-            showToast('★'.repeat(rating) + ' Saved!');
+            showToast(rating + '/5 — saved');
           case 3:
             return _context6.a(2);
         }
@@ -2445,7 +2670,10 @@ function App() {
       gap: 10,
       alignItems: 'center'
     }
-  }, "\u270F\uFE0F Add manually"), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "edit",
+    size: 15
+  }), "Add manually"), /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
       setShowAddMenu(false);
       setShowImport(true);
@@ -2465,7 +2693,10 @@ function App() {
       gap: 10,
       alignItems: 'center'
     }
-  }, "\uD83D\uDCCD Import from Google Maps"))), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "pin",
+    size: 15
+  }), "Import from Maps"))), /*#__PURE__*/React.createElement("div", {
     style: {
       textAlign: 'center',
       paddingBottom: 8
@@ -2504,10 +2735,10 @@ function App() {
     }
   }, [{
     k: 'home',
-    l: '🍽 List'
+    l: 'List'
   }, {
     k: 'map',
-    l: '🗺 Map'
+    l: 'Map'
   }].map(function (t) {
     return /*#__PURE__*/React.createElement("button", {
       key: t.k,
@@ -2572,13 +2803,11 @@ function App() {
       alignItems: 'flex-start'
     }
   }, /*#__PURE__*/React.createElement(Column, {
-    title: "Recommended",
-    icon: "\u25CE",
+    title: "To Visit",
     items: wantList,
     onCardClick: setDetail
   }), /*#__PURE__*/React.createElement(Column, {
     title: "Visited",
-    icon: "\u2713",
     items: visitedList,
     onCardClick: setDetail
   }))), tab === 'map' && !loading && /*#__PURE__*/React.createElement(MapView, {

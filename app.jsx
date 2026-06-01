@@ -95,6 +95,27 @@ async function nominatimReverse(lat, lng) {
   } catch(e){ return ''; }
 }
 
+// ── SVG icon helper ─────────────────────────────────────────
+const Ic = ({n, size=18}) => {
+  const p = {
+    phone:  <path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 014 6a2 2 0 012-2z"/>,
+    nav:    <><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5,12 12,5 19,12"/></>,
+    globe:  <><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 000 18M12 3a14 14 0 010 18"/></>,
+    list:   <><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1" fill="currentColor" stroke="none"/></>,
+    share:  <><circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><line x1="8.59" y1="10.51" x2="15.42" y2="6.49"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.51"/></>,
+    pin:    <><path d="M12 2a7 7 0 017 7c0 5-7 13-7 13S5 14 5 9a7 7 0 017-7z"/><circle cx="12" cy="9" r="2.5"/></>,
+    clock:  <><circle cx="12" cy="12" r="9"/><polyline points="12,7 12,12 15,14"/></>,
+    chat:   <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>,
+    person: <><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></>,
+    star:   <polygon points="12,2 15.1,8.3 22,9.3 17,14.1 18.2,21 12,17.8 5.8,21 7,14.1 2,9.3 8.9,8.3"/>,
+    edit:   <><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></>,
+    trash:  <><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></>,
+    close:  <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>,
+    aim:    <><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></>,
+  };
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">{p[n]}</svg>;
+};
+
 // ── StarRating ───────────────────────────────────────────────
 const StarRating = ({ value, onChange, readonly, size=16 }) => (
   <div style={{display:'flex',gap:'2px'}}>
@@ -139,7 +160,7 @@ const MapView = ({ spots, onMarkerClick }) => {
       });
       const mk = L.marker([r.lat,r.lng],{icon})
         .addTo(map.current)
-        .bindPopup(`<div style="font-family:serif;min-width:140px"><strong style="font-size:14px">${r.name}</strong><br/><span style="font-size:11px;color:${bg}">${r.cuisine}</span>${r.location?`<br/><span style="font-size:11px;color:#666">📍 ${r.location}</span>`:''}</div>`);
+        .bindPopup(`<div style="font-family:serif;min-width:140px"><strong style="font-size:14px">${r.name}</strong><br/><span style="font-size:11px;color:${bg}">${r.cuisine}</span>${r.location?`<br/><span style="font-size:11px;color:#666">${r.location}</span>`:''}</div>`);
       mk.on('click',()=>{ mk.openPopup(); onMarkerClick(r); });
       marks.current[r.id]=mk;
       bounds.push([r.lat,r.lng]);
@@ -160,9 +181,9 @@ const MapView = ({ spots, onMarkerClick }) => {
           const {latitude:lat,longitude:lng}=pos.coords;
           map.current.setView([lat,lng],15);
           if (locateMarker.current) locateMarker.current.remove();
-          locateMarker.current=L.circleMarker([lat,lng],{radius:8,fillColor:'#4a90d9',color:'#fff',weight:2.5,opacity:1,fillOpacity:1}).addTo(map.current).bindPopup('📍 You are here');
+          locateMarker.current=L.circleMarker([lat,lng],{radius:8,fillColor:'#4a90d9',color:'#fff',weight:2.5,opacity:1,fillOpacity:1}).addTo(map.current).bindPopup('You are here');
         },()=>alert('Location access denied. Please allow location in your browser settings.'));
-      }} style={{position:'absolute',bottom:24,left:12,zIndex:1000,background:'rgba(255,248,240,0.95)',backdropFilter:'blur(12px)',WebkitBackdropFilter:'blur(12px)',border:'1px solid rgba(180,140,110,0.3)',borderRadius:10,padding:'9px 14px',fontFamily:"'Lora',serif",fontSize:13,color:'#1e0e04',cursor:'pointer',boxShadow:'0 2px 12px rgba(0,0,0,0.12)',display:'flex',alignItems:'center',gap:6}}>🎯 Locate Me</button>
+      }} style={{position:'absolute',bottom:24,left:12,zIndex:1000,background:'rgba(255,248,240,0.95)',backdropFilter:'blur(12px)',WebkitBackdropFilter:'blur(12px)',border:'1px solid rgba(180,140,110,0.3)',borderRadius:10,padding:'9px 14px',fontFamily:"'Lora',serif",fontSize:13,color:'#1e0e04',cursor:'pointer',boxShadow:'0 2px 12px rgba(0,0,0,0.12)',display:'flex',alignItems:'center',gap:6}}><Ic n="aim" size={15}/>Locate Me</button>
       {/* Legend */}
       <div style={{position:'absolute',top:12,right:12,background:'rgba(255,248,240,0.92)',backdropFilter:'blur(12px)',borderRadius:12,padding:'10px 14px',border:'1px solid rgba(180,140,110,0.2)',zIndex:1000,boxShadow:'0 2px 12px rgba(0,0,0,0.1)'}}>
         <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
@@ -290,7 +311,7 @@ const ImportModal = ({ onClose, onImport }) => {
           <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:20,color:'#1e0e04',margin:0}}>
             {step==='paste'?'Import from Google Maps':'Confirm Details'}
           </h2>
-          <button onClick={onClose} style={{background:'rgba(180,140,110,0.15)',border:'1px solid rgba(180,140,110,0.25)',color:'rgba(100,70,40,0.5)',borderRadius:'50%',width:30,height:30,cursor:'pointer',fontSize:13,display:'flex',alignItems:'center',justifyContent:'center'}}>✕</button>
+          <button onClick={onClose} style={{background:'rgba(180,140,110,0.15)',border:'1px solid rgba(180,140,110,0.25)',color:'rgba(100,70,40,0.5)',borderRadius:'50%',width:30,height:30,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}><Ic n="close" size={13}/></button>
         </div>
 
         {step==='paste' && (<>
@@ -314,7 +335,7 @@ const ImportModal = ({ onClose, onImport }) => {
         </>)}
 
         {step==='preview' && form && (<>
-          {busy&&<p style={{fontFamily:"'Lora',serif",fontSize:12,color:'#c8773a',marginBottom:12}}>📍 Getting address…</p>}
+          {busy&&<p style={{fontFamily:"'Lora',serif",fontSize:12,color:'#c8773a',marginBottom:12}}>Getting address…</p>}
           {!form.name&&<div style={{background:'rgba(200,119,58,0.1)',border:'1px solid rgba(200,119,58,0.25)',borderRadius:10,padding:'9px 12px',marginBottom:4}}>
             <p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(140,80,20,0.85)',margin:0,lineHeight:1.5}}>Couldn't auto-fill the name. Type it below to pin.</p>
           </div>}
@@ -333,13 +354,13 @@ const ImportModal = ({ onClose, onImport }) => {
             <div><label style={lbl}>Notes</label><textarea style={{...inp,resize:'vertical',minHeight:60}} value={form.note} onChange={e=>set('note',e.target.value)} placeholder="What to order, tips…"/></div>
             {form.lat&&form.lng&&(
               <div style={{background:'rgba(90,154,106,0.1)',border:'1px solid rgba(90,154,106,0.25)',borderRadius:10,padding:'9px 12px'}}>
-                <p style={{fontFamily:"'Lora',serif",fontSize:12,color:'#3d7a4f',margin:0}}>✓ Coordinates found — will appear on map</p>
+                <p style={{fontFamily:"'Lora',serif",fontSize:12,color:'#3d7a4f',margin:0}}>Coordinates found — will appear on map</p>
               </div>
             )}
           </div>
           <div style={{display:'flex',gap:10,marginTop:20}}>
             <button onClick={()=>setStep('paste')} style={{flex:1,padding:11,borderRadius:10,background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.2)',color:'rgba(100,70,40,0.5)',fontFamily:"'DM Serif Display',serif",fontSize:14,cursor:'pointer'}}>← Back</button>
-            <button onClick={()=>canSave&&onImport(form)} style={{flex:2,padding:11,borderRadius:10,background:canSave?'#2c1f14':'rgba(180,140,110,0.12)',border:'none',color:canSave?'#fdf8f3':'rgba(100,70,40,0.3)',fontFamily:"'DM Serif Display',serif",fontSize:14,cursor:canSave?'pointer':'default',transition:'all 0.2s'}}>📍 Pin It</button>
+            <button onClick={()=>canSave&&onImport(form)} style={{flex:2,padding:11,borderRadius:10,background:canSave?'#2c1f14':'rgba(180,140,110,0.12)',border:'none',color:canSave?'#fdf8f3':'rgba(100,70,40,0.3)',fontFamily:"'DM Serif Display',serif",fontSize:14,cursor:canSave?'pointer':'default',transition:'all 0.2s'}}>Pin It</button>
           </div>
         </>)}
       </div>
@@ -372,16 +393,16 @@ const DetailPanel = ({ r, onClose, onEdit, onMarkVisited, onRate, onDelete }) =>
 
   const photos = (r.photos||[]).filter(p=>typeof p==='string'&&p.startsWith('http'));
   const actionBtns = [
-    r.phone&&{label:'Call',icon:'📞',fn:call},
-    {label:'Directions',icon:'🧭',fn:directions},
-    r.website&&{label:'Website',icon:'🌐',fn:()=>openUrl(r.website)},
-    {label:'Menu',icon:'📋',fn:menu},
-    {label:'Share',icon:'📤',fn:share},
+    r.phone&&{label:'Call',icon:<Ic n="phone" size={22}/>,fn:call},
+    {label:'Directions',icon:<Ic n="nav" size={22}/>,fn:directions},
+    r.website&&{label:'Website',icon:<Ic n="globe" size={22}/>,fn:()=>openUrl(r.website)},
+    {label:'Menu',icon:<Ic n="list" size={22}/>,fn:menu},
+    {label:'Share',icon:<Ic n="share" size={22}/>,fn:share},
   ].filter(Boolean);
 
   const row = (icon,content,onTap) => (
     <button onClick={onTap||undefined} style={{width:'100%',display:'flex',alignItems:'center',gap:16,padding:'15px 18px',background:'none',border:'none',cursor:onTap?'pointer':'default',textAlign:'left',borderBottom:'1px solid rgba(180,140,110,0.12)'}}>
-      <span style={{fontSize:19,flexShrink:0,width:24,textAlign:'center'}}>{icon}</span>
+      <span style={{flexShrink:0,width:24,display:'flex',justifyContent:'center',color:'rgba(60,35,14,0.45)'}}>{icon}</span>
       <div style={{flex:1,minWidth:0}}>{content}</div>
       {onTap&&<span style={{color:'rgba(100,70,40,0.3)',fontSize:16,flexShrink:0}}>›</span>}
     </button>
@@ -407,7 +428,7 @@ const DetailPanel = ({ r, onClose, onEdit, onMarkVisited, onRate, onDelete }) =>
           </div>
         ):(
           <div style={{margin:'10px 18px 0',height:130,background:'linear-gradient(135deg,rgba(200,160,120,0.18),rgba(200,160,120,0.08))',borderRadius:14,display:'flex',alignItems:'center',justifyContent:'center',border:'1px solid rgba(180,140,110,0.15)'}}>
-            <span style={{fontSize:44,opacity:0.25}}>🍽</span>
+            <div style={{opacity:0.2,color:'#8b6040'}}><Ic n="pin" size={42}/></div>
           </div>
         )}
 
@@ -419,15 +440,15 @@ const DetailPanel = ({ r, onClose, onEdit, onMarkVisited, onRate, onDelete }) =>
             {r.priceRange&&<><span style={{fontFamily:"'Lora',serif",fontSize:13,color:'rgba(100,70,40,0.65)'}}>{r.priceRange}</span><span style={{color:'rgba(120,80,40,0.35)'}}>·</span></>}
             <span style={{fontFamily:"'Lora',serif",fontSize:13,color:'#c8773a'}}>{r.cuisine}</span>
             <span style={{color:'rgba(120,80,40,0.35)'}}>·</span>
-            <span style={{fontFamily:"'Lora',serif",fontSize:13,color:r.status==='visited'?'#5a9a6a':'#b8873a'}}>{r.status==='visited'?'✓ Visited':'◎ Want to Try'}</span>
+            <span style={{fontFamily:"'Lora',serif",fontSize:13,color:r.status==='visited'?'#5a9a6a':'#b8873a'}}>{r.status==='visited'?'Visited':'To Visit'}</span>
           </div>
         </div>
 
         {/* Action buttons */}
         <div style={{display:'flex',gap:10,padding:'14px 18px',overflowX:'auto',borderBottom:'1px solid rgba(180,140,110,0.13)',WebkitOverflowScrolling:'touch'}}>
           {actionBtns.map(b=>(
-            <button key={b.label} onClick={b.fn} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:7,background:'rgba(200,160,120,0.13)',border:'1px solid rgba(180,140,110,0.22)',borderRadius:16,padding:'13px 18px',cursor:'pointer',flexShrink:0,minWidth:68,transition:'background 0.15s'}}>
-              <span style={{fontSize:22}}>{b.icon}</span>
+            <button key={b.label} onClick={b.fn} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:7,background:'rgba(200,160,120,0.13)',border:'1px solid rgba(180,140,110,0.22)',borderRadius:16,padding:'13px 18px',cursor:'pointer',flexShrink:0,minWidth:68,transition:'background 0.15s',color:'rgba(50,28,8,0.7)'}}>
+              {b.icon}
               <span style={{fontFamily:"'Lora',serif",fontSize:11,color:'rgba(50,28,8,0.75)',whiteSpace:'nowrap'}}>{b.label}</span>
             </button>
           ))}
@@ -436,7 +457,7 @@ const DetailPanel = ({ r, onClose, onEdit, onMarkVisited, onRate, onDelete }) =>
         {/* Info rows */}
         <div style={{paddingBottom:8}}>
 
-          {r.location&&row('📍',
+          {r.location&&row(<Ic n="pin" size={17}/>,
             <><p style={{fontFamily:"'Lora',serif",fontSize:14,color:'#1e0e04'}}>{r.location}</p><p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(100,70,40,0.45)',marginTop:1}}>Open in Google Maps</p></>,
             openInMaps
           )}
@@ -444,7 +465,7 @@ const DetailPanel = ({ r, onClose, onEdit, onMarkVisited, onRate, onDelete }) =>
           {r.hours?.length>0&&(
             <div style={{borderBottom:'1px solid rgba(180,140,110,0.12)'}}>
               <button onClick={()=>setHoursOpen(v=>!v)} style={{width:'100%',display:'flex',alignItems:'center',gap:16,padding:'15px 18px',background:'none',border:'none',cursor:'pointer',textAlign:'left'}}>
-                <span style={{fontSize:19,width:24,textAlign:'center',flexShrink:0}}>🕐</span>
+                <span style={{width:24,display:'flex',justifyContent:'center',flexShrink:0,color:'rgba(60,35,14,0.5)'}}><Ic n="clock" size={17}/></span>
                 <span style={{fontFamily:"'Lora',serif",fontSize:14,color:'#1e0e04',flex:1}}>Hours</span>
                 <span style={{color:'rgba(100,70,40,0.4)',fontSize:14,transition:'transform 0.2s',display:'inline-block',transform:hoursOpen?'rotate(90deg)':'none'}}>›</span>
               </button>
@@ -461,27 +482,27 @@ const DetailPanel = ({ r, onClose, onEdit, onMarkVisited, onRate, onDelete }) =>
             </div>
           )}
 
-          {r.phone&&row('📞',
+          {r.phone&&row(<Ic n="phone" size={17}/>,
             <span style={{fontFamily:"'Lora',serif",fontSize:14,color:'#c8773a'}}>{r.phone}</span>,
             call
           )}
 
-          {r.website&&row('🌐',
+          {r.website&&row(<Ic n="globe" size={17}/>,
             <span style={{fontFamily:"'Lora',serif",fontSize:14,color:'#c8773a',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',display:'block'}}>{r.website.replace(/^https?:\/\//,'')}</span>,
             ()=>openUrl(r.website)
           )}
 
-          {r.note&&row('💬',
+          {r.note&&row(<Ic n="chat" size={17}/>,
             <><p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(100,70,40,0.45)',marginBottom:3}}>Note{r.recommender?' from '+r.recommender:''}</p><p style={{fontFamily:"'Lora',serif",fontSize:14,color:'rgba(30,14,4,0.8)',fontStyle:'italic',lineHeight:1.5}}>"{r.note}"</p></>
           )}
 
-          {r.recommender&&row('👤',
+          {r.recommender&&row(<Ic n="person" size={17}/>,
             <><p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(100,70,40,0.45)',marginBottom:2}}>Recommended by</p><p style={{fontFamily:"'Lora',serif",fontSize:14,color:'#1e0e04'}}>{r.recommender}</p></>
           )}
 
           {/* Your rating */}
           <div style={{display:'flex',alignItems:'center',gap:16,padding:'15px 18px',borderBottom:'1px solid rgba(180,140,110,0.12)'}}>
-            <span style={{fontSize:19,width:24,textAlign:'center',flexShrink:0}}>⭐</span>
+            <span style={{width:24,display:'flex',justifyContent:'center',flexShrink:0,color:'rgba(60,35,14,0.5)'}}><Ic n="star" size={17}/></span>
             <div>
               <p style={{fontFamily:"'Lora',serif",fontSize:12,color:'rgba(100,70,40,0.45)',marginBottom:6}}>Your rating</p>
               <StarRating value={r.rating} onChange={v=>onRate(r.id,v)} size={28}/>
@@ -492,10 +513,10 @@ const DetailPanel = ({ r, onClose, onEdit, onMarkVisited, onRate, onDelete }) =>
         {/* Bottom actions */}
         <div style={{display:'flex',gap:10,padding:'12px 18px 36px'}}>
           {r.status==='want'&&(
-            <button onClick={()=>onMarkVisited(r.id)} style={{flex:2,padding:14,borderRadius:14,background:'rgba(90,154,106,0.15)',border:'1.5px solid rgba(90,154,106,0.3)',color:'#3d7a4f',fontFamily:"'DM Serif Display',serif",fontSize:15,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>✓ Mark as Visited</button>
+            <button onClick={()=>onMarkVisited(r.id)} style={{flex:2,padding:14,borderRadius:14,background:'rgba(90,154,106,0.15)',border:'1.5px solid rgba(90,154,106,0.3)',color:'#3d7a4f',fontFamily:"'DM Serif Display',serif",fontSize:15,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>Mark as Visited</button>
           )}
-          <button onClick={()=>onEdit(r)} style={{flex:1,padding:14,borderRadius:14,background:'rgba(180,140,110,0.12)',border:'1px solid rgba(180,140,110,0.25)',color:'rgba(60,35,14,0.7)',fontFamily:"'DM Serif Display',serif",fontSize:15,cursor:'pointer'}}>✏️ Edit</button>
-          <button onClick={()=>{ if(window.confirm('Remove "'+r.name+'"? This cannot be undone.')) onDelete(r.id); }} style={{padding:14,borderRadius:14,background:'rgba(180,60,60,0.08)',border:'1px solid rgba(180,60,60,0.2)',color:'rgba(160,50,50,0.75)',fontFamily:"'DM Serif Display',serif",fontSize:15,cursor:'pointer',minWidth:52,display:'flex',alignItems:'center',justifyContent:'center'}}>🗑</button>
+          <button onClick={()=>onEdit(r)} style={{flex:1,padding:14,borderRadius:14,background:'rgba(180,140,110,0.12)',border:'1px solid rgba(180,140,110,0.25)',color:'rgba(60,35,14,0.7)',fontFamily:"'DM Serif Display',serif",fontSize:15,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:7}}><Ic n="edit" size={15}/>Edit</button>
+          <button onClick={()=>{ if(window.confirm('Remove "'+r.name+'"? This cannot be undone.')) onDelete(r.id); }} style={{padding:14,borderRadius:14,background:'rgba(180,60,60,0.08)',border:'1px solid rgba(180,60,60,0.2)',color:'rgba(160,50,50,0.7)',cursor:'pointer',minWidth:52,display:'flex',alignItems:'center',justifyContent:'center'}}><Ic n="trash" size={16}/></button>
         </div>
       </div>
     </div>
@@ -518,7 +539,7 @@ const EditModal = ({ onClose, onSave, editData }) => {
       <div style={{width:'100%',maxWidth:440,maxHeight:'88vh',overflowY:'auto',borderRadius:22,background:'rgba(255,248,240,0.92)',backdropFilter:'blur(32px)',WebkitBackdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.7)',boxShadow:'0 24px 64px rgba(30,14,4,0.2)',padding:28,animation:'slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)'}} onClick={e=>e.stopPropagation()}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:22}}>
           <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:20,color:'#1e0e04',margin:0}}>{editData?'Edit Restaurant':'Add Manually'}</h2>
-          <button onClick={onClose} style={{background:'rgba(180,140,110,0.15)',border:'1px solid rgba(180,140,110,0.25)',color:'rgba(100,70,40,0.5)',borderRadius:'50%',width:30,height:30,cursor:'pointer',fontSize:13,display:'flex',alignItems:'center',justifyContent:'center'}}>✕</button>
+          <button onClick={onClose} style={{background:'rgba(180,140,110,0.15)',border:'1px solid rgba(180,140,110,0.25)',color:'rgba(100,70,40,0.5)',borderRadius:'50%',width:30,height:30,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}><Ic n="close" size={13}/></button>
         </div>
         <div style={{display:'flex',flexDirection:'column',gap:13}}>
           <div><label style={lbl}>Restaurant Name *</label><input style={inp} value={form.name} onChange={e=>set('name',e.target.value)} placeholder="e.g. Chez Pierre"/></div>
@@ -538,7 +559,7 @@ const EditModal = ({ onClose, onSave, editData }) => {
             <div style={{display:'flex',gap:10}}>
               {['want','visited'].map(s=>(
                 <button key={s} onClick={()=>set('status',s)} style={{flex:1,padding:10,borderRadius:10,border:`1.5px solid ${form.status===s?'#c8773a':'rgba(180,140,110,0.25)'}`,background:form.status===s?'rgba(200,119,58,0.1)':'transparent',color:form.status===s?'#c8773a':'rgba(100,70,40,0.45)',fontFamily:"'DM Serif Display',serif",fontSize:13,cursor:'pointer',transition:'all 0.15s'}}>
-                  {s==='want'?'◎ Want to Try':'✓ Been There'}
+                  {s==='want'?'To Visit':'Visited'}
                 </button>
               ))}
             </div>
@@ -576,14 +597,14 @@ const Card = ({ r, onClick }) => {
       </div>
       <div style={{display:'flex',gap:4,alignItems:'center',flexWrap:'wrap',marginBottom:6}}>
         <span style={{fontSize:10,color:'#c8773a',fontFamily:"'Lora',serif",letterSpacing:'0.05em'}}>{r.cuisine}</span>
-        {r.location&&<><span style={{color:'rgba(120,80,40,0.3)',fontSize:9}}>·</span><span style={{fontSize:10,color:'rgba(100,70,40,0.45)',fontFamily:"'Lora',serif",overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:110,display:'inline-block'}}>📍 {r.location}</span></>}
+        {r.location&&<><span style={{color:'rgba(120,80,40,0.3)',fontSize:9}}>·</span><span style={{fontSize:10,color:'rgba(100,70,40,0.45)',fontFamily:"'Lora',serif",overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:110,display:'inline-block'}}>{r.location}</span></>}
       </div>
       {r.note&&<p style={{fontFamily:"'Lora',serif",fontSize:11,color:'rgba(60,35,14,0.5)',margin:'0 0 8px',fontStyle:'italic',lineHeight:1.4,overflow:'hidden',display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical'}}>"{r.note}"</p>}
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-        <span style={{fontSize:10,color:'rgba(100,70,40,0.4)',fontFamily:"'Lora',serif"}}>by <span style={{color:'#c8773a'}}>{r.recommender}</span></span>
+        {r.recommender?<span style={{fontSize:10,color:'rgba(100,70,40,0.4)',fontFamily:"'Lora',serif"}}>via <span style={{color:'#c8773a'}}>{r.recommender}</span></span>:<span/>}
         <div style={{display:'flex',gap:4}}>
-          <button onClick={nav} title="Directions" style={{padding:'4px 8px',borderRadius:6,background:'rgba(200,119,58,0.12)',border:'1px solid rgba(200,119,58,0.2)',color:'#c8773a',fontSize:11,cursor:'pointer'}}>🧭</button>
-          {r.website&&<button onClick={site} title="Website" style={{padding:'4px 8px',borderRadius:6,background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.2)',color:'rgba(60,35,14,0.6)',fontSize:11,cursor:'pointer'}}>🌐</button>}
+          <button onClick={nav} title="Directions" style={{padding:'5px 7px',borderRadius:6,background:'rgba(200,119,58,0.12)',border:'1px solid rgba(200,119,58,0.2)',color:'#c8773a',cursor:'pointer',display:'flex',alignItems:'center'}}><Ic n="nav" size={13}/></button>
+          {r.website&&<button onClick={site} title="Website" style={{padding:'5px 7px',borderRadius:6,background:'rgba(180,140,110,0.1)',border:'1px solid rgba(180,140,110,0.2)',color:'rgba(60,35,14,0.6)',cursor:'pointer',display:'flex',alignItems:'center'}}><Ic n="globe" size={13}/></button>}
         </div>
       </div>
     </div>
@@ -594,7 +615,6 @@ const Card = ({ r, onClick }) => {
 const Column = ({ title, icon, items, onCardClick }) => (
   <div style={{flex:1,minWidth:0}}>
     <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
-      <span style={{fontSize:13}}>{icon}</span>
       <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:15,color:'#1e0e04',margin:0,flex:1}}>{title}</h2>
       <span style={{fontSize:11,fontFamily:"'Lora',serif",color:'rgba(100,70,40,0.4)',background:'rgba(180,140,110,0.15)',borderRadius:20,padding:'2px 8px'}}>{items.length}</span>
     </div>
@@ -677,7 +697,7 @@ function App() {
     }
     if (error) { showToast('Save failed: '+error.message); return; }
     setShowEdit(false); setShowImport(false); setEditTarget(null); setDetail(null);
-    showToast(editTarget?'Updated!':'Pinned! 📍');
+    showToast(editTarget?'Updated':'Pinned');
     await loadSpots();
   }
 
@@ -708,7 +728,7 @@ function App() {
     if (error) { showToast('Update failed'); return; }
     setRestaurants(rs=>rs.map(r=>r.id===id?{...r,status:'visited'}:r));
     setDetail(d=>d?.id===id?{...d,status:'visited'}:d);
-    showToast('Marked as visited! ✓');
+    showToast('Marked as visited');
   }
 
   async function handleRate(id,rating) {
@@ -716,7 +736,7 @@ function App() {
     if (error) { showToast('Rating failed'); return; }
     setRestaurants(rs=>rs.map(r=>r.id===id?{...r,rating,status:'visited'}:r));
     setDetail(d=>d?.id===id?{...d,rating,status:'visited'}:d);
-    showToast('★'.repeat(rating)+' Saved!');
+    showToast(rating+'/5 — saved');
   }
 
   async function handleDelete(id) {
@@ -753,8 +773,8 @@ function App() {
             <button onClick={()=>setShowAddMenu(v=>!v)} style={{background:'#2c1f14',color:'#fdf8f3',border:'none',borderRadius:10,padding:'8px 15px',fontFamily:"'DM Serif Display',serif",fontSize:13,cursor:'pointer',letterSpacing:'0.03em',boxShadow:'0 3px 10px rgba(30,14,4,0.22)'}}>+ Add</button>
             {showAddMenu&&(
               <div style={{position:'absolute',top:'calc(100% + 8px)',right:0,background:'rgba(255,248,240,0.96)',backdropFilter:'blur(20px)',borderRadius:12,border:'1px solid rgba(180,140,110,0.25)',boxShadow:'0 8px 32px rgba(30,14,4,0.15)',padding:6,zIndex:100,minWidth:190,animation:'slideUp 0.15s ease'}} onClick={e=>e.stopPropagation()}>
-                <button onClick={()=>{setShowAddMenu(false);setEditTarget(null);setShowEdit(true);}} style={{width:'100%',padding:'10px 14px',border:'none',background:'none',textAlign:'left',fontFamily:"'Lora',serif",fontSize:13,color:'#1e0e04',cursor:'pointer',borderRadius:8,display:'flex',gap:10,alignItems:'center'}}>✏️ Add manually</button>
-                <button onClick={()=>{setShowAddMenu(false);setShowImport(true);}} style={{width:'100%',padding:'10px 14px',border:'none',background:'none',textAlign:'left',fontFamily:"'Lora',serif",fontSize:13,color:'#1e0e04',cursor:'pointer',borderRadius:8,display:'flex',gap:10,alignItems:'center'}}>📍 Import from Google Maps</button>
+                <button onClick={()=>{setShowAddMenu(false);setEditTarget(null);setShowEdit(true);}} style={{width:'100%',padding:'10px 14px',border:'none',background:'none',textAlign:'left',fontFamily:"'Lora',serif",fontSize:13,color:'#1e0e04',cursor:'pointer',borderRadius:8,display:'flex',gap:10,alignItems:'center'}}><Ic n="edit" size={15}/>Add manually</button>
+                <button onClick={()=>{setShowAddMenu(false);setShowImport(true);}} style={{width:'100%',padding:'10px 14px',border:'none',background:'none',textAlign:'left',fontFamily:"'Lora',serif",fontSize:13,color:'#1e0e04',cursor:'pointer',borderRadius:8,display:'flex',gap:10,alignItems:'center'}}><Ic n="pin" size={15}/>Import from Maps</button>
               </div>
             )}
           </div>
@@ -768,7 +788,7 @@ function App() {
           {/* Tab toggle – centred below logo */}
           <div style={{display:'flex',justifyContent:'center',marginBottom:tab==='home'?10:0}}>
             <div style={{display:'flex',background:'rgba(180,140,110,0.15)',borderRadius:10,padding:3,border:'1px solid rgba(180,140,110,0.2)'}}>
-              {[{k:'home',l:'🍽 List'},{k:'map',l:'🗺 Map'}].map(t=>(
+              {[{k:'home',l:'List'},{k:'map',l:'Map'}].map(t=>(
                 <button key={t.k} onClick={()=>setTab(t.k)} style={{padding:'6px 16px',borderRadius:8,border:'none',cursor:'pointer',fontFamily:"'Lora',serif",fontSize:13,transition:'all 0.15s',background:tab===t.k?'rgba(255,248,240,0.9)':'transparent',color:tab===t.k?'#1e0e04':'rgba(100,70,40,0.5)',boxShadow:tab===t.k?'0 1px 4px rgba(30,14,4,0.1)':'none'}}>{t.l}</button>
               ))}
             </div>
@@ -786,8 +806,8 @@ function App() {
             <div style={{textAlign:'center',padding:'60px 0'}}><p style={{fontFamily:"'Lora',serif",fontSize:15,color:'rgba(60,35,14,0.4)'}}>Loading…</p></div>
           ):(
             <div style={{display:'flex',gap:14,alignItems:'flex-start'}}>
-              <Column title="Recommended" icon="◎" items={wantList} onCardClick={setDetail}/>
-              <Column title="Visited" icon="✓" items={visitedList} onCardClick={setDetail}/>
+              <Column title="To Visit" items={wantList} onCardClick={setDetail}/>
+              <Column title="Visited" items={visitedList} onCardClick={setDetail}/>
             </div>
           )}
         </div>
