@@ -1096,6 +1096,17 @@ const PENDING_SPOTS = [
     hours: ['Monday: Closed','Tuesday: 5–9 PM','Wednesday: 5–9 PM','Thursday: 5–9 PM','Friday: 5–9 PM','Saturday: 5–9 PM','Sunday: Closed'],
     lat: 49.2471, lng: -123.1016,
   },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440019',
+    name: "Kang's Kitchen",
+    cuisine: 'Korean',
+    location: '329 North Rd #240, Coquitlam, BC',
+    recommended_by: '',
+    notes: 'Korean · samgyeopsal & traditional BBQ · Open late · $20-30 per person · Hanin Village · New management',
+    visited: false,
+    price_range: '$20-30',
+    lat: 49.2435, lng: -122.8951,
+  },
 ];
 
 // ── App ──────────────────────────────────────────────────────
