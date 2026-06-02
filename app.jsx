@@ -1102,9 +1102,11 @@ const PENDING_SPOTS = [
     cuisine: 'Korean',
     location: '329 North Rd #240, Coquitlam, BC',
     recommended_by: '',
-    notes: 'Korean · samgyeopsal & traditional BBQ · Open late · $20-30 per person · Hanin Village · New management',
+    notes: 'Korean · handmade noodles · seafood pancake · Open late · $20-30 per person · Hanin Village',
     visited: false,
     price_range: '$20-30',
+    phone: '604-492-3737',
+    website: 'https://kangskitchen.ca',
     lat: 49.2435, lng: -122.8951,
   },
 ];
