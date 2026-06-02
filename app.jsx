@@ -1109,6 +1109,19 @@ const PENDING_SPOTS = [
     website: 'https://kangskitchen.ca',
     lat: 49.2435, lng: -122.8951,
   },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440021',
+    name: 'Pizzeria Spacca Napoli',
+    cuisine: 'Italian',
+    location: '2801 St Johns St, Port Moody, BC',
+    recommended_by: '',
+    notes: 'Awarded Canada\'s best pizza for 3rd year in a row · family-run Neapolitan pizzeria · outdoor seating · great cocktails',
+    visited: false,
+    price_range: '$20-30',
+    phone: '604-939-5800',
+    website: 'https://www.pizzeriaspaccanapoli.com',
+    lat: 49.2831, lng: -122.8312,
+  },
 ];
 
 // ── App ──────────────────────────────────────────────────────
