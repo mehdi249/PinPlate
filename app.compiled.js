@@ -3106,12 +3106,12 @@ var PENDING_SPOTS = [{
   lat: 49.2471,
   lng: -123.1016
 }, {
-  id: '550e8400-e29b-41d4-a716-446655440019',
+  id: '550e8400-e29b-41d4-a716-446655440020',
   name: "Kang's Kitchen",
   cuisine: 'Korean',
   location: '329 North Rd #240, Coquitlam, BC',
   recommended_by: '',
-  notes: 'Korean · handmade noodles · seafood pancake · Open late · $20-30 per person · Hanin Village',
+  notes: 'Korean · handmade noodles · seafood pancake · Open late · Hanin Village',
   visited: false,
   price_range: '$20-30',
   phone: '604-492-3737',
