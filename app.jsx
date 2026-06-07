@@ -1161,6 +1161,19 @@ const PENDING_SPOTS = [
     website: 'https://theonggi.ca',
     lat: 49.2502, lng: -122.8958,
   },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440025',
+    name: 'Bukchon',
+    cuisine: 'Korean',
+    location: '1564 Lonsdale Ave, North Vancouver, BC',
+    recommended_by: '',
+    notes: 'Korean · outdoor seating · vegan options · Wi-Fi · closes 11pm',
+    visited: false,
+    price_range: '$20-30',
+    phone: '778-689-2616',
+    website: 'https://bukchon.ca',
+    lat: 49.3271, lng: -123.0725,
+  },
 ];
 
 // ── App ──────────────────────────────────────────────────────
