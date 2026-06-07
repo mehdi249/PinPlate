@@ -3157,6 +3157,19 @@ var PENDING_SPOTS = [{
   website: 'http://gahyangru.ca',
   lat: 49.3196,
   lng: -123.0726
+}, {
+  id: '550e8400-e29b-41d4-a716-446655440024',
+  name: 'Onggi Korean Cuisine',
+  cuisine: 'Korean',
+  location: '4501 North Rd #103, Burnaby, BC',
+  recommended_by: '',
+  notes: 'Korean · Korea Town Center · vegan options · Wi-Fi · best price on website',
+  visited: false,
+  price_range: '$20-30',
+  phone: '604-420-0277',
+  website: 'https://theonggi.ca',
+  lat: 49.2502,
+  lng: -122.8958
 }];
 
 // ── App ──────────────────────────────────────────────────────
