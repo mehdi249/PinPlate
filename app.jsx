@@ -361,7 +361,7 @@ const ImportModal = ({ onClose, onImport }) => {
   const canSave = form?.name?.trim();
 
   return (
-    <div style={{position:'fixed',inset:0,zIndex:300,background:'rgba(10,5,0,0.45)',backdropFilter:'blur(6px)',WebkitBackdropFilter:'blur(6px)',display:'flex',alignItems:'center',justifyContent:'center',padding:20,animation:'fadeIn 0.2s ease'}} onClick={onClose}>
+    <div style={{position:'fixed',inset:0,zIndex:2000,background:'rgba(10,5,0,0.45)',backdropFilter:'blur(6px)',WebkitBackdropFilter:'blur(6px)',display:'flex',alignItems:'center',justifyContent:'center',padding:20,animation:'fadeIn 0.2s ease'}} onClick={onClose}>
       <div style={{width:'100%',maxWidth:420,maxHeight:'88vh',overflowY:'auto',borderRadius:20,background:C.hi,boxShadow:'0 24px 60px rgba(0,0,0,0.18)',padding:28,animation:'slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)'}} onClick={e=>e.stopPropagation()}>
 
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:22}}>
@@ -472,7 +472,7 @@ const DetailPanel = ({ r, onClose, onEdit, onMarkVisited, onRate, onDelete }) =>
   );
 
   return (
-    <div style={{position:'fixed',inset:0,zIndex:200,background:'rgba(10,5,0,0.35)',backdropFilter:'blur(4px)',WebkitBackdropFilter:'blur(4px)',animation:'fadeIn 0.2s ease'}} onClick={onClose}>
+    <div style={{position:'fixed',inset:0,zIndex:2000,background:'rgba(10,5,0,0.35)',backdropFilter:'blur(4px)',WebkitBackdropFilter:'blur(4px)',animation:'fadeIn 0.2s ease'}} onClick={onClose}>
       <div style={{position:'fixed',bottom:0,left:0,right:0,maxHeight:'92vh',borderRadius:'22px 22px 0 0',background:C.hi,boxShadow:'0 -4px 40px rgba(0,0,0,0.14)',display:'flex',flexDirection:'column',animation:'slideUp 0.3s cubic-bezier(0.34,1.1,0.64,1)'}} onClick={e=>e.stopPropagation()}>
 
         {/* Scrollable body */}
@@ -605,7 +605,7 @@ const EditModal = ({ onClose, onSave, editData }) => {
   const lbl={display:'block',fontFamily:C.ui,fontSize:11,fontWeight:600,letterSpacing:'0.05em',color:C.dim,marginBottom:5,textTransform:'uppercase'};
   const ok=form.name.trim();
   return (
-    <div style={{position:'fixed',inset:0,zIndex:300,background:'rgba(10,5,0,0.45)',backdropFilter:'blur(6px)',WebkitBackdropFilter:'blur(6px)',display:'flex',alignItems:'center',justifyContent:'center',padding:20,animation:'fadeIn 0.2s ease'}} onClick={onClose}>
+    <div style={{position:'fixed',inset:0,zIndex:2000,background:'rgba(10,5,0,0.45)',backdropFilter:'blur(6px)',WebkitBackdropFilter:'blur(6px)',display:'flex',alignItems:'center',justifyContent:'center',padding:20,animation:'fadeIn 0.2s ease'}} onClick={onClose}>
       <div style={{width:'100%',maxWidth:420,maxHeight:'88vh',overflowY:'auto',borderRadius:20,background:C.hi,boxShadow:'0 24px 60px rgba(0,0,0,0.18)',padding:28,animation:'slideUp 0.25s cubic-bezier(0.34,1.4,0.64,1)'}} onClick={e=>e.stopPropagation()}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:22}}>
           <h2 style={{fontFamily:C.display,fontSize:21,color:C.text,margin:0}}>{editData?'Edit Restaurant':'Add Manually'}</h2>

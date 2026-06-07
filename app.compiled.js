@@ -993,7 +993,7 @@ var ImportModal = function ImportModal(_ref5) {
     style: {
       position: 'fixed',
       inset: 0,
-      zIndex: 300,
+      zIndex: 2000,
       background: 'rgba(10,5,0,0.45)',
       backdropFilter: 'blur(6px)',
       WebkitBackdropFilter: 'blur(6px)',
@@ -1420,7 +1420,7 @@ var DetailPanel = function DetailPanel(_ref6) {
     style: {
       position: 'fixed',
       inset: 0,
-      zIndex: 200,
+      zIndex: 2000,
       background: 'rgba(10,5,0,0.35)',
       backdropFilter: 'blur(4px)',
       WebkitBackdropFilter: 'blur(4px)',
@@ -1950,7 +1950,7 @@ var EditModal = function EditModal(_ref7) {
     style: {
       position: 'fixed',
       inset: 0,
-      zIndex: 300,
+      zIndex: 2000,
       background: 'rgba(10,5,0,0.45)',
       backdropFilter: 'blur(6px)',
       WebkitBackdropFilter: 'blur(6px)',
