@@ -3196,6 +3196,19 @@ var PENDING_SPOTS = [{
   website: 'http://www.arrivarestaurant.ca',
   lat: 49.2712,
   lng: -123.0694
+}, {
+  id: '550e8400-e29b-41d4-a716-446655440027',
+  name: 'Zoomak Korean Tavern',
+  cuisine: 'Korean',
+  location: '52 Alexander St, Vancouver, BC',
+  recommended_by: '',
+  notes: 'Korean share plates & snacks · lunch specials & cocktails · outdoor seating · vegan options · Gastown',
+  visited: false,
+  price_range: '$20-30',
+  phone: '604-620-1240',
+  website: 'https://www.zoomakyvr.com',
+  lat: 49.2839,
+  lng: -123.1043
 }];
 
 // ── App ──────────────────────────────────────────────────────
