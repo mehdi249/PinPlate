@@ -4,7 +4,7 @@ const SUPABASE_URL = 'https://biafijftxhealzmmwsmk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpYWZpamZ0eGhlYWx6bW13c21rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTQ3NjYsImV4cCI6MjA5NTgzMDc2Nn0.el4_ujwNYvbYdFtvzAEooKd1SvZlJd5YGVdlGlSo6Q8';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const CUISINES = ["American","Brazilian","Caribbean","Chinese","Ethiopian","Filipino","French","Greek","Hawaiian","Indian","Indonesian","Italian","Japanese","Korean","Lebanese","Malaysian","Mediterranean","Mexican","Middle Eastern","Moroccan","Peruvian","Spanish","Taiwanese","Thai","Turkish","Vietnamese","Other"];
+const CUISINES = ["American","Brazilian","Cambodian","Caribbean","Chinese","Ethiopian","Filipino","French","Greek","Hawaiian","Indian","Indonesian","Italian","Japanese","Korean","Lebanese","Malaysian","Mediterranean","Mexican","Middle Eastern","Moroccan","Peruvian","Spanish","Taiwanese","Thai","Turkish","Vietnamese","Other"];
 
 // Design tokens
 const C = {
@@ -1199,6 +1199,19 @@ const PENDING_SPOTS = [
     phone: '604-620-1240',
     website: 'https://www.zoomakyvr.com',
     lat: 49.2839, lng: -123.1043,
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440028',
+    name: 'Touk Contemporary Cambodian',
+    cuisine: 'Cambodian',
+    location: '1152 Alberni St, Vancouver, BC',
+    recommended_by: '',
+    notes: 'Contemporary Cambodian · $100+ per person · vegan options · Wi-Fi · Downtown Vancouver',
+    visited: false,
+    price_range: '$100+',
+    phone: '604-428-2808',
+    website: 'https://www.toukyvr.com',
+    lat: 49.2853, lng: -123.1241,
   },
 ];
 
