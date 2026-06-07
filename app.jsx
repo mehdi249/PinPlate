@@ -1174,6 +1174,19 @@ const PENDING_SPOTS = [
     website: 'https://bukchon.ca',
     lat: 49.3271, lng: -123.0725,
   },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440026',
+    name: 'Arriva Ristorante',
+    cuisine: 'Italian',
+    location: '1537 Commercial Dr, Vancouver, BC',
+    recommended_by: '',
+    notes: 'Italian · whole wheat, gluten-free & vegetarian pastas · outdoor seating · private dining room',
+    visited: false,
+    price_range: '$30-70',
+    phone: '604-251-1177',
+    website: 'http://www.arrivarestaurant.ca',
+    lat: 49.2712, lng: -123.0694,
+  },
 ];
 
 // ── App ──────────────────────────────────────────────────────
