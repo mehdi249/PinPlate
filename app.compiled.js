@@ -3131,6 +3131,19 @@ var PENDING_SPOTS = [{
   website: 'https://www.pizzeriaspaccanapoli.com',
   lat: 49.2831,
   lng: -122.8312
+}, {
+  id: '550e8400-e29b-41d4-a716-446655440022',
+  name: 'South Castle Korean Restaurant',
+  cuisine: 'Korean',
+  location: '141 E 2nd St, North Vancouver, BC',
+  recommended_by: '',
+  notes: 'Korean · outdoor seating · Wi-Fi · closes 9pm · no reservations',
+  visited: false,
+  price_range: '$20-30',
+  phone: '604-960-0612',
+  website: 'http://www.southcastlekorean.com',
+  lat: 49.3101,
+  lng: -123.0739
 }];
 
 // ── App ──────────────────────────────────────────────────────
