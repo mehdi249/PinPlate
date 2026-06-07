@@ -3144,6 +3144,19 @@ var PENDING_SPOTS = [{
   website: 'http://www.southcastlekorean.com',
   lat: 49.3101,
   lng: -123.0739
+}, {
+  id: '550e8400-e29b-41d4-a716-446655440023',
+  name: 'Ga Hyang Ru',
+  cuisine: 'Korean',
+  location: '1205 Lonsdale Ave, North Vancouver, BC',
+  recommended_by: '',
+  notes: 'Korean-Chinese fusion · stir-fries, noodles & soups · seasonal patio · vegetarian options · closes 10pm',
+  visited: false,
+  price_range: '$20-30',
+  phone: '604-929-1231',
+  website: 'http://gahyangru.ca',
+  lat: 49.3196,
+  lng: -123.0726
 }];
 
 // ── App ──────────────────────────────────────────────────────
