@@ -87,7 +87,36 @@ function parseGoogleMapsHtml(html) {
     html.match(/["']placeName["']\s*:\s*["']([^"']{2,80})["']/)?.[1]?.trim() || '';
   const latM = html.match(/"latitude"\s*:\s*(-?\d+\.\d+)/) || html.match(/itemprop="latitude"[^>]+content="(-?\d+\.\d+)"/i);
   const lngM = html.match(/"longitude"\s*:\s*(-?\d+\.\d+)/) || html.match(/itemprop="longitude"[^>]+content="(-?\d+\.\d+)"/i);
-  return { name, lat: latM?parseFloat(latM[1]):null, lng: lngM?parseFloat(lngM[1]):null };
+  return { name, lat: latM?parseFloat(latM[1]):null, lng: lngM?parseFloat(lngM[1]):null, photos: extractPhotoUrls(html) };
+}
+
+// Pulls place/review photo URLs out of a Google Maps page's raw HTML —
+// these are the same images shown in the Photos tab / review gallery.
+function extractPhotoUrls(html) {
+  if (!html) return [];
+  const matches = html.match(/https:\/\/lh3\.googleusercontent\.com\/p\/[A-Za-z0-9_-]+/g) || [];
+  const uniq = [...new Set(matches)];
+  return uniq.slice(0, 9).map(u => u + '=w700-h700-k-no');
+}
+
+// Fetches a URL's HTML from the browser, routing around CORS via the same
+// fallback chain used to resolve shortened Maps links.
+async function fetchHtmlViaProxies(url) {
+  const race = p => Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000))]);
+  try {
+    const r = await race(fetch(url));
+    const t = await r.text();
+    if (t) return t;
+  } catch(e) {}
+  try {
+    const d = await race(fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`).then(r=>r.json()));
+    if (d.contents) return d.contents;
+  } catch(e) {}
+  try {
+    const t = await race(fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`).then(r=>r.text()));
+    if (t) return t;
+  } catch(e) {}
+  return '';
 }
 
 function extractMapsUrlFromFdl(html) {
@@ -345,10 +374,14 @@ const ImportModal = ({ onClose, onImport }) => {
     };
     let location = '';
     if (parsed.lat && parsed.lng) location = await nominatimReverse(parsed.lat, parsed.lng);
+    let photos = htmlData.photos || [];
+    if (!photos.length) {
+      try { photos = extractPhotoUrls(await fetchHtmlViaProxies(resolved)); } catch(e) {}
+    }
     const base = {
       name:parsed.name||'', cuisine:'Other', location,
       recommender:'', note:'', status:'want', rating:null, priceRange:'',
-      phone:'', website:'', menuUrl:'', hours:[], photos:[], reviews:[],
+      phone:'', website:'', menuUrl:'', hours:[], photos, reviews:[],
       lat:parsed.lat, lng:parsed.lng, googleMapsUrl:rawUrl,
     };
     if (isShort && parsed.name) { onImport(base); }
@@ -657,6 +690,9 @@ const Card = ({ r, onClick, isPriority, priorityNum, priorityTotal, onTogglePrio
   const isVisited = r.status === 'visited';
   const accent    = isVisited ? C.sage  : C.amber;
   const accentBg  = isVisited ? C.sageBg : C.amberBg;
+  const accentBd  = isVisited ? C.sageBd : C.amberBd;
+  const [imgError, setImgError] = useState(false);
+  const photo = !imgError && (r.photos||[]).find(p=>typeof p==='string'&&p.startsWith('http'));
 
   function nav(e) {
     e.stopPropagation();
@@ -674,49 +710,61 @@ const Card = ({ r, onClick, isPriority, priorityNum, priorityTotal, onTogglePrio
       onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-1px)';e.currentTarget.style.boxShadow=isPriority?'0 6px 20px rgba(192,112,48,0.18)':'0 4px 16px rgba(0,0,0,0.09)';}}
       onMouseLeave={e=>{e.currentTarget.style.transform='';e.currentTarget.style.boxShadow=isPriority?'0 2px 12px rgba(192,112,48,0.13)':'0 1px 3px rgba(0,0,0,0.05),0 3px 10px rgba(0,0,0,0.04)';}}>
 
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
-        <div style={{flex:1,paddingRight:8,display:'flex',alignItems:'flex-start',gap:7}}>
-          {isPriority&&priorityNum&&(
-            <div style={{flexShrink:0,display:'flex',alignItems:'center',gap:3,marginTop:1}}>
-              <span style={{minWidth:18,height:18,borderRadius:9,background:C.amber,color:'#fff',fontFamily:C.ui,fontSize:10,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',padding:'0 5px'}}>{priorityNum}</span>
-              <div style={{display:'flex',flexDirection:'column',gap:1}}>
-                <button onClick={e=>{e.stopPropagation();onMoveUp&&onMoveUp();}} disabled={priorityNum===1} style={{background:'none',border:'none',padding:0,cursor:priorityNum===1?'default':'pointer',lineHeight:1,opacity:priorityNum===1?0.25:0.7}}>
-                  <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke={C.amber} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="18,15 12,9 6,15"/></svg>
-                </button>
-                <button onClick={e=>{e.stopPropagation();onMoveDown&&onMoveDown();}} disabled={priorityNum===priorityTotal} style={{background:'none',border:'none',padding:0,cursor:priorityNum===priorityTotal?'default':'pointer',lineHeight:1,opacity:priorityNum===priorityTotal?0.25:0.7}}>
-                  <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke={C.amber} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6,9 12,15 18,9"/></svg>
-                </button>
-              </div>
+      <div style={{display:'flex',gap:13,alignItems:'flex-start'}}>
+        <div style={{flex:1,minWidth:0}}>
+
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
+            <div style={{flex:1,paddingRight:8,display:'flex',alignItems:'flex-start',gap:7}}>
+              {isPriority&&priorityNum&&(
+                <div style={{flexShrink:0,display:'flex',alignItems:'center',gap:3,marginTop:1}}>
+                  <span style={{minWidth:18,height:18,borderRadius:9,background:C.amber,color:'#fff',fontFamily:C.ui,fontSize:10,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',padding:'0 5px'}}>{priorityNum}</span>
+                  <div style={{display:'flex',flexDirection:'column',gap:1}}>
+                    <button onClick={e=>{e.stopPropagation();onMoveUp&&onMoveUp();}} disabled={priorityNum===1} style={{background:'none',border:'none',padding:0,cursor:priorityNum===1?'default':'pointer',lineHeight:1,opacity:priorityNum===1?0.25:0.7}}>
+                      <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke={C.amber} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="18,15 12,9 6,15"/></svg>
+                    </button>
+                    <button onClick={e=>{e.stopPropagation();onMoveDown&&onMoveDown();}} disabled={priorityNum===priorityTotal} style={{background:'none',border:'none',padding:0,cursor:priorityNum===priorityTotal?'default':'pointer',lineHeight:1,opacity:priorityNum===priorityTotal?0.25:0.7}}>
+                      <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke={C.amber} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6,9 12,15 18,9"/></svg>
+                    </button>
+                  </div>
+                </div>
+              )}
+              <h3 style={{fontFamily:C.display,fontSize:17,color:C.text,margin:0,lineHeight:1.25}}>{r.name}</h3>
             </div>
-          )}
-          <h3 style={{fontFamily:C.display,fontSize:17,color:C.text,margin:0,lineHeight:1.25}}>{r.name}</h3>
+            {isVisited&&r.rating
+              ?<StarRating value={r.rating} readonly size={11}/>
+              :!isVisited&&(
+                <button onClick={e=>{e.stopPropagation();onTogglePriority&&onTogglePriority();}} style={{background:'none',border:'none',padding:'1px 0 0',cursor:'pointer',flexShrink:0,lineHeight:1}}>
+                  <svg width={17} height={17} viewBox="0 0 24 24" fill={isPriority?C.amber:'none'} stroke={isPriority?C.amber:'rgba(168,144,122,0.35)'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="12,2 15.1,8.3 22,9.3 17,14.1 18.2,21 12,17.8 5.8,21 7,14.1 2,9.3 8.9,8.3"/>
+                  </svg>
+                </button>
+              )
+            }
+          </div>
+
+          <div style={{display:'flex',gap:7,alignItems:'center',flexWrap:'wrap',marginBottom:r.note?8:10}}>
+            <span style={{fontFamily:C.ui,fontSize:11,fontWeight:500,color:accent,background:accentBg,borderRadius:20,padding:'2px 9px'}}>{r.cuisine}</span>
+            {r.location&&<span style={{fontFamily:C.ui,fontSize:11,color:C.dim}}>{r.location}</span>}
+          </div>
+
+          {r.note&&<p style={{fontFamily:C.ui,fontSize:12,color:'#8a7060',margin:'0 0 10px',lineHeight:1.5,overflow:'hidden',display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',fontStyle:'italic'}}>"{r.note}"</p>}
+
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            {r.recommender
+              ?<span style={{fontFamily:C.ui,fontSize:11,color:C.dim}}>via <span style={{color:C.amber,fontWeight:500}}>{r.recommender}</span></span>
+              :<span/>}
+            <div style={{display:'flex',gap:4}}>
+              <button onClick={nav} title="Directions" style={{padding:'5px 7px',borderRadius:7,background:C.amberBg,border:`1px solid ${C.amberBd}`,color:C.amber,cursor:'pointer',display:'flex',alignItems:'center'}}><Ic n="nav" size={13}/></button>
+              {r.website&&<button onClick={site} title="Website" style={{padding:'5px 7px',borderRadius:7,background:C.surface,border:`1px solid ${C.bd}`,color:C.mid,cursor:'pointer',display:'flex',alignItems:'center'}}><Ic n="globe" size={13}/></button>}
+            </div>
+          </div>
+
         </div>
-        {isVisited&&r.rating
-          ?<StarRating value={r.rating} readonly size={11}/>
-          :!isVisited&&(
-            <button onClick={e=>{e.stopPropagation();onTogglePriority&&onTogglePriority();}} style={{background:'none',border:'none',padding:'1px 0 0',cursor:'pointer',flexShrink:0,lineHeight:1}}>
-              <svg width={17} height={17} viewBox="0 0 24 24" fill={isPriority?C.amber:'none'} stroke={isPriority?C.amber:'rgba(168,144,122,0.35)'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="12,2 15.1,8.3 22,9.3 17,14.1 18.2,21 12,17.8 5.8,21 7,14.1 2,9.3 8.9,8.3"/>
-              </svg>
-            </button>
-          )
-        }
-      </div>
 
-      <div style={{display:'flex',gap:7,alignItems:'center',flexWrap:'wrap',marginBottom:r.note?8:10}}>
-        <span style={{fontFamily:C.ui,fontSize:11,fontWeight:500,color:accent,background:accentBg,borderRadius:20,padding:'2px 9px'}}>{r.cuisine}</span>
-        {r.location&&<span style={{fontFamily:C.ui,fontSize:11,color:C.dim}}>{r.location}</span>}
-      </div>
-
-      {r.note&&<p style={{fontFamily:C.ui,fontSize:12,color:'#8a7060',margin:'0 0 10px',lineHeight:1.5,overflow:'hidden',display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',fontStyle:'italic'}}>"{r.note}"</p>}
-
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-        {r.recommender
-          ?<span style={{fontFamily:C.ui,fontSize:11,color:C.dim}}>via <span style={{color:C.amber,fontWeight:500}}>{r.recommender}</span></span>
-          :<span/>}
-        <div style={{display:'flex',gap:4}}>
-          <button onClick={nav} title="Directions" style={{padding:'5px 7px',borderRadius:7,background:C.amberBg,border:`1px solid ${C.amberBd}`,color:C.amber,cursor:'pointer',display:'flex',alignItems:'center'}}><Ic n="nav" size={13}/></button>
-          {r.website&&<button onClick={site} title="Website" style={{padding:'5px 7px',borderRadius:7,background:C.surface,border:`1px solid ${C.bd}`,color:C.mid,cursor:'pointer',display:'flex',alignItems:'center'}}><Ic n="globe" size={13}/></button>}
+        <div style={{width:88,height:88,borderRadius:13,flexShrink:0,overflow:'hidden',background:accentBg,border:`1px solid ${accentBd}`,display:'flex',alignItems:'center',justifyContent:'center'}}>
+          {photo
+            ?<img src={photo} alt="" onError={()=>setImgError(true)} style={{width:'100%',height:'100%',objectFit:'cover'}}/>
+            :<span style={{color:accent,opacity:0.4}}><Ic n="pin" size={26}/></span>}
         </div>
       </div>
     </div>
@@ -1328,6 +1376,30 @@ function App() {
   }
 
   useEffect(()=>{ if (session) loadSpots(); },[session]);
+
+  // Quietly backfill photos for spots that don't have any yet, a few at a
+  // time so the feed fills in with real images without hammering the
+  // free CORS proxies used to read Google Maps pages.
+  useEffect(()=>{
+    if (loading) return;
+    let cancelled = false;
+    (async () => {
+      const targets = restaurants.filter(r=>!(r.photos&&r.photos.length)).slice(0,15);
+      for (const r of targets) {
+        if (cancelled) return;
+        const mapsUrl = r.googleMapsUrl || `https://www.google.com/maps/place/${encodeURIComponent([r.name,r.location].filter(Boolean).join(', '))}`;
+        try {
+          const photos = extractPhotoUrls(await fetchHtmlViaProxies(mapsUrl));
+          if (photos.length) {
+            await sb.from('spots').update({photos}).eq('id',r.id);
+            if (!cancelled) setRestaurants(rs=>rs.map(x=>x.id===r.id?{...x,photos}:x));
+          }
+        } catch(e) {}
+        await new Promise(res=>setTimeout(res,1000));
+      }
+    })();
+    return ()=>{ cancelled = true; };
+  },[loading]);
 
   const filtered = useMemo(()=>{
     const q=search.toLowerCase();

@@ -1,8 +1,6 @@
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
-function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _regeneratorValues(e) { if (null != e) { var t = e["function" == typeof Symbol && Symbol.iterator || "@@iterator"], r = 0; if (t) return t.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) return { next: function next() { return e && r >= e.length && (e = void 0), { value: e && e[r++], done: !e }; } }; } throw new TypeError(_typeof(e) + " is not iterable"); }
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t.return || t.return(); } finally { if (u) throw o; } } }; }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i.return) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -12,12 +10,16 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 var _React = React,
   useState = _React.useState,
   useMemo = _React.useMemo,
@@ -138,8 +140,104 @@ function parseGoogleMapsHtml(html) {
   return {
     name: name,
     lat: latM ? parseFloat(latM[1]) : null,
-    lng: lngM ? parseFloat(lngM[1]) : null
+    lng: lngM ? parseFloat(lngM[1]) : null,
+    photos: extractPhotoUrls(html)
   };
+}
+
+// Pulls place/review photo URLs out of a Google Maps page's raw HTML —
+// these are the same images shown in the Photos tab / review gallery.
+function extractPhotoUrls(html) {
+  if (!html) return [];
+  var matches = html.match(/https:\/\/lh3\.googleusercontent\.com\/p\/[A-Za-z0-9_-]+/g) || [];
+  var uniq = _toConsumableArray(new Set(matches));
+  return uniq.slice(0, 9).map(function (u) {
+    return u + '=w700-h700-k-no';
+  });
+}
+
+// Fetches a URL's HTML from the browser, routing around CORS via the same
+// fallback chain used to resolve shortened Maps links.
+function fetchHtmlViaProxies(_x) {
+  return _fetchHtmlViaProxies.apply(this, arguments);
+}
+function _fetchHtmlViaProxies() {
+  _fetchHtmlViaProxies = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee0(url) {
+    var race, r, t, d, _t12, _t13, _t14, _t15;
+    return _regenerator().w(function (_context1) {
+      while (1) switch (_context1.p = _context1.n) {
+        case 0:
+          race = function race(p) {
+            return Promise.race([p, new Promise(function (_, rej) {
+              return setTimeout(function () {
+                return rej(new Error('timeout'));
+              }, 8000);
+            })]);
+          };
+          _context1.p = 1;
+          _context1.n = 2;
+          return race(fetch(url));
+        case 2:
+          r = _context1.v;
+          _context1.n = 3;
+          return r.text();
+        case 3:
+          t = _context1.v;
+          if (!t) {
+            _context1.n = 4;
+            break;
+          }
+          return _context1.a(2, t);
+        case 4:
+          _context1.n = 6;
+          break;
+        case 5:
+          _context1.p = 5;
+          _t13 = _context1.v;
+        case 6:
+          _context1.p = 6;
+          _context1.n = 7;
+          return race(fetch("https://api.allorigins.win/get?url=".concat(encodeURIComponent(url))).then(function (r) {
+            return r.json();
+          }));
+        case 7:
+          d = _context1.v;
+          if (!d.contents) {
+            _context1.n = 8;
+            break;
+          }
+          return _context1.a(2, d.contents);
+        case 8:
+          _context1.n = 10;
+          break;
+        case 9:
+          _context1.p = 9;
+          _t14 = _context1.v;
+        case 10:
+          _context1.p = 10;
+          _context1.n = 11;
+          return race(fetch("https://corsproxy.io/?".concat(encodeURIComponent(url))).then(function (r) {
+            return r.text();
+          }));
+        case 11:
+          _t12 = _context1.v;
+          if (!_t12) {
+            _context1.n = 12;
+            break;
+          }
+          return _context1.a(2, _t12);
+        case 12:
+          _context1.n = 14;
+          break;
+        case 13:
+          _context1.p = 13;
+          _t15 = _context1.v;
+        case 14:
+          return _context1.a(2, '');
+      }
+    }, _callee0, null, [[10, 13], [6, 9], [1, 5]]);
+  }));
+  return _fetchHtmlViaProxies.apply(this, arguments);
 }
 function extractMapsUrlFromFdl(html) {
   var patterns = [/href="(https:\/\/(?:www\.)?google\.com\/maps\/place\/[^"]+)"/, /content="(https:\/\/(?:www\.)?google\.com\/maps\/place\/[^"]+)"/, /content="(https:\/\/maps\.(?:app\.)?goo\.gl\/[^"]+)"/, /"(https:\/\/(?:www\.)?google\.com\/maps\/place\/[^"]{20,})"/, /href="(https:\/\/maps\.google\.com\/maps\/place\/[^"]+)"/, /destinationUrl["'\s]*:["'\s]*(https:\/\/[^"'\s,]+google\.com\/maps\/place\/[^"'\s,]+)/];
@@ -150,36 +248,36 @@ function extractMapsUrlFromFdl(html) {
   }
   return null;
 }
-function nominatimReverse(_x, _x2) {
+function nominatimReverse(_x2, _x3) {
   return _nominatimReverse.apply(this, arguments);
 } // ── SVG icons ────────────────────────────────────────────────
 function _nominatimReverse() {
-  _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee9(lat, lng) {
-    var r, d, a, _t9;
-    return _regenerator().w(function (_context9) {
-      while (1) switch (_context9.p = _context9.n) {
+  _nominatimReverse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee1(lat, lng) {
+    var r, d, a, _t16;
+    return _regenerator().w(function (_context10) {
+      while (1) switch (_context10.p = _context10.n) {
         case 0:
-          _context9.p = 0;
-          _context9.n = 1;
+          _context10.p = 0;
+          _context10.n = 1;
           return fetch("https://nominatim.openstreetmap.org/reverse?lat=".concat(lat, "&lon=").concat(lng, "&format=json"), {
             headers: {
               'Accept-Language': 'en'
             }
           });
         case 1:
-          r = _context9.v;
-          _context9.n = 2;
+          r = _context10.v;
+          _context10.n = 2;
           return r.json();
         case 2:
-          d = _context9.v;
+          d = _context10.v;
           a = d.address || {};
-          return _context9.a(2, [a.road, a.neighbourhood || a.suburb, a.city || a.town || a.village, a.country].filter(Boolean).slice(0, 3).join(', '));
+          return _context10.a(2, [a.road, a.neighbourhood || a.suburb, a.city || a.town || a.village, a.country].filter(Boolean).slice(0, 3).join(', '));
         case 3:
-          _context9.p = 3;
-          _t9 = _context9.v;
-          return _context9.a(2, '');
+          _context10.p = 3;
+          _t16 = _context10.v;
+          return _context10.a(2, '');
       }
-    }, _callee9, null, [[0, 3]]);
+    }, _callee1, null, [[0, 3]]);
   }));
   return _nominatimReverse.apply(this, arguments);
 }
@@ -764,7 +862,7 @@ var ImportModal = function ImportModal(_ref5) {
   function _handleParse() {
     _handleParse = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
       var _urlData$lat, _urlData$lng;
-      var rawUrl, isMapsGoo, isShort, resolved, htmlData, race, debugUrl, resp, html, mapsUrl, d, _mapsUrl, _html, _mapsUrl2, _resp, _d$status, _d, _html2, m, urlData, parsed, location, base, _t, _t2, _t3, _t4, _t5, _t6, _t7, _t8;
+      var rawUrl, isMapsGoo, isShort, resolved, htmlData, race, debugUrl, resp, html, mapsUrl, d, _mapsUrl, _html, _mapsUrl2, _resp, _d$status, _d, _html2, m, urlData, parsed, location, photos, base, _t, _t2, _t3, _t4, _t5, _t6, _t7, _t8, _t9, _t0;
       return _regenerator().w(function (_context) {
         while (1) switch (_context.p = _context.n) {
           case 0:
@@ -933,6 +1031,23 @@ var ImportModal = function ImportModal(_ref5) {
           case 29:
             location = _context.v;
           case 30:
+            photos = htmlData.photos || [];
+            if (photos.length) {
+              _context.n = 34;
+              break;
+            }
+            _context.p = 31;
+            _t9 = extractPhotoUrls;
+            _context.n = 32;
+            return fetchHtmlViaProxies(resolved);
+          case 32:
+            photos = _t9(_context.v);
+            _context.n = 34;
+            break;
+          case 33:
+            _context.p = 33;
+            _t0 = _context.v;
+          case 34:
             base = {
               name: parsed.name || '',
               cuisine: 'Other',
@@ -946,7 +1061,7 @@ var ImportModal = function ImportModal(_ref5) {
               website: '',
               menuUrl: '',
               hours: [],
-              photos: [],
+              photos: photos,
               reviews: [],
               lat: parsed.lat,
               lng: parsed.lng,
@@ -959,10 +1074,10 @@ var ImportModal = function ImportModal(_ref5) {
               setStep('preview');
             }
             setBusy(false);
-          case 31:
+          case 35:
             return _context.a(2);
         }
-      }, _callee, null, [[25, 27], [22, 24], [16, 18], [14, 20], [10, 12], [7, 9], [2, 5]]);
+      }, _callee, null, [[31, 33], [25, 27], [22, 24], [16, 18], [14, 20], [10, 12], [7, 9], [2, 5]]);
     }));
     return _handleParse.apply(this, arguments);
   }
@@ -2202,6 +2317,14 @@ var Card = function Card(_ref8) {
   var isVisited = r.status === 'visited';
   var accent = isVisited ? C.sage : C.amber;
   var accentBg = isVisited ? C.sageBg : C.amberBg;
+  var accentBd = isVisited ? C.sageBd : C.amberBd;
+  var _useState13 = useState(false),
+    _useState14 = _slicedToArray(_useState13, 2),
+    imgError = _useState14[0],
+    setImgError = _useState14[1];
+  var photo = !imgError && (r.photos || []).find(function (p) {
+    return typeof p === 'string' && p.startsWith('http');
+  });
   function nav(e) {
     e.stopPropagation();
     var q = r.lat && r.lng ? "".concat(r.lat, ",").concat(r.lng) : encodeURIComponent([r.name, r.location].filter(Boolean).join(' '));
@@ -2229,6 +2352,17 @@ var Card = function Card(_ref8) {
     onMouseLeave: function onMouseLeave(e) {
       e.currentTarget.style.transform = '';
       e.currentTarget.style.boxShadow = isPriority ? '0 2px 12px rgba(192,112,48,0.13)' : '0 1px 3px rgba(0,0,0,0.05),0 3px 10px rgba(0,0,0,0.04)';
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 13,
+      alignItems: 'flex-start'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      minWidth: 0
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -2451,6 +2585,38 @@ var Card = function Card(_ref8) {
   }, /*#__PURE__*/React.createElement(Ic, {
     n: "globe",
     size: 13
+  }))))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 88,
+      height: 88,
+      borderRadius: 13,
+      flexShrink: 0,
+      overflow: 'hidden',
+      background: accentBg,
+      border: "1px solid ".concat(accentBd),
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
+  }, photo ? /*#__PURE__*/React.createElement("img", {
+    src: photo,
+    alt: "",
+    onError: function onError() {
+      return setImgError(true);
+    },
+    style: {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover'
+    }
+  }) : /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: accent,
+      opacity: 0.4
+    }
+  }, /*#__PURE__*/React.createElement(Ic, {
+    n: "pin",
+    size: 26
   })))));
 };
 
@@ -2458,20 +2624,20 @@ var Card = function Card(_ref8) {
 var Feed = function Feed(_ref9) {
   var restaurants = _ref9.restaurants,
     onCardClick = _ref9.onCardClick;
-  var _useState13 = useState('All'),
-    _useState14 = _slicedToArray(_useState13, 2),
-    cuisine = _useState14[0],
-    setCuisine = _useState14[1];
-  var _useState15 = useState('want'),
+  var _useState15 = useState('All'),
     _useState16 = _slicedToArray(_useState15, 2),
-    section = _useState16[0],
-    setSection = _useState16[1];
-  var _useState17 = useState(function () {
+    cuisine = _useState16[0],
+    setCuisine = _useState16[1];
+  var _useState17 = useState('want'),
+    _useState18 = _slicedToArray(_useState17, 2),
+    section = _useState18[0],
+    setSection = _useState18[1];
+  var _useState19 = useState(function () {
       return getPriorityList();
     }),
-    _useState18 = _slicedToArray(_useState17, 2),
-    priority = _useState18[0],
-    setPriority = _useState18[1];
+    _useState20 = _slicedToArray(_useState19, 2),
+    priority = _useState20[0],
+    setPriority = _useState20[1];
   function togglePriority(id) {
     setPriority(function (prev) {
       var next = prev.includes(id) ? prev.filter(function (x) {
@@ -2709,18 +2875,18 @@ var Feed = function Feed(_ref9) {
 // ── Sign-in screen ───────────────────────────────────────────
 var ADMIN_EMAIL = 'mehdiiaabbassii@gmail.com';
 var SignIn = function SignIn() {
-  var _useState19 = useState(''),
-    _useState20 = _slicedToArray(_useState19, 2),
-    password = _useState20[0],
-    setPassword = _useState20[1];
   var _useState21 = useState(''),
     _useState22 = _slicedToArray(_useState21, 2),
-    err = _useState22[0],
-    setErr = _useState22[1];
-  var _useState23 = useState(false),
+    password = _useState22[0],
+    setPassword = _useState22[1];
+  var _useState23 = useState(''),
     _useState24 = _slicedToArray(_useState23, 2),
-    busy = _useState24[0],
-    setBusy = _useState24[1];
+    err = _useState24[0],
+    setErr = _useState24[1];
+  var _useState25 = useState(false),
+    _useState26 = _slicedToArray(_useState25, 2),
+    busy = _useState26[0],
+    setBusy = _useState26[1];
   var inp = {
     width: '100%',
     padding: '11px 14px',
@@ -3265,54 +3431,54 @@ var PENDING_SPOTS = [{
 
 // ── App ──────────────────────────────────────────────────────
 function App() {
-  var _useState25 = useState([]),
-    _useState26 = _slicedToArray(_useState25, 2),
-    restaurants = _useState26[0],
-    setRestaurants = _useState26[1];
-  var _useState27 = useState(true),
+  var _useState27 = useState([]),
     _useState28 = _slicedToArray(_useState27, 2),
-    loading = _useState28[0],
-    setLoading = _useState28[1];
-  var _useState29 = useState('home'),
+    restaurants = _useState28[0],
+    setRestaurants = _useState28[1];
+  var _useState29 = useState(true),
     _useState30 = _slicedToArray(_useState29, 2),
-    tab = _useState30[0],
-    setTab = _useState30[1];
-  var _useState31 = useState(false),
+    loading = _useState30[0],
+    setLoading = _useState30[1];
+  var _useState31 = useState('home'),
     _useState32 = _slicedToArray(_useState31, 2),
-    showEdit = _useState32[0],
-    setShowEdit = _useState32[1];
+    tab = _useState32[0],
+    setTab = _useState32[1];
   var _useState33 = useState(false),
     _useState34 = _slicedToArray(_useState33, 2),
-    showImport = _useState34[0],
-    setShowImport = _useState34[1];
+    showEdit = _useState34[0],
+    setShowEdit = _useState34[1];
   var _useState35 = useState(false),
     _useState36 = _slicedToArray(_useState35, 2),
-    showAddMenu = _useState36[0],
-    setShowAddMenu = _useState36[1];
-  var _useState37 = useState(null),
+    showImport = _useState36[0],
+    setShowImport = _useState36[1];
+  var _useState37 = useState(false),
     _useState38 = _slicedToArray(_useState37, 2),
-    editTarget = _useState38[0],
-    setEditTarget = _useState38[1];
+    showAddMenu = _useState38[0],
+    setShowAddMenu = _useState38[1];
   var _useState39 = useState(null),
     _useState40 = _slicedToArray(_useState39, 2),
-    detail = _useState40[0],
-    setDetail = _useState40[1];
-  var _useState41 = useState(''),
+    editTarget = _useState40[0],
+    setEditTarget = _useState40[1];
+  var _useState41 = useState(null),
     _useState42 = _slicedToArray(_useState41, 2),
-    search = _useState42[0],
-    setSearch = _useState42[1];
-  var _useState43 = useState(null),
+    detail = _useState42[0],
+    setDetail = _useState42[1];
+  var _useState43 = useState(''),
     _useState44 = _slicedToArray(_useState43, 2),
-    toast = _useState44[0],
-    setToast = _useState44[1];
+    search = _useState44[0],
+    setSearch = _useState44[1];
   var _useState45 = useState(null),
     _useState46 = _slicedToArray(_useState45, 2),
-    session = _useState46[0],
-    setSession = _useState46[1];
-  var _useState47 = useState(false),
+    toast = _useState46[0],
+    setToast = _useState46[1];
+  var _useState47 = useState(null),
     _useState48 = _slicedToArray(_useState47, 2),
-    authChecked = _useState48[0],
-    setAuthChecked = _useState48[1];
+    session = _useState48[0],
+    setSession = _useState48[1];
+  var _useState49 = useState(false),
+    _useState50 = _slicedToArray(_useState49, 2),
+    authChecked = _useState50[0],
+    setAuthChecked = _useState50[1];
   function showToast(msg) {
     setToast(msg);
     setTimeout(function () {
@@ -3339,17 +3505,17 @@ function App() {
     return _insertPending.apply(this, arguments);
   }
   function _insertPending() {
-    _insertPending = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+    _insertPending = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
       var _error$message, _error$message2;
       var deleted, pending, ids, _yield$sb$from$select, existing, existingIds, toInsert, _yield$sb$from$upsert, error, safe, _yield$sb$from$upsert2;
-      return _regenerator().w(function (_context3) {
-        while (1) switch (_context3.n) {
+      return _regenerator().w(function (_context5) {
+        while (1) switch (_context5.n) {
           case 0:
             if (PENDING_SPOTS.length) {
-              _context3.n = 1;
+              _context5.n = 1;
               break;
             }
-            return _context3.a(2);
+            return _context5.a(2);
           case 1:
             deleted = new Set();
             try {
@@ -3359,18 +3525,18 @@ function App() {
               return !deleted.has(s.id);
             });
             if (pending.length) {
-              _context3.n = 2;
+              _context5.n = 2;
               break;
             }
-            return _context3.a(2);
+            return _context5.a(2);
           case 2:
             ids = pending.map(function (s) {
               return s.id;
             });
-            _context3.n = 3;
+            _context5.n = 3;
             return sb.from('spots').select('id').in('id', ids);
           case 3:
-            _yield$sb$from$select = _context3.v;
+            _yield$sb$from$select = _context5.v;
             existing = _yield$sb$from$select.data;
             existingIds = new Set((existing || []).map(function (r) {
               return r.id;
@@ -3379,32 +3545,32 @@ function App() {
               return !existingIds.has(s.id);
             });
             if (toInsert.length) {
-              _context3.n = 4;
+              _context5.n = 4;
               break;
             }
-            return _context3.a(2);
+            return _context5.a(2);
           case 4:
-            _context3.n = 5;
+            _context5.n = 5;
             return sb.from('spots').upsert(toInsert, {
               onConflict: 'id',
               ignoreDuplicates: true
             });
           case 5:
-            _yield$sb$from$upsert = _context3.v;
+            _yield$sb$from$upsert = _context5.v;
             error = _yield$sb$from$upsert.error;
             if (!(error && ((_error$message = error.message) !== null && _error$message !== void 0 && _error$message.includes('column') || (_error$message2 = error.message) !== null && _error$message2 !== void 0 && _error$message2.includes('schema') || error.code === 'PGRST204'))) {
-              _context3.n = 7;
+              _context5.n = 7;
               break;
             }
-            safe = toInsert.map(function (_ref10) {
-              var id = _ref10.id,
-                name = _ref10.name,
-                cuisine = _ref10.cuisine,
-                location = _ref10.location,
-                recommended_by = _ref10.recommended_by,
-                notes = _ref10.notes,
-                visited = _ref10.visited,
-                rating = _ref10.rating;
+            safe = toInsert.map(function (_ref11) {
+              var id = _ref11.id,
+                name = _ref11.name,
+                cuisine = _ref11.cuisine,
+                location = _ref11.location,
+                recommended_by = _ref11.recommended_by,
+                notes = _ref11.notes,
+                visited = _ref11.visited,
+                rating = _ref11.rating;
               return {
                 id: id,
                 name: name || '',
@@ -3416,54 +3582,54 @@ function App() {
                 rating: rating || null
               };
             });
-            _context3.n = 6;
+            _context5.n = 6;
             return sb.from('spots').upsert(safe, {
               onConflict: 'id',
               ignoreDuplicates: true
             });
           case 6:
-            _yield$sb$from$upsert2 = _context3.v;
+            _yield$sb$from$upsert2 = _context5.v;
             error = _yield$sb$from$upsert2.error;
           case 7:
             if (error) showToast('Seed error: ' + error.message);
           case 8:
-            return _context3.a(2);
+            return _context5.a(2);
         }
-      }, _callee3);
+      }, _callee4);
     }));
     return _insertPending.apply(this, arguments);
   }
-  function handleSave(_x3) {
+  function handleSave(_x4) {
     return _handleSave.apply(this, arguments);
   }
   function _handleSave() {
-    _handleSave = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4(form) {
+    _handleSave = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5(form) {
       var _error$message3, _error$message4;
       var payload, error, _yield$sb$from$update, _yield$sb$from$insert, safe, _yield$sb$from$update2, _yield$sb$from$insert2;
-      return _regenerator().w(function (_context4) {
-        while (1) switch (_context4.n) {
+      return _regenerator().w(function (_context6) {
+        while (1) switch (_context6.n) {
           case 0:
             payload = appToDb(form);
             if (!editTarget) {
-              _context4.n = 2;
+              _context6.n = 2;
               break;
             }
-            _context4.n = 1;
+            _context6.n = 1;
             return sb.from('spots').update(payload).eq('id', editTarget.id);
           case 1:
-            _yield$sb$from$update = _context4.v;
+            _yield$sb$from$update = _context6.v;
             error = _yield$sb$from$update.error;
-            _context4.n = 4;
+            _context6.n = 4;
             break;
           case 2:
-            _context4.n = 3;
+            _context6.n = 3;
             return sb.from('spots').insert(payload);
           case 3:
-            _yield$sb$from$insert = _context4.v;
+            _yield$sb$from$insert = _context6.v;
             error = _yield$sb$from$insert.error;
           case 4:
             if (!(error && ((_error$message3 = error.message) !== null && _error$message3 !== void 0 && _error$message3.includes('column') || (_error$message4 = error.message) !== null && _error$message4 !== void 0 && _error$message4.includes('schema') || error.code === 'PGRST204'))) {
-              _context4.n = 8;
+              _context6.n = 8;
               break;
             }
             safe = {
@@ -3476,41 +3642,41 @@ function App() {
               rating: payload.rating
             };
             if (!editTarget) {
-              _context4.n = 6;
+              _context6.n = 6;
               break;
             }
-            _context4.n = 5;
+            _context6.n = 5;
             return sb.from('spots').update(safe).eq('id', editTarget.id);
           case 5:
-            _yield$sb$from$update2 = _context4.v;
+            _yield$sb$from$update2 = _context6.v;
             error = _yield$sb$from$update2.error;
-            _context4.n = 8;
+            _context6.n = 8;
             break;
           case 6:
-            _context4.n = 7;
+            _context6.n = 7;
             return sb.from('spots').insert(safe);
           case 7:
-            _yield$sb$from$insert2 = _context4.v;
+            _yield$sb$from$insert2 = _context6.v;
             error = _yield$sb$from$insert2.error;
           case 8:
             if (!error) {
-              _context4.n = 9;
+              _context6.n = 9;
               break;
             }
             showToast('Save failed: ' + error.message);
-            return _context4.a(2);
+            return _context6.a(2);
           case 9:
             setShowEdit(false);
             setShowImport(false);
             setEditTarget(null);
             setDetail(null);
             showToast(editTarget ? 'Updated' : 'Pinned');
-            _context4.n = 10;
+            _context6.n = 10;
             return loadSpots();
           case 10:
-            return _context4.a(2);
+            return _context6.a(2);
         }
-      }, _callee4);
+      }, _callee5);
     }));
     return _handleSave.apply(this, arguments);
   }
@@ -3518,41 +3684,148 @@ function App() {
     return _loadSpots.apply(this, arguments);
   }
   function _loadSpots() {
-    _loadSpots = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
+    _loadSpots = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
       var _yield$sb$from$select2, data, error;
-      return _regenerator().w(function (_context5) {
-        while (1) switch (_context5.n) {
+      return _regenerator().w(function (_context7) {
+        while (1) switch (_context7.n) {
           case 0:
-            _context5.n = 1;
+            _context7.n = 1;
             return insertPending();
           case 1:
-            _context5.n = 2;
+            _context7.n = 2;
             return sb.from('spots').select('*').order('created_at', {
               ascending: false
             });
           case 2:
-            _yield$sb$from$select2 = _context5.v;
+            _yield$sb$from$select2 = _context7.v;
             data = _yield$sb$from$select2.data;
             error = _yield$sb$from$select2.error;
             if (!error) {
-              _context5.n = 3;
+              _context7.n = 3;
               break;
             }
             showToast('Load error: ' + error.message);
-            return _context5.a(2);
+            return _context7.a(2);
           case 3:
             setRestaurants((data || []).map(dbToApp));
             setLoading(false);
           case 4:
-            return _context5.a(2);
+            return _context7.a(2);
         }
-      }, _callee5);
+      }, _callee6);
     }));
     return _loadSpots.apply(this, arguments);
   }
   useEffect(function () {
     if (session) loadSpots();
   }, [session]);
+
+  // Quietly backfill photos for spots that don't have any yet, a few at a
+  // time so the feed fills in with real images without hammering the
+  // free CORS proxies used to read Google Maps pages.
+  useEffect(function () {
+    if (loading) return;
+    var cancelled = false;
+    _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+      var targets, _iterator, _step, _loop, _ret, _t11;
+      return _regenerator().w(function (_context4) {
+        while (1) switch (_context4.p = _context4.n) {
+          case 0:
+            targets = restaurants.filter(function (r) {
+              return !(r.photos && r.photos.length);
+            }).slice(0, 15);
+            _iterator = _createForOfIteratorHelper(targets);
+            _context4.p = 1;
+            _loop = /*#__PURE__*/_regenerator().m(function _loop() {
+              var r, mapsUrl, photos, _t1, _t10;
+              return _regenerator().w(function (_context3) {
+                while (1) switch (_context3.p = _context3.n) {
+                  case 0:
+                    r = _step.value;
+                    if (!cancelled) {
+                      _context3.n = 1;
+                      break;
+                    }
+                    return _context3.a(2, {
+                      v: void 0
+                    });
+                  case 1:
+                    mapsUrl = r.googleMapsUrl || "https://www.google.com/maps/place/".concat(encodeURIComponent([r.name, r.location].filter(Boolean).join(', ')));
+                    _context3.p = 2;
+                    _t1 = extractPhotoUrls;
+                    _context3.n = 3;
+                    return fetchHtmlViaProxies(mapsUrl);
+                  case 3:
+                    photos = _t1(_context3.v);
+                    if (!photos.length) {
+                      _context3.n = 5;
+                      break;
+                    }
+                    _context3.n = 4;
+                    return sb.from('spots').update({
+                      photos: photos
+                    }).eq('id', r.id);
+                  case 4:
+                    if (!cancelled) setRestaurants(function (rs) {
+                      return rs.map(function (x) {
+                        return x.id === r.id ? _objectSpread(_objectSpread({}, x), {}, {
+                          photos: photos
+                        }) : x;
+                      });
+                    });
+                  case 5:
+                    _context3.n = 7;
+                    break;
+                  case 6:
+                    _context3.p = 6;
+                    _t10 = _context3.v;
+                  case 7:
+                    _context3.n = 8;
+                    return new Promise(function (res) {
+                      return setTimeout(res, 1000);
+                    });
+                  case 8:
+                    return _context3.a(2);
+                }
+              }, _loop, null, [[2, 6]]);
+            });
+            _iterator.s();
+          case 2:
+            if ((_step = _iterator.n()).done) {
+              _context4.n = 5;
+              break;
+            }
+            return _context4.d(_regeneratorValues(_loop()), 3);
+          case 3:
+            _ret = _context4.v;
+            if (!_ret) {
+              _context4.n = 4;
+              break;
+            }
+            return _context4.a(2, _ret.v);
+          case 4:
+            _context4.n = 2;
+            break;
+          case 5:
+            _context4.n = 7;
+            break;
+          case 6:
+            _context4.p = 6;
+            _t11 = _context4.v;
+            _iterator.e(_t11);
+          case 7:
+            _context4.p = 7;
+            _iterator.f();
+            return _context4.f(7);
+          case 8:
+            return _context4.a(2);
+        }
+      }, _callee3, null, [[1, 6, 7, 8]]);
+    }))();
+    return function () {
+      cancelled = true;
+    };
+  }, [loading]);
   var filtered = useMemo(function () {
     var q = search.toLowerCase();
     return restaurants.filter(function (r) {
@@ -3565,28 +3838,28 @@ function App() {
   var visitedList = filtered.filter(function (r) {
     return r.status === 'visited';
   });
-  function handleMarkVisited(_x4) {
+  function handleMarkVisited(_x5) {
     return _handleMarkVisited.apply(this, arguments);
   }
   function _handleMarkVisited() {
-    _handleMarkVisited = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6(id) {
+    _handleMarkVisited = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7(id) {
       var _yield$sb$from$update3, error;
-      return _regenerator().w(function (_context6) {
-        while (1) switch (_context6.n) {
+      return _regenerator().w(function (_context8) {
+        while (1) switch (_context8.n) {
           case 0:
-            _context6.n = 1;
+            _context8.n = 1;
             return sb.from('spots').update({
               visited: true
             }).eq('id', id);
           case 1:
-            _yield$sb$from$update3 = _context6.v;
+            _yield$sb$from$update3 = _context8.v;
             error = _yield$sb$from$update3.error;
             if (!error) {
-              _context6.n = 2;
+              _context8.n = 2;
               break;
             }
             showToast('Update failed');
-            return _context6.a(2);
+            return _context8.a(2);
           case 2:
             setRestaurants(function (rs) {
               return rs.map(function (r) {
@@ -3602,35 +3875,35 @@ function App() {
             });
             showToast('Marked as visited');
           case 3:
-            return _context6.a(2);
+            return _context8.a(2);
         }
-      }, _callee6);
+      }, _callee7);
     }));
     return _handleMarkVisited.apply(this, arguments);
   }
-  function handleRate(_x5, _x6) {
+  function handleRate(_x6, _x7) {
     return _handleRate.apply(this, arguments);
   }
   function _handleRate() {
-    _handleRate = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7(id, rating) {
+    _handleRate = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8(id, rating) {
       var _yield$sb$from$update4, error;
-      return _regenerator().w(function (_context7) {
-        while (1) switch (_context7.n) {
+      return _regenerator().w(function (_context9) {
+        while (1) switch (_context9.n) {
           case 0:
-            _context7.n = 1;
+            _context9.n = 1;
             return sb.from('spots').update({
               rating: rating,
               visited: true
             }).eq('id', id);
           case 1:
-            _yield$sb$from$update4 = _context7.v;
+            _yield$sb$from$update4 = _context9.v;
             error = _yield$sb$from$update4.error;
             if (!error) {
-              _context7.n = 2;
+              _context9.n = 2;
               break;
             }
             showToast('Rating failed');
-            return _context7.a(2);
+            return _context9.a(2);
           case 2:
             setRestaurants(function (rs) {
               return rs.map(function (r) {
@@ -3648,32 +3921,32 @@ function App() {
             });
             showToast(rating + '/5 — saved');
           case 3:
-            return _context7.a(2);
+            return _context9.a(2);
         }
-      }, _callee7);
+      }, _callee8);
     }));
     return _handleRate.apply(this, arguments);
   }
-  function handleDelete(_x7) {
+  function handleDelete(_x8) {
     return _handleDelete.apply(this, arguments);
   }
   function _handleDelete() {
-    _handleDelete = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8(id) {
+    _handleDelete = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee9(id) {
       var _yield$sb$from$delete, error, t;
-      return _regenerator().w(function (_context8) {
-        while (1) switch (_context8.n) {
+      return _regenerator().w(function (_context0) {
+        while (1) switch (_context0.n) {
           case 0:
-            _context8.n = 1;
+            _context0.n = 1;
             return sb.from('spots').delete().eq('id', id);
           case 1:
-            _yield$sb$from$delete = _context8.v;
+            _yield$sb$from$delete = _context0.v;
             error = _yield$sb$from$delete.error;
             if (!error) {
-              _context8.n = 2;
+              _context0.n = 2;
               break;
             }
             showToast('Delete failed: ' + error.message);
-            return _context8.a(2);
+            return _context0.a(2);
           case 2:
             // If this was a seeded spot, tombstone it so it doesn't get re-seeded on reload
             if (PENDING_SPOTS.some(function (s) {
@@ -3692,9 +3965,9 @@ function App() {
             setDetail(null);
             showToast('Removed.');
           case 3:
-            return _context8.a(2);
+            return _context0.a(2);
         }
-      }, _callee8);
+      }, _callee9);
     }));
     return _handleDelete.apply(this, arguments);
   }
