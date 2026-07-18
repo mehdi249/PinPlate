@@ -1239,6 +1239,19 @@ const PENDING_SPOTS = [
     website: 'https://www.eliovolpe.com',
     lat: 49.2516, lng: -123.1187,
   },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440031',
+    name: 'Phonatic Social Restaurant',
+    cuisine: 'Vietnamese',
+    location: '751 Lonsdale Ave, North Vancouver, BC V7M 2G9',
+    recommended_by: '',
+    notes: 'Vietnamese · wheelchair accessible · closes 9:30pm',
+    visited: false,
+    price_range: '$20-30',
+    phone: '(236) 551-0888',
+    website: 'https://phonaticsocial.com',
+    lat: 49.3153, lng: -123.0732,
+  },
 ];
 
 // ── App ──────────────────────────────────────────────────────
